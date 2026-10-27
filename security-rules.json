@@ -1,0 +1,14 @@
+{
+    "rules": {
+        ".read": false,
+        ".write": false,
+        "rooms": {
+            "$roomCode": {
+                ".read": "auth != null",
+                ".write": "auth != null"
+            },
+            ".read": false,
+            ".write": false
+        }
+    }
+}

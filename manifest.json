@@ -1,0 +1,37 @@
+{
+  "background_color": "#0b1226",
+  "categories": [
+    "games",
+    "entertainment"
+  ],
+  "description": "Hold the phone to your forehead, friends give clues, guess the word. Every word in English and Hinglish. Works fully offline.",
+  "display": "standalone",
+  "icons": [
+    {
+      "purpose": "any",
+      "sizes": "192x192",
+      "src": "icon-192.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "sizes": "512x512",
+      "src": "icon-512.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "maskable",
+      "sizes": "512x512",
+      "src": "icon-maskable-512.png",
+      "type": "image/png"
+    }
+  ],
+  "id": "./",
+  "lang": "en",
+  "name": "Upar Guessing Game",
+  "orientation": "any",
+  "scope": "./",
+  "short_name": "UPAR",
+  "start_url": "./",
+  "theme_color": "#0b1226"
+}
