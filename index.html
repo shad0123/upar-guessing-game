@@ -55,6 +55,16 @@ img,svg{max-width:100%}
 .topnav a:hover{background:var(--surface2)}
 .icon-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 13px;font-weight:700;font-size:14px}
 .icon-btn[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+/* Speaker icon sound controls: the same button in the top bar, the
+   Controls sheet, the offline stage and the online stage. One icon
+   is shown at a time — waves when sound is on, a cross when muted —
+   switched by data-sound, which syncSoundButtons() keeps in step
+   with the persisted soundOn state. */
+.sound-btn{display:inline-flex;align-items:center;justify-content:center}
+.sound-btn .snd-icon{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sound-btn .snd-off{display:none}
+.sound-btn[data-sound="off"] .snd-on{display:none}
+.sound-btn[data-sound="off"] .snd-off{display:block}
 
 /* Hero */
 .hero{padding:44px 20px 8px}
@@ -179,8 +189,10 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;color:var(--muted);f
 footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
 
 /* Hamburger menu + short windows (sheets) */
-/* Full-screen button, immediately left of the menu button (home page only;
-   short windows have no full-screen button). */
+/* Full-screen button, immediately left of the menu button (every
+   full-page screen in a browser tab; hidden in the installed
+   standalone app, and hidden on the live round stage itself.
+   Short windows have no full-screen button). */
 .fs-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;width:44px;height:40px;display:grid;place-items:center;flex:none}
 .fs-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .fs-btn .icon-exit{display:none}
@@ -263,17 +275,19 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
 }
 @media (orientation:landscape) and (max-height:600px){
   .stage-top{flex-wrap:nowrap}
-  #stageDeckLabel{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:20ch;font-size:13px}
+  #stageDeckLabel,#onlineStageLabel{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:20ch;font-size:13px}
 }
 .stage-top .spacer{flex:1}
 .timer-pill{font-family:"Outfit";font-weight:900;font-size:26px;background:#1b2a4e;border:1px solid #2b3d6b;border-radius:999px;padding:6px 18px}
 .timer-pill.low{background:var(--bad);border-color:var(--bad);color:#fff;animation:pulse 1s infinite}
 @keyframes pulse{50%{transform:scale(1.06)}}
 .stage-btn{border:1px solid #2b3d6b;background:#1b2a4e;color:var(--card-ink);border-radius:999px;padding:9px 14px;font-weight:700;font-size:14px}
-/* Pause / End round stay hidden on the ready screen and only appear
+/* Pause stays hidden on the ready screen and only appears
    once "Tap when you're ready" has been pressed (see startTimer /
-   the ready-tap handler). The explicit rule keeps [hidden] working
-   inside the flex .stage-top bar. */
+   the ready-tap handler). There is no End round button: a round
+   ends only when the timer runs out (or the words run out). The
+   explicit rule keeps [hidden] working inside the flex .stage-top
+   bar. */
 .stage-btn[hidden]{display:none}
 .progress{height:8px;background:#1b2a4e;margin:0 16px;border-radius:99px;overflow:hidden}
 .progress i{display:block;height:100%;background:var(--lime);border-radius:99px;transition:width .25s linear}
@@ -366,6 +380,13 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
 .stage-bg .team-row{color:var(--ink)}
 .team-row .dot{width:14px;height:14px;border-radius:99px;display:inline-block;margin-right:8px;vertical-align:-1px}
 .team-row.winner{border-color:var(--teal);background:color-mix(in srgb,var(--teal) 10%,var(--surface))}
+/* Final ("Play again") scoreboard rows are buttons: tapping a name
+   swaps the Correct / Pass box below to that player/team. The
+   pressed row gets the accent ring; the handoff board keeps plain
+   div rows and is unaffected. */
+#scoreboard .team-row{width:100%;font:inherit;color:var(--ink);cursor:pointer;text-align:left;appearance:none}
+#scoreboard .team-row[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 45%,transparent)}
+.result-lists-hint{margin:10px 0 0;color:var(--muted);font-size:13px;font-weight:600}
 .result-lists{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:left;margin-top:20px}
 .winner-banner{background:color-mix(in srgb,var(--lime) 18%,var(--surface));border:2px solid var(--lime);color:var(--ink);border-radius:16px;padding:16px;font-family:"Outfit";font-weight:800;font-size:20px;margin-top:18px}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
@@ -413,37 +434,155 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
   .deck h3{font-size:12px}
   #deckSheet .sheet-foot .btn{font-size:14px}
 }
+/* Deck picker head: title on its own row, Clear all + Done below it,
+   so the heading never wraps against the action buttons. */
+#deckSheet .sheet-head{flex-wrap:wrap}
+#deckSheet .sheet-head>div:first-child{flex:1 1 100%}
+#deckSheet .sheet-head-actions{margin-left:auto}
+.setup-page{max-width:640px;margin:0 auto;padding:18px 20px 28px}
+.setup-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.setup-head h2{margin:0;font-size:clamp(26px,4vw,34px);flex:1}
+.setup-back{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:9px 15px;font-weight:800;white-space:nowrap}
+.setup-page .panel{padding:18px}
+.setup-stack{display:grid;gap:12px}
+.setup-stack .picker-btn{box-shadow:none}
+.setup-summary{margin:0;color:var(--muted);font-size:14px}
+.setup-summary b{color:var(--ink)}
+.setup-rules{margin:0;color:var(--muted);font-size:13.5px;line-height:1.5}
+.setup-rules b{color:var(--ink)}
+.player-btn .tile{background:var(--teal);color:#fff}
+.seg.small button{padding:8px 13px;font-size:14px}
+.settings-grid{display:grid;gap:2px}
+.settings-grid .seg-label{margin-top:14px}
+.settings-grid .seg-label:first-of-type{margin-top:0}
+.sheet-head-actions{display:flex;gap:8px;align-items:center;flex:none;flex-wrap:wrap}
+.sheet-head-actions .btn{padding:10px 18px;font-size:14px}
+.clear-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:10px 15px;font-weight:800;font-size:14px}
+.clear-btn:hover{border-color:var(--accent)}
+/* Player list window: name on top, team letters + remove below it */
+.prow{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.prow-top{display:flex;gap:8px;align-items:center}
+.prow-top input{flex:1;min-width:0;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:11px 13px;font-size:16px}
+.prow-bottom{display:flex;gap:8px;align-items:center;justify-content:space-between;min-height:36px}
+.prow-bottom .team-note{font-size:13px;font-weight:700;color:var(--muted)}
+.prow .team-pick{display:flex;gap:5px;flex:none}
+.prow .team-pick button{border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:99px;width:36px;height:36px;font-weight:900}
+.prow .team-pick button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.prow .remove-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;width:36px;height:36px;font-weight:800;flex:none;margin-left:auto}
+.prow .remove-btn[disabled]{opacity:.35;cursor:not-allowed}
+/* Game-mode chooser window (Play Offline) */
+.mode-choices{display:grid;gap:10px}
+.mode-choice{display:flex;flex-direction:column;gap:4px;width:100%;text-align:left;border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:16px;padding:16px 18px}
+.mode-choice:hover{border-color:var(--accent)}
+.mode-choice b{font-family:"Outfit";font-size:19px}
+.mode-choice span{color:var(--muted);font-size:14px;line-height:1.45}
+/* Blocked-start message on the setup page (team minimum not met) */
+.team-error{background:color-mix(in srgb,var(--bad) 10%,var(--surface));border:1px solid var(--bad);border-radius:12px;padding:11px 14px;font-size:14px;font-weight:600;margin:0}
+.team-error[hidden]{display:none}
+/* Online lobby: player cards */
+.room-code-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.copy-btn{border:1px solid #2b3d6b;background:#1b2a4e;color:var(--card-ink);border-radius:999px;padding:10px 16px;font-weight:800}
+.copy-btn:hover{border-color:var(--lime)}
+.player-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0;text-align:left}
+.player-card{background:#1b2a4e;border:1px solid #2b3d6b;border-radius:16px;padding:14px 16px;color:var(--card-ink);min-width:0}
+.player-card .pc-name{font-weight:800;font-size:17px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.player-card .pc-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.player-card .pc-tag{font-size:11.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#8ea0c8;border:1px solid #2b3d6b;border-radius:99px;padding:3px 9px}
+.player-card .pc-tag.you{color:var(--lime);border-color:var(--lime)}
+.player-card .pc-team{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.player-card .pc-team button{border:1px solid #2b3d6b;background:#22314f;color:var(--card-ink);border-radius:99px;padding:7px 12px;font-weight:800;font-size:13px}
+.player-card .pc-team button[aria-pressed="true"]{background:var(--lime);color:#0c1222;border-color:var(--lime)}
+.player-card .pc-team button:disabled{opacity:.55;cursor:default}
+.player-card .pc-team .pc-team-label{font-size:12px;font-weight:800;color:#8ea0c8;align-self:center;letter-spacing:.07em;text-transform:uppercase}
+.player-card.waiting{border-style:dashed;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:4px;animation:waitingPulse 1.6s ease-in-out infinite}
+.player-card.waiting b{font-family:"Outfit";font-size:17px}
+.player-card.waiting span{color:#8ea0c8;font-size:13px;font-weight:600}
+@keyframes waitingPulse{50%{opacity:.55}}
+.lobby-settings{background:#1b2a4e;border:1px solid #2b3d6b;border-radius:16px;padding:14px 16px;text-align:left;margin-top:4px}
+.lobby-settings .seg-label{color:#8ea0c8;margin-top:12px}
+.lobby-settings .seg-label:first-of-type{margin-top:0}
+.lobby-settings .seg button{background:#22314f;border-color:#2b3d6b;color:var(--card-ink)}
+.lobby-settings .seg button[aria-pressed="true"]{background:var(--lime);color:#0c1222;border-color:var(--lime)}
+.lobby-settings .seg button:disabled{opacity:.45;cursor:not-allowed}
+.lobby-settings .lobby-note{margin:10px 0 0;color:#8ea0c8;font-size:13px}
+.claim-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.claim-row button{border:1px solid #2b3d6b;background:#1b2a4e;color:var(--card-ink);border-radius:999px;padding:11px 18px;font-weight:800}
+.claim-row button.suggested{border-color:var(--lime);color:var(--lime)}
+/* Handoff guesser picker */
+.handoff-members{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+.handoff-members button{border:1px solid #2b3d6b;background:#1b2a4e;color:var(--card-ink);border-radius:999px;padding:11px 18px;font-weight:800}
+.handoff-members button[aria-pressed="true"]{background:var(--lime);color:#0c1222;border-color:var(--lime)}
+.handoff-members button:disabled{opacity:.4;cursor:not-allowed}
+.install-steps{margin:0;padding-left:20px;color:var(--muted)}
+.install-steps li{margin:10px 0}
+.install-steps b{color:var(--ink)}
+@media (max-width:560px){
+  .player-cards{grid-template-columns:1fr}
+  .setup-page{padding:14px 14px 22px}
+}
+/* Compact setup page on phones, so Player List, deck button, round
+   settings and Start all fit one viewport. */
+@media (max-width:760px){
+  .setup-page{padding-top:10px}
+  .setup-head{margin-bottom:10px}
+  .setup-stack{gap:9px}
+  .setup-stack .picker-btn{padding:11px 14px}
+  .setup-stack .picker-btn .tile{width:38px;height:38px;border-radius:11px}
+  .setup-stack .selected-chips{margin-top:0}
+  .setup-page .panel{padding:14px 16px}
+  .settings-grid .seg-label{margin-top:8px}
+  .seg.small button{padding:7px 11px;font-size:13.5px}
+  .setup-page .selected-line{margin-top:10px;padding:10px 13px}
+  .setup-page .start-btn{padding:14px}
+  .setup-page .fineprint{font-size:12.5px;line-height:1.45;margin-top:8px}
+  .setup-page .panel .sub{margin-bottom:8px}
+}
 /* Online multiplayer (Firebase Realtime Database, loaded only on demand) */
 .btn-online{background:var(--ink);color:var(--bg);box-shadow:0 10px 24px rgba(12,18,34,.22)}
 .btn-online:hover{filter:brightness(1.12)}
 .btn-online .live-dot{width:9px;height:9px;border-radius:99px;background:#2ee6a8;flex:none}
-.online-form{display:grid;gap:14px}
+.online-form{display:grid;gap:14px;min-width:0}
+.online-form>*{min-width:0}
 .online-field label{display:block;font-weight:700;font-size:14px;margin-bottom:6px}
 .online-field input{width:100%;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:12px 14px;font-size:16px;text-transform:uppercase;letter-spacing:.14em}
 .online-field input#onlineNameInput{text-transform:none;letter-spacing:0}
 .online-divider{display:flex;align-items:center;gap:12px;color:var(--muted);font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase}
 .online-divider::before,.online-divider::after{content:"";flex:1;height:1px;background:var(--line)}
-.online-error{display:none;background:color-mix(in srgb,var(--bad) 10%,var(--surface));border:1px solid var(--bad);border-radius:12px;padding:11px 14px;font-size:14px;font-weight:600}
+.online-error{display:none;background:color-mix(in srgb,var(--bad) 10%,var(--surface));border:1px solid var(--bad);border-radius:12px;padding:11px 14px;font-size:14px;font-weight:600;overflow-wrap:anywhere;word-break:break-word}
 .online-error.show{display:block}
 .online-note{font-size:13px;color:var(--muted);margin:0}
 .online-note b{color:var(--ink)}
 .rules-code{background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:12.5px;line-height:1.5;overflow-x:auto;white-space:pre;margin:10px 0}
-.online-stage{height:100%;min-height:0;display:flex;flex-direction:column;overflow-y:auto;padding-bottom:max(20px,env(safe-area-inset-bottom))}
-.online-view{display:none;flex:1;min-height:0;flex-direction:column}
+.online-stage{height:100%;min-height:0;display:flex;flex-direction:column;overflow:hidden;padding-bottom:max(20px,env(safe-area-inset-bottom))}
+.online-view{display:none;flex:1;min-height:0;flex-direction:column;overflow:hidden}
 .online-view.show{display:flex}
-.online-center{max-width:640px;width:100%;margin:0 auto;padding:20px;text-align:center;flex:1;display:flex;flex-direction:column;justify-content:center;justify-content:safe center}
+.online-center{max-width:640px;width:100%;margin:0 auto;padding:16px 20px;text-align:center;flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;justify-content:center;justify-content:safe center}
 .online-center h2{font-size:clamp(28px,5.5vw,40px);margin:0 0 8px;color:#fff}
 .online-center p{color:#aebddf;margin:0 0 8px}
-.room-code{font-family:"Outfit";font-weight:900;font-size:clamp(44px,12vw,64px);letter-spacing:.22em;color:var(--lime);line-height:1;margin:6px 0 2px}
-.player-list{display:grid;gap:8px;margin:20px 0;text-align:left}
+.room-code{font-family:"Outfit";font-weight:900;font-size:clamp(36px,min(11dvh,12vw),64px);letter-spacing:.22em;color:var(--lime);line-height:1;margin:6px 0 2px}
+.player-list{display:grid;gap:8px;margin:14px 0;text-align:left}
 .player-row{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#1b2a4e;border:1px solid #2b3d6b;border-radius:14px;padding:13px 16px;font-weight:700;color:var(--card-ink)}
+.player-row>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.player-row .tag{flex:none}
 .player-row .tag{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8ea0c8;border:1px solid #2b3d6b;border-radius:99px;padding:4px 10px;white-space:nowrap}
 .player-row .tag.you{color:var(--lime);border-color:var(--lime)}
-.online-word{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px 20px;gap:0;min-height:0}
-.online-word .big{font-family:"Outfit";font-weight:900;font-size:clamp(40px,10vw,84px);line-height:1.02;max-width:20ch;overflow-wrap:break-word}
-.online-word .rule{width:72px;height:5px;background:var(--lime);border-radius:99px;margin:18px auto}
-.online-word .hinglish{font-size:clamp(22px,5vw,36px);font-weight:800;color:var(--lime)}
-.online-hidden{font-family:"Outfit";font-weight:900;font-size:clamp(56px,16vw,110px);line-height:1;color:#fff;letter-spacing:.08em}
+.online-word{flex:1;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;text-align:center;padding:8px 20px 10px;gap:0;min-height:0;overflow:hidden}
+/* Live round card, mirroring the offline round view: small meta,
+   top-left; English + Hinglish equal, centred, as large as the
+   space between the Pass / Got it zones allows. */
+.online-round-meta{align-self:stretch;text-align:left;display:flex;flex-wrap:wrap;gap:2px 14px;align-items:baseline;justify-content:flex-start;flex:none}
+.online-round-meta .kicker{margin:0}
+.online-round-meta .play-meta{margin:0;justify-content:flex-start}
+.online-clue-note{color:#8ea0c8;font-weight:700;font-size:13px;margin:4px 0 0;text-align:left;flex:none}
+.online-word-block{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;width:100%;padding:2px 0}
+.online-word-block p{margin:0}
+#onlineClueWord{width:100%}
+.online-word .big,.online-word .hinglish{font-size:var(--online-word-size,clamp(30px,min(9dvh,13vw),72px));font-weight:900;line-height:1.04;max-width:22ch;overflow-wrap:break-word;text-wrap:balance}
+.online-word .big{font-family:"Outfit";line-height:1.02}
+.online-word .rule{width:48px;height:4px;background:var(--lime);border-radius:99px;margin:10px auto;flex:none}
+.online-word .hinglish{font-weight:800;color:var(--lime)}
+.online-hidden{font-family:"Outfit";font-weight:900;font-size:var(--online-word-size,clamp(30px,min(9dvh,13vw),72px));line-height:1;color:#fff;letter-spacing:.08em}
+.online-hidden + p{color:#aebddf;font-weight:700;font-size:clamp(13px,2.4dvh,16px);margin:10px 0 0;max-width:34rem}
 .online-lists{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left;margin-top:16px}
 .online-lists ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 .online-lists li{background:#1b2a4e;border:1px solid #2b3d6b;border-radius:10px;padding:8px 11px;font-size:14px;color:var(--card-ink)}
@@ -451,6 +590,30 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
 .online-lists h4{margin:0 0 8px;color:#fff;font-size:15px}
 .countdown-num{font-family:"Outfit";font-weight:900;font-size:clamp(72px,22vw,150px);line-height:1;color:#fff}
 @media (max-width:760px){.online-lists{grid-template-columns:1fr}}
+/* Online screens on short viewports (landscape phones): the same
+   compact treatment the offline stage gets — smaller headings, room
+   code and word area, so lobby / ready / live / result all fit one
+   viewport without the top bar scrolling away. */
+@media (max-height:600px){
+  .online-center{padding:8px 16px 10px}
+  .online-center h2{font-size:clamp(24px,5.5dvh,34px)}
+  .room-code{font-size:clamp(32px,min(10dvh,11vw),56px)}
+  .player-list{margin:10px 0}
+  .online-center .big-actions{margin-top:12px;gap:8px}
+  .online-word{padding:6px 16px 8px}
+  .online-clue-note{font-size:12px}
+}
+@media (max-height:520px){
+  .online-center h2{font-size:clamp(22px,5dvh,28px)}
+}
+/* Installed web app (standalone display mode) already runs full
+   screen: the full screen button is useless there, so it never
+   appears — in a browser tab it shows as normal. */
+@media (display-mode: standalone){
+  .fs-toggle{display:none!important}
+}
+html.standalone .fs-toggle{display:none!important}
+.picker-btn[disabled]{opacity:.55;cursor:not-allowed}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *{animation:none!important;transition:none!important}
@@ -463,7 +626,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
   <div class="wrap topbar-in">
     <a class="wordmark" href="#top">UP<span>AR</span></a>
     <nav class="topnav" aria-label="Main">
-      <button class="icon-btn" id="soundToggle" type="button" aria-pressed="false">Sound: On</button>
+      <button class="icon-btn sound-btn" id="soundToggle" type="button" aria-pressed="true" aria-label="Sound on — tap to mute" title="Mute sound"><svg class="snd-icon snd-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18 6a8.5 8.5 0 0 1 0 12"/></svg><svg class="snd-icon snd-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg></button>
       <button class="fs-btn fs-toggle" id="fullscreenBtn" type="button" data-orient="portrait" aria-label="Enter full screen" aria-pressed="false" title="Full screen">
         <svg class="icon-enter" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
         <svg class="icon-exit" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>
@@ -481,16 +644,16 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
       <h2>Menu</h2>
       <button class="x-btn" type="button" data-close-menu aria-label="Close menu">×</button>
     </div>
-    <button class="menu-item" type="button" id="onlineMenuBtn"><span><b>Play Online</b><small>Each player on their own phone · room code</small></span><span class="arr" aria-hidden="true">›</span></button>
+    <button class="menu-item" type="button" id="installMenuBtn"><span><b>Install app</b><small>Add UPAR to your home screen</small></span><span class="arr" aria-hidden="true">›</span></button>
     <button class="menu-item" type="button" data-sheet="controlsSheet"><span><b>Controls &amp; fairness</b><small>Tilt, sound, no repeats, session count</small></span><span class="arr" aria-hidden="true">›</span></button>
-    <button class="menu-item" type="button" data-sheet="customSheet"><span><b>Your own words</b><small>Add your own words and play with them</small></span><span class="arr" aria-hidden="true">›</span></button>
     <button class="menu-item" type="button" data-sheet="howSheet"><span><b>How to play</b><small>Rules and tips for a better game</small></span><span class="arr" aria-hidden="true">›</span></button>
     <button class="menu-item" type="button" data-sheet="faqSheet"><span><b>FAQ</b><small>Common questions, answered</small></span><span class="arr" aria-hidden="true">›</span></button>
-    <p class="menu-note">Round settings and deck selection stay on the main screen — everything else lives here.</p>
+    <p class="menu-note">Round settings live on each setup page — open a mode from the home screen to set them up.</p>
   </div>
 </div>
 
 <main id="top">
+  <div id="homeView">
   <!-- HERO -->
   <div class="wrap hero">
     <div class="hero-grid">
@@ -498,10 +661,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
         <h1>Hold it up, <em>guess it.</em></h1>
         <p class="lead">Hold the phone to your forehead, let your friends act it out, and guess. No sign-up — play free in your browser, install it like an app, and keep playing offline. Every word appears in English <b>upar</b>, Hinglish <b>neeche</b>.</p>
         <div class="cta-row">
-          <a class="btn btn-primary" href="#play">Pick decks ↓</a>
+          <button class="btn btn-primary" id="heroPlayBtn" type="button">Play Offline</button>
           <button class="btn btn-online" id="heroOnlineBtn" type="button"><span class="live-dot" aria-hidden="true"></span>Play Online · each on your own phone</button>
-          <button class="btn btn-ghost" id="heroTeamsBtn" type="button">Teams mode · 2–4 teams</button>
-          <button class="btn btn-ghost" id="heroCustomBtn" type="button">Your own words</button>
         </div>
         <div class="chips" aria-label="Highlights">
           <span class="chip"><b>Free</b> · every deck unlocked</span>
@@ -532,52 +693,86 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
       <div class="step"><div class="num">3</div><h3>Pass <span class="arr">↑ tilt up</span></h3><p>Stuck? Tilt up — or tap the top — to skip to the next word before time runs out.</p></div>
     </div>
   </div>
+  </div><!-- /homeView -->
 
-  <!-- PLAY / ROUND SETTINGS -->
-  <section id="play">
-    <div class="wrap">
-
-      <div class="setup">
-        <div class="panel">
+  <!-- OFFLINE SETUP PAGE: Player List, deck button, round settings, Start -->
+  <div id="setupView" hidden>
+    <div class="setup-page">
+      <div class="setup-head">
+        <button class="setup-back" id="setupBackBtn" type="button">← Home</button>
+        <h2 id="setupTitle">Play Decks</h2>
+      </div>
+      <div class="setup-stack">
+        <button class="picker-btn player-btn" id="playerListBtn" type="button" aria-haspopup="dialog">
+          <span class="tile" aria-hidden="true">◉</span>
+          <span><b>Player List</b><small id="playerSummary">2 players</small></span>
+          <span class="arr" aria-hidden="true">›</span>
+        </button>
+        <button class="picker-btn" id="deckPickerBtn" type="button" aria-haspopup="dialog">
+          <span class="tile" aria-hidden="true">▦</span>
+          <span><b id="deckPickerTitle">Choose decks</b><small id="pickerSummary">Mixed · 448 words</small></span>
+          <span class="arr" aria-hidden="true">›</span>
+        </button>
+        <div class="selected-chips" id="selectedChips" aria-label="Selected decks"></div>
+        <p class="sel-empty" id="selEmpty" hidden>No deck selected — open “Choose decks” to pick one or more.</p>
+        <div class="panel settings-grid">
           <h3>Round settings</h3>
-          <p class="sub">Set these before you start. Pick one deck — or several to mix them into one round. Shorter rounds keep the energy high.</p>
+          <p class="sub">Set these before you start.</p>
           <p class="seg-label">Timer</p>
-          <div class="seg" id="timerSeg" role="group" aria-label="Timer length">
+          <div class="seg small" id="timerSeg" role="group" aria-label="Timer length">
             <button type="button" data-secs="30" aria-pressed="false">30 sec</button>
             <button type="button" data-secs="60" aria-pressed="true">60 sec</button>
             <button type="button" data-secs="90" aria-pressed="false">90 sec</button>
             <button type="button" data-secs="120" aria-pressed="false">120 sec</button>
           </div>
-          <p class="seg-label">Game mode</p>
-          <div class="seg" id="modeSeg" role="group" aria-label="Game mode">
-            <button type="button" data-mode="solo" aria-pressed="true">Solo / One turn</button>
-            <button type="button" data-mode="teams" aria-pressed="false">Teams</button>
-          </div>
           <div id="teamCountRow" hidden>
             <p class="seg-label">Number of teams</p>
-            <div class="seg" id="teamSeg" role="group" aria-label="Number of teams">
+            <div class="seg small" id="teamSeg" role="group" aria-label="Number of teams">
               <button type="button" data-teams="2" aria-pressed="true">2 teams</button>
               <button type="button" data-teams="3" aria-pressed="false">3 teams</button>
               <button type="button" data-teams="4" aria-pressed="false">4 teams</button>
             </div>
-            <p class="fineprint">Each team takes one turn with the phone on the guesser's forehead. Scores add up on a running scoreboard, and the highest total wins — no word repeats in the same session, so every team gets a fresh set.</p>
+            <p class="seg-label">Turns per team</p>
+            <div class="seg small" id="turnsSeg" role="group" aria-label="Turns per team">
+              <button type="button" data-turns="1" aria-pressed="true">1 turn</button>
+              <button type="button" data-turns="2" aria-pressed="false">2 turns</button>
+              <button type="button" data-turns="3" aria-pressed="false">3 turns</button>
+            </div>
+            <p class="fineprint">Teams take turns in order (Team A → B → C → D). On a team's turn, pick one member as the Guesser — only that team's other members give clues. Next time that team plays, a different member guesses. Every team gets the same number of turns.</p>
           </div>
-          <p class="seg-label">Categories</p>
-          <button class="picker-btn" id="deckPickerBtn" type="button" aria-haspopup="dialog">
-            <span class="tile" aria-hidden="true">▦</span>
-            <span><b>Choose decks</b><small id="pickerSummary">Mixed · 448 words</small></span>
-            <span class="arr" aria-hidden="true">›</span>
-          </button>
-          <div class="selected-chips" id="selectedChips" aria-label="Selected decks"></div>
-          <p class="sel-empty" id="selEmpty" hidden>No deck selected — open “Choose decks” to pick one or more.</p>
+          <p class="fineprint" id="soloRulesNote">Solo: one guesses, everyone else gives clues. The next player guesses after the timer, until everyone has had a turn. Highest score wins (+1 correct, 0 pass).</p>
           <div class="selected-line" id="selectedLine">Selected: <b>Mixed</b> · 60 seconds · Solo</div>
           <p class="fineprint" id="bestLineSettings" style="margin-top:8px"></p>
-          <button class="btn btn-primary start-btn" id="startBtn" type="button">Start round →</button>
-          <p class="fineprint">Rounds are played in landscape — turn the phone sideways when it's your turn. Tap works too, if tilting isn't your thing. Words never repeat in the same session, so every team gets a fresh set.</p>
+        </div>
+        <button class="btn btn-primary start-btn" id="startBtn" type="button" style="margin-top:0">Start round →</button>
+        <p class="team-error" id="startError" role="alert" hidden></p>
+        <p class="fineprint" style="margin:0">Rounds are played in landscape — turn the phone sideways when it's your turn. Tap works too, if tilting isn't your thing. Words never repeat in the same session.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ONLINE CREATE / JOIN PAGE -->
+  <div id="onlineJoinView" hidden>
+    <div class="setup-page">
+      <div class="setup-head">
+        <button class="setup-back" id="onlineJoinBackBtn" type="button">← Home</button>
+        <h2>Play Online</h2>
+      </div>
+      <div class="setup-stack">
+        <p class="setup-rules"><b>How it works:</b> each player is on their own phone. One player is the Guesser — phone on their forehead, word hidden — and everyone else sees the word on their own phone and gives clues over a call. The Guesser rotates every round; +1 point for every correct guess, 0 for a pass. In Team mode, turns rotate through the teams and each team's score adds up. The highest score wins.</p>
+        <div class="panel" style="padding:18px">
+          <div class="online-form">
+            <div class="online-field"><label for="onlineNameInput">Your nickname</label><input id="onlineNameInput" type="text" placeholder="Enter your nickname" autocomplete="off" maxlength="24" /></div>
+            <button class="btn btn-primary" id="onlineCreateBtn" type="button" style="justify-content:center">Create a room →</button>
+            <div class="online-divider">or join a room</div>
+            <div class="online-field"><label for="onlineCodeInput">Room code (4 letters)</label><input id="onlineCodeInput" type="text" placeholder="ABCD" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" /></div>
+            <button class="btn btn-ghost" id="onlineJoinBtn" type="button" style="justify-content:center">Join room →</button>
+            <p class="online-error" id="onlineError" role="alert"></p>
+          </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
 </main>
 
@@ -596,7 +791,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
         <h2>Pick categories</h2>
         <p>Tap one deck — or tap several to mix them into one round. Scroll to see all decks.</p>
       </div>
-      <button class="x-btn" type="button" data-close aria-label="Close deck picker">×</button>
+      <div class="sheet-head-actions">
+        <button class="clear-btn" id="clearDecksBtn" type="button">Clear all</button>
+        <button class="btn btn-primary" id="deckDoneBtn" type="button">Done</button>
+      </div>
     </div>
     <div class="sheet-body">
       <div class="deck-tools">
@@ -606,16 +804,89 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
         </div>
         <div class="quick-actions" aria-label="Deck quick actions">
           <button type="button" id="randomMixBtn">Surprise mix · 3 decks</button>
-          <button type="button" id="clearDecksBtn">Clear all</button>
           <span class="deck-count" id="deckCountLine" aria-live="polite"></span>
         </div>
       </div>
       <div class="deck-grid" id="deckGrid" role="group" aria-label="Decks"></div>
       <p class="empty-note" id="noDecks">No deck matches that search. Try “animals” or “food”.</p>
     </div>
+  </div>
+</div>
+
+<!-- PLAYER LIST WINDOW -->
+<div class="sheet-overlay" id="playerSheet" role="dialog" aria-modal="true" aria-label="Player list">
+  <div class="sheet sheet-narrow">
+    <div class="sheet-head">
+      <div>
+        <h2>Player List</h2>
+        <p id="playerSheetSub">Add everyone's name. Turn order follows this list.</p>
+      </div>
+    </div>
+    <div class="sheet-body">
+      <div id="playerRows"></div>
+      <div class="mini-actions" style="margin-top:4px">
+        <button type="button" id="addPlayerBtn">+ Add new player</button>
+      </div>
+    </div>
     <div class="sheet-foot">
-      <button class="btn btn-primary" id="startBtn3" type="button">Start round →</button>
-      <button class="btn btn-ghost" type="button" data-close>Done</button>
+      <button class="btn btn-primary" id="playerDoneBtn" type="button">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- GAME MODE CHOOSER WINDOW (Play Offline) -->
+<div class="sheet-overlay" id="modeSheet" role="dialog" aria-modal="true" aria-label="Choose game mode">
+  <div class="sheet sheet-narrow">
+    <div class="sheet-head">
+      <div>
+        <h2>Choose game mode</h2>
+        <p>Pick how this game will be played.</p>
+      </div>
+      <button class="x-btn" type="button" data-close aria-label="Close game mode chooser">×</button>
+    </div>
+    <div class="sheet-body">
+      <div class="mode-choices">
+        <button class="mode-choice" id="modeSoloBtn" type="button"><b>Solo · One vs All</b><span>One player guesses, everyone else gives clues at the same time. Turns rotate until everyone has guessed.</span></button>
+        <button class="mode-choice" id="modeTeamsBtn" type="button"><b>Team · 2–4 teams</b><span>Split into teams yourself in the Player List — each team needs at least 2 players. Turns rotate through the teams.</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM WINDOW ("Are you sure?") -->
+<div class="sheet-overlay" id="confirmSheet" role="dialog" aria-modal="true" aria-label="Confirm">
+  <div class="sheet sheet-narrow">
+    <div class="sheet-head">
+      <div>
+        <h2 id="confirmTitle">Are you sure?</h2>
+        <p id="confirmText"></p>
+      </div>
+      <button class="x-btn" type="button" data-close aria-label="Cancel">×</button>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn btn-ghost" id="confirmCancelBtn" type="button">Cancel</button>
+      <button class="btn btn-primary" id="confirmOkBtn" type="button">Yes, leave</button>
+    </div>
+  </div>
+</div>
+
+<!-- INSTALL STEPS WINDOW -->
+<div class="sheet-overlay" id="installSheet" role="dialog" aria-modal="true" aria-label="Install the app">
+  <div class="sheet sheet-narrow">
+    <div class="sheet-head">
+      <div>
+        <h2>Install UPAR</h2>
+        <p>Add it to your home screen so it opens like an app — and keeps working offline after the first visit.</p>
+      </div>
+      <button class="x-btn" type="button" data-close aria-label="Close install steps">×</button>
+    </div>
+    <div class="sheet-body">
+      <ol class="install-steps">
+        <li><b>Android (Chrome):</b> tap the ⋮ menu at the top right, then <b>Install app</b> (or <b>Add to Home screen</b>).</li>
+        <li><b>iPhone (Safari):</b> tap the Share button, then <b>Add to Home Screen</b>.</li>
+        <li><b>Desktop (Chrome):</b> click the install icon in the address bar, or open the ⋮ menu and choose <b>Install app</b>.</li>
+      </ol>
+      <p class="fineprint">If your browser offered an install prompt, it would have appeared here instead. These steps always work.</p>
     </div>
   </div>
 </div>
@@ -643,7 +914,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
       </div>
       <div class="switch-row">
         <div><strong>Sound effects</strong><p>Correct ding, pass buzz, countdown ticks and the time-up buzzer.</p></div>
-        <button class="toggle" id="soundToggle2" type="button" aria-pressed="true">On</button>
+        <button class="toggle sound-btn" id="soundToggle2" type="button" aria-pressed="true" aria-label="Sound on — tap to mute" title="Mute sound"><svg class="snd-icon snd-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18 6a8.5 8.5 0 0 1 0 12"/></svg><svg class="snd-icon snd-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg></button>
       </div>
       <div class="switch-row">
         <div><strong>No repeats</strong><p>A word shown once won't come back in this session — across all teams.</p></div>
@@ -663,7 +934,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
     <div class="sheet-head">
       <div>
         <h2>Your own words</h2>
-        <p>Add at least 4 words, then start. English goes on top, Hinglish underneath — add both if you can.</p>
+        <p>Add words only here — English goes on top, Hinglish underneath, add both if you can. Add at least 4, then close this window and start the round with Start round on the setup page.</p>
       </div>
       <button class="x-btn" type="button" data-close aria-label="Close your own words">×</button>
     </div>
@@ -678,18 +949,11 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
           </div>
           <div class="mini-actions">
             <button type="button" id="addWordBtn">+ Add word</button>
-            <button type="button" id="sampleWordsBtn">Fill with examples</button>
+            <button type="button" id="clearCustomBtn">Clear all words</button>
           </div>
           <div class="word-list" id="customList" aria-live="polite"></div>
           <p class="fineprint" id="customCount">0 words added · need at least 4 to start.</p>
-        </div>
-        <div class="panel">
-          <h3>Play your deck</h3>
-          <p class="sub">Your words shuffle every round, and they never repeat in the same session.</p>
-          <div class="selected-line" id="customLine">Your deck: <b>0 words</b></div>
-          <button class="btn btn-primary start-btn" id="startCustomBtn" type="button" disabled>Start with my words →</button>
-          <div class="mini-actions"><button type="button" id="clearCustomBtn">Clear all words</button></div>
-          <p class="fineprint">Tip: mix easy and hard words. Inside jokes work brilliantly here — your friends will know exactly what you mean.</p>
+          <p class="fineprint">Tip: mix easy and hard words. Inside jokes work brilliantly here — your friends will know exactly what you mean. Your words shuffle every round, and they never repeat in the same session.</p>
         </div>
       </div>
     </div>
@@ -710,11 +974,11 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
         <div class="card">
           <h3>Playing a round</h3>
           <ol>
-            <li><b>Pick deck(s)</b> and set the timer. Tap several decks to mix them. In Teams mode, pick 2, 3 or 4 teams.</li>
+            <li><b>Add players, pick deck(s)</b> and set the timer on the setup page. Tap several decks to mix them. In Team mode (choose Team after tapping Play Offline), put each player in a team (A–D) in the Player List and pick 2, 3 or 4 teams — each team needs at least 2 players.</li>
             <li><b>Hold the phone to your forehead</b>, screen facing your friends. Turn it sideways.</li>
             <li><b>Friends act it out or describe it</b> — gestures, sounds and short hints. Don't say the word itself.</li>
             <li><b>Guess, then tilt down</b> for a correct answer or <b>tilt up to pass</b>. Tap the top or bottom of the screen if you prefer.</li>
-            <li><b>Beat the timer.</b> When time runs out, see your score and every word you got or passed.</li>
+            <li><b>Beat the timer, then pass the phone on.</b> In Solo mode the next player guesses next, until everyone has had a turn — highest score wins. In Team mode the next team goes, with a different guesser each time that team plays; every team gets the same number of turns and the highest team total wins.</li>
           </ol>
         </div>
         <div class="card">
@@ -722,7 +986,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
           <ul>
             <li><b>Keep the pace quick.</b> Pass fast on hard words — every second counts.</li>
             <li><b>Use both languages.</b> The Hinglish line under each word gives clue-givers a second way in.</li>
-            <li><b>Switch guessers every round.</b> In Teams mode, hand the phone to the next team's guesser.</li>
+            <li><b>Switch guessers every round.</b> In Solo mode everyone guesses once; in Teams mode, a different member of the team guesses each time that team plays.</li>
             <li><b>Shorter rounds, more rounds.</b> 30–60 seconds keeps the room loud and laughing.</li>
             <li><b>Kids playing?</b> Start with the Kids deck — simple, familiar words for family game night.</li>
           </ul>
@@ -746,10 +1010,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
       <details><summary>Do I need to download an app?</summary><p>No. It runs in any modern browser on iPhone and Android. Menus work in portrait; turn the phone sideways for the guessing round. You can install it from your browser menu (Add to Home screen / Install app) — after the first visit it keeps working offline, with no download from an app store.</p></details>
       <details><summary>How do the two languages work?</summary><p>Every card shows the word in English on top and Hinglish underneath, at the same time. There is no language switch — both are always visible, so clue-givers can use whichever helps.</p></details>
       <details><summary>Can we play on separate phones?</summary><p>Yes — tap “Play Online” on the home screen. One player creates a room and shares the 4-letter room code; everyone else joins with that code (any number of players, no cap). Each round one player is the Guesser — phone on their forehead, word hidden, tilting to score or pass — and everyone else sees the word on their own phone and gives clues over a call. The Guesser rotates every round, and the word, timer and score stay in sync on every screen. Online play needs internet; the offline game on this page still works with no connection at all.</p></details>
-      <details><summary>Can we play in teams?</summary><p>Yes. Choose Teams under Game mode and pick 2, 3 or 4 teams. The game passes the turn from team to team, adds each round's score to that team's total, shows a running scoreboard, and never repeats a word in the same session.</p></details>
+      <details><summary>Can we play in teams?</summary><p>Yes. Tap Play Offline and choose Team, then pick 2, 3 or 4 teams in the round settings. Put each player in a team on the Player List window (offline) or by tapping a team on your lobby card (online) — each team needs at least 2 players, and teams don't need to be equal. Turns rotate through the teams, a different member guesses each time a team plays, every team gets the same number of turns, scores add up into each team's total, and the highest total wins — no word repeats in the same session.</p></details>
       <details><summary>How many people can play?</summary><p>At least two: one guesses while the others give clues. One phone is enough for the whole room — pass it around so everyone gets a turn. It works for birthdays, house parties, classrooms, offsites and family game nights.</p></details>
       <details><summary>Is it good for kids and families?</summary><p>Yes. The Kids deck has simple, familiar words, which makes it a great free game for family game night and playing with children.</p></details>
-      <details><summary>Can I use my own words?</summary><p>Yes — add your own words in the “Your own words” window, opened from the menu at the top right. Add at least 4, then start a round with just your deck.</p></details>
+      <details><summary>Can I use my own words?</summary><p>Yes — open “Choose decks”, tap the Your Words tile at the end of the grid, and add your own words in the window that opens. Add at least 4, then start a round with just your deck.</p></details>
     </div>
   </div>
 </div>
@@ -778,9 +1042,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
       <span style="font-weight:700;color:#aebddf" id="stageDeckLabel">Mixed</span>
       <span class="spacer"></span>
       <button class="stage-btn" id="pauseBtn" type="button" hidden>Pause</button>
-      <button class="stage-btn" id="stageSoundBtn" type="button">Sound: On</button>
-      <button class="stage-btn fs-toggle" id="stageFullscreenBtn" type="button" aria-pressed="false">Full screen</button>
-      <button class="stage-btn" id="endRoundBtn" type="button" hidden>End round</button>
+      <button class="stage-btn sound-btn" id="stageSoundBtn" type="button" aria-pressed="true" aria-label="Sound on — tap to mute" title="Mute sound"><svg class="snd-icon snd-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18 6a8.5 8.5 0 0 1 0 12"/></svg><svg class="snd-icon snd-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg></button>
+      <button class="stage-btn fs-toggle" id="stageFullscreenBtn" type="button" aria-pressed="false" hidden>Full screen</button>
     </div>
     <div class="progress" aria-hidden="true"><i id="progressBar" style="width:100%"></i></div>
 
@@ -793,7 +1056,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
       <button class="btn btn-primary ready-tap" id="readyTapBtn" type="button">Tap when you're ready</button>
       <p class="ready-tilt ready-hide" id="tiltStatus">Tilt: checking…</p>
       <button class="stage-btn ready-enable" id="enableTiltBtn" type="button" hidden>Enable tilt</button>
-      <button class="stage-btn ready-home ready-hide" id="readyHomeBtn" type="button">← Back to decks</button>
       <div class="count-num" id="countNum" hidden aria-live="polite">3</div>
     </div>
 
@@ -830,9 +1092,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
       <p id="bestLine" style="margin:6px 0 0;color:var(--muted);font-size:14px;font-weight:700"></p>
       <div id="winnerBanner" class="winner-banner" hidden></div>
       <div class="scoreboard" id="scoreboard" hidden></div>
+      <p class="result-lists-hint" id="resultListsHint">Tap a name above to see that player or team's words.</p>
       <div class="result-lists">
-        <button class="result-list-btn good" id="correctListBtn" type="button" aria-label="View correct words"><span><b>✓ Correct</b><small>Tap to view words</small></span><span class="rl-count" id="correctCount">0</span><span class="rl-arr" aria-hidden="true">›</span></button>
-        <button class="result-list-btn bad" id="passListBtn" type="button" aria-label="View passed words"><span><b>Pass</b><small>Tap to view words</small></span><span class="rl-count" id="passCount">0</span><span class="rl-arr" aria-hidden="true">›</span></button>
+        <button class="result-list-btn good" id="correctListBtn" type="button" aria-label="View correct words"><span><b>✓ Correct</b><small id="correctListHint">Tap to view words</small></span><span class="rl-count" id="correctCount">0</span><span class="rl-arr" aria-hidden="true">›</span></button>
+        <button class="result-list-btn bad" id="passListBtn" type="button" aria-label="View passed words"><span><b>Pass</b><small id="passListHint">Tap to view words</small></span><span class="rl-count" id="passCount">0</span><span class="rl-arr" aria-hidden="true">›</span></button>
       </div>
       <div class="big-actions">
         <button class="btn btn-primary" id="nextBtn" type="button">Play again →</button>
@@ -846,119 +1109,81 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
 <!-- TEAM HANDOFF -->
 <div class="overlay" id="handoffOverlay" role="dialog" aria-modal="true" aria-label="Next team">
   <div class="stage-bg">
-    <div style="display:flex;justify-content:flex-end;padding:14px 16px 0"><button class="stage-btn fs-toggle" id="handoffFullscreenBtn" type="button" aria-pressed="false">Full screen</button></div>
+    <div style="display:flex;justify-content:flex-end;padding:14px 16px 0"><button class="stage-btn fs-toggle" id="handoffFullscreenBtn" type="button" data-orient="portrait" aria-pressed="false">Full screen</button></div>
     <div class="center-col stage-col" style="flex:1;display:flex;flex-direction:column;justify-content:safe center">
       <p class="kicker" style="color:#8ea0c8;font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:800" id="handoffKicker">Next up</p>
       <h2 id="handoffTitle" style="color:#fff">Team 1</h2>
-      <p>Hand the phone to this team's guesser; the rest give the clues. Turn it sideways when you're ready.</p>
+      <p id="handoffText">Hand the phone to this team's guesser; the rest give the clues. Turn it sideways when you're ready.</p>
+      <div class="handoff-members" id="handoffMembers" hidden></div>
       <div class="scoreboard" id="handoffBoard" style="text-align:left"></div>
       <div class="big-actions">
         <button class="btn btn-primary" id="handoffStartBtn" type="button">Start this team's round →</button>
-        <button class="btn btn-ghost" id="handoffHomeBtn" type="button" style="background:#1b2a4e;color:#fff;border-color:#2b3d6b">Quit to home</button>
+        <button class="btn btn-ghost" id="handoffHomeBtn" type="button" style="background:#1b2a4e;color:#fff;border-color:#2b3d6b">Back to decks</button>
       </div>
     </div>
   </div>
 </div>
-<!-- ONLINE MULTIPLAYER: setup sheet, security guide, and live room overlay -->
-<div class="sheet-overlay" id="onlineSheet" role="dialog" aria-modal="true" aria-label="Play online">
-  <div class="sheet">
-    <div class="sheet-head">
-      <div>
-        <h2>Play Online</h2>
-        <p>Each player on their own phone. One Guesser per round — phone on their forehead, word hidden — everyone else sees the word on their own phone and gives clues over a call. The Guesser rotates every round. No sign-up; anonymous sign-in only.</p>
-      </div>
-      <button class="x-btn" type="button" data-close aria-label="Close online setup">×</button>
-    </div>
-    <div class="sheet-body">
-      <div class="online-form">
-        <div class="online-field"><label for="onlineNameInput">Your name</label><input id="onlineNameInput" type="text" placeholder="e.g. Aditya" autocomplete="off" maxlength="24" /></div>
-        <p class="online-note">Decks &amp; timer: <b id="onlineSettingsSummary"></b> — set them in Round settings before you start; online rounds use the same decks and timer.</p>
-        <button class="btn btn-primary" id="onlineCreateBtn" type="button" style="justify-content:center">Create a room →</button>
-        <div class="online-divider">or join a room</div>
-        <div class="online-field"><label for="onlineCodeInput">Room code (4 letters)</label><input id="onlineCodeInput" type="text" placeholder="ABCD" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" /></div>
-        <button class="btn btn-ghost" id="onlineJoinBtn" type="button" style="justify-content:center">Join room →</button>
-        <p class="online-error" id="onlineError" role="alert"></p>
-        <p class="online-note">Internet is needed for online play. The offline game stays exactly as it is and works with no connection. Firebase is only loaded when you create or join a room — never before.</p>
-        <button class="menu-item" type="button" data-sheet="onlineGuideSheet"><span><b>Security &amp; setup guide</b><small>Database rules, API-key restriction, file list</small></span><span class="arr" aria-hidden="true">›</span></button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="sheet-overlay" id="onlineGuideSheet" role="dialog" aria-modal="true" aria-label="Security and setup guide">
-  <div class="sheet sheet-wide">
-    <div class="sheet-head">
-      <div>
-        <h2>Security &amp; setup guide</h2>
-        <p>How the online mode stays private, and how to lock the API key to your domain.</p>
-      </div>
-      <button class="x-btn" type="button" data-close aria-label="Close guide">×</button>
-    </div>
-    <div class="sheet-body">
-      <h3 style="margin:0 0 6px">What keeps a room private</h3>
-      <p style="margin:0;color:var(--muted)">No Firebase Admin SDK key is in this page — only the public web config, which identifies the project and is not a secret. Players sign in anonymously. The database rules below deny all reads and writes at the root, and allow them only inside the one room code a player knows — so nobody can list rooms or wipe the whole database.</p>
-      <pre class="rules-code" id="onlineRulesCode">{
-  "rules": {
-    ".read": false,
-    ".write": false,
-    "rooms": {
-      "$roomCode": {
-        ".read": "auth != null",
-        ".write": "auth != null"
-      },
-      ".read": false,
-      ".write": false
-    }
-  }
-}</pre>
-      <div class="mini-actions">
-        <button type="button" id="onlineDownloadRulesBtn">Download security-rules.json</button>
-        <button type="button" id="onlineCopyRulesBtn">Copy rules</button>
-      </div>
-      <p class="fineprint">The same file ships with the game at <b>assets/security-rules.json</b>. To use it: Firebase Console → Realtime Database → Rules → paste these rules → Publish. Or with the Firebase CLI, save it as your database rules file and run <b>firebase deploy --only database</b>.</p>
-      <h3 style="margin:18px 0 6px">Restrict the API key (Google Cloud Console)</h3>
-      <ol style="margin:0;padding-left:20px;color:var(--muted)">
-        <li>Open <b style="color:var(--ink)">console.cloud.google.com</b>, select the project <b style="color:var(--ink)">upar-multiplayer</b>, then go to <b style="color:var(--ink)">APIs &amp; Services → Credentials</b>.</li>
-        <li>Open the browser API key used by this web app.</li>
-        <li>Under <b style="color:var(--ink)">Application restrictions</b>, choose <b style="color:var(--ink)">HTTP referrers (websites)</b> and add the exact domain(s) where the game is hosted, for example <b style="color:var(--ink)">https://your-domain.example/*</b>. Remove any bare <b style="color:var(--ink)">*</b> entry.</li>
-        <li>Under <b style="color:var(--ink)">API restrictions</b>, choose <b style="color:var(--ink)">Restrict key</b> and allow the <b style="color:var(--ink)">Identity Toolkit API</b> (anonymous sign-in) and the Firebase Realtime Database API if listed. Save.</li>
-        <li>Remember: the web API key is public by design — the rules above plus this referrer restriction are the real protection. This project's test-mode rules expire on <b style="color:var(--ink)">26 November 2026</b>: publish the rules above before then.</li>
-      </ol>
-      <h3 style="margin:18px 0 6px">Files</h3>
-      <pre class="rules-code">index.html                 Game + online mode (Firebase loads only on demand)
-assets/security-rules.json Realtime Database rules (paste / deploy as above)
-assets/words.json          Local word lists (offline, unchanged)
-assets/manifest.webmanifest, assets/sw.js, icons, fonts
-                           PWA / offline shell (unchanged)</pre>
-    </div>
-  </div>
-</div>
-
 <!-- ONLINE ROOM -->
+
 <div class="overlay" id="onlineOverlay" role="dialog" aria-modal="true" aria-label="Online game room">
   <div class="stage-bg online-stage">
     <div class="stage-top">
       <span class="timer-pill" id="onlineTimerPill">60</span>
       <span style="font-weight:700;color:#aebddf" id="onlineStageLabel">Online</span>
       <span class="spacer"></span>
-      <button class="stage-btn" id="onlineSoundBtn" type="button">Sound: On</button>
+      <button class="stage-btn sound-btn" id="onlineSoundBtn" type="button" aria-pressed="true" aria-label="Sound on — tap to mute" title="Mute sound"><svg class="snd-icon snd-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18 6a8.5 8.5 0 0 1 0 12"/></svg><svg class="snd-icon snd-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg></button>
+      <button class="stage-btn fs-toggle" id="onlineFullscreenBtn" type="button" data-orient="portrait" aria-pressed="false">Full screen</button>
       <button class="stage-btn" id="onlineLeaveTopBtn" type="button">Leave room</button>
     </div>
     <div class="progress" aria-hidden="true"><i id="onlineProgressBar" style="width:100%"></i></div>
 
     <div class="online-view show" id="onlineLobbyView">
       <div class="online-center">
-        <p style="letter-spacing:.18em;text-transform:uppercase;font-size:12px;font-weight:800;color:#8ea0c8">Waiting lobby</p>
-        <h2>Room code</h2>
-        <div class="room-code" id="onlineRoomCodeBig">····</div>
-        <p>Share this code — anyone with it can join. Any number of players, no cap.</p>
-        <div class="player-list" id="onlinePlayerList"></div>
+        <p style="letter-spacing:.18em;text-transform:uppercase;font-size:12px;font-weight:800;color:#8ea0c8">Waiting lobby · share the code</p>
+        <div class="room-code-row">
+          <div class="room-code" id="onlineRoomCodeBig">····</div>
+          <button class="copy-btn" id="onlineCopyCodeBtn" type="button">Copy code</button>
+        </div>
+        <div class="player-cards" id="onlinePlayerCards"></div>
         <p id="onlineLobbyStatus">Waiting for players… need at least 2 to start.</p>
+        <button class="picker-btn" id="lobbyDeckBtn" type="button" aria-haspopup="dialog" style="background:#1b2a4e;border-color:#2b3d6b;color:var(--card-ink);box-shadow:none">
+          <span class="tile" aria-hidden="true">▦</span>
+          <span><b style="color:#fff">Choose decks</b><small id="lobbyDeckSummary" style="color:#aebddf">Mixed</small></span>
+          <span class="arr" aria-hidden="true">›</span>
+        </button>
+        <div class="lobby-settings">
+          <p class="seg-label">Timer</p>
+          <div class="seg small" id="lobbyTimerSeg" role="group" aria-label="Timer length">
+            <button type="button" data-secs="30" aria-pressed="false">30 sec</button>
+            <button type="button" data-secs="60" aria-pressed="true">60 sec</button>
+            <button type="button" data-secs="90" aria-pressed="false">90 sec</button>
+            <button type="button" data-secs="120" aria-pressed="false">120 sec</button>
+          </div>
+          <p class="seg-label">Game mode</p>
+          <div class="seg small" id="lobbyModeSeg" role="group" aria-label="Game mode">
+            <button type="button" data-mode="solo" aria-pressed="true">Solo (One vs All)</button>
+            <button type="button" data-mode="teams" aria-pressed="false">Teams</button>
+          </div>
+          <div id="lobbyTeamRow" hidden>
+            <p class="seg-label">Number of teams</p>
+            <div class="seg small" id="lobbyTeamSeg" role="group" aria-label="Number of teams">
+              <button type="button" data-teams="2" aria-pressed="true">2 teams</button>
+              <button type="button" data-teams="3" aria-pressed="false">3 teams</button>
+              <button type="button" data-teams="4" aria-pressed="false">4 teams</button>
+            </div>
+            <p class="seg-label">Turns per team</p>
+            <div class="seg small" id="lobbyTurnsSeg" role="group" aria-label="Turns per team">
+              <button type="button" data-turns="1" aria-pressed="true">1 turn</button>
+              <button type="button" data-turns="2" aria-pressed="false">2 turns</button>
+              <button type="button" data-turns="3" aria-pressed="false">3 turns</button>
+            </div>
+          </div>
+          <p class="lobby-note" id="lobbySettingsNote">Only the host can change decks &amp; settings — they sync to everyone.</p>
+        </div>
         <div class="big-actions">
           <button class="btn btn-primary" id="onlineStartBtn" type="button">Start game →</button>
           <button class="btn btn-ghost" id="onlineLeaveBtn" type="button" style="background:#1b2a4e;color:#fff;border-color:#2b3d6b">Leave room</button>
         </div>
-        <p style="font-size:13px;color:#7e90b8">Decks &amp; timer: <span id="onlineLobbySettings"></span></p>
       </div>
     </div>
 
@@ -967,6 +1192,7 @@ assets/manifest.webmanifest, assets/sw.js, icons, fonts
         <p style="letter-spacing:.18em;text-transform:uppercase;font-size:12px;font-weight:800;color:#8ea0c8" id="onlineReadyKicker">Round 1</p>
         <h2 id="onlineReadyTitle">—</h2>
         <p id="onlineReadyText"></p>
+        <div class="claim-row" id="onlineClaimRow" hidden></div>
         <div class="big-actions">
           <button class="btn btn-primary" id="onlineReadyBtn" type="button">I'm ready — phone on my forehead</button>
         </div>
@@ -985,28 +1211,32 @@ assets/manifest.webmanifest, assets/sw.js, icons, fonts
     <div class="online-view" id="onlineLiveView" style="flex:1">
       <button class="zone zone-pass" id="onlinePassZone" type="button">▲ &nbsp;Pass<small>Tap here · or tilt up</small></button>
       <div class="online-word" id="onlineWordArea">
-        <p id="onlineClueNote" style="color:#8ea0c8;font-weight:700;font-size:14px;margin:0 0 8px"></p>
-        <div id="onlineClueWord">
-          <p class="kicker" id="onlineWordKicker" style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#8ea0c8;font-weight:800;margin:0">Word 1</p>
-          <p class="big" id="onlineWordEn">—</p>
-          <div class="rule" aria-hidden="true"></div>
-          <p class="hinglish" id="onlineWordHi">—</p>
+        <div class="online-round-meta">
+          <p class="kicker" id="onlineWordKicker" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#8ea0c8;font-weight:800">Word 1</p>
+          <div class="play-meta"><span id="onlineLiveCorrect">✓ Correct: 0</span><span id="onlineLivePass">Pass: 0</span><span id="onlineWordsLeft">Words left: 0</span></div>
         </div>
-        <div id="onlineHiddenWord" hidden>
-          <p class="online-hidden">???</p>
-          <p style="color:#aebddf;font-weight:700">The word is hidden from you.<br/>Your friends can see it — listen for their clues.</p>
+        <p class="online-clue-note" id="onlineClueNote"></p>
+        <div class="online-word-block" id="onlineWordBlock">
+          <div id="onlineClueWord">
+            <p class="big" id="onlineWordEn">—</p>
+            <div class="rule" aria-hidden="true"></div>
+            <p class="hinglish" id="onlineWordHi">—</p>
+          </div>
+          <div id="onlineHiddenWord" hidden>
+            <p class="online-hidden">???</p>
+            <p>The word is hidden from you.<br/>Your friends can see it — listen for their clues.</p>
+          </div>
         </div>
-        <div class="play-meta" style="margin-top:16px"><span id="onlineLiveCorrect">✓ Correct: 0</span><span id="onlineLivePass">Pass: 0</span><span id="onlineWordsLeft">Words left: 0</span></div>
       </div>
       <button class="zone zone-got" id="onlineGotZone" type="button">▼ &nbsp;Got it!<small>Tap here · or tilt down</small></button>
-      <div style="padding:10px 16px 14px;display:flex;justify-content:center"><button class="stage-btn" id="onlineEndRoundBtn" type="button">End round</button></div>
     </div>
 
     <div class="online-view" id="onlineResultView">
       <div class="online-center" style="text-align:left">
-        <p style="letter-spacing:.12em;text-transform:uppercase;font-size:12px;font-weight:800;color:#8ea0c8">Round over</p>
+        <p style="letter-spacing:.12em;text-transform:uppercase;font-size:12px;font-weight:800;color:#8ea0c8" id="onlineResultKicker">Round over</p>
         <h2 id="onlineResultTitle">Time's up!</h2>
         <p id="onlineResultSub"></p>
+        <div id="onlineWinnerBanner" class="winner-banner" hidden></div>
         <div class="scoreboard" id="onlineScoreboard"></div>
         <div class="online-lists">
           <div><h4>✓ Correct</h4><ul id="onlineCorrectList"></ul></div>
@@ -1014,6 +1244,7 @@ assets/manifest.webmanifest, assets/sw.js, icons, fonts
         </div>
         <div class="big-actions">
           <button class="btn btn-primary" id="onlineNextBtn" type="button">Next round →</button>
+          <button class="btn btn-primary" id="onlineFinishBtn" type="button" hidden>Back to lobby →</button>
           <button class="btn btn-ghost" id="onlineLeaveBtn2" type="button" style="background:#1b2a4e;color:#fff;border-color:#2b3d6b">Leave room</button>
         </div>
         <p id="onlineNextNote" style="font-size:13px;color:#7e90b8"></p>
@@ -1036,7 +1267,7 @@ const DECKS = [
 {id:"animals",name:"Animals",desc:"From lions to penguins — act, sound, describe.",color:"#7ef0c4",words:[
 ["Lion","Sher"],["Elephant","Haathi"],["Tiger","Baagh"],["Dog","Kutta"],["Cat","Billi"],["Monkey","Bandar"],["Horse","Ghoda"],["Cow","Gaay"],["Buffalo","Bhains"],["Goat","Bakri"],["Rabbit","Khargosh"],["Deer","Hiran"],["Bear","Bhalu"],["Wolf","Bhediya"],["Fox","Lomdi"],["Snake","Saanp"],["Frog","Mendhak"],["Fish","Machhli"],["Parrot","Tota"],["Peacock","Mor"],["Owl","Ullu"],["Eagle","Baaz"],["Crow","Kauwa"],["Duck","Battakh"],["Hen","Murgi"],["Giraffe","Jiraaf"],["Zebra","Zebra"],["Kangaroo","Kangaroo"],["Dolphin","Dolphin"],["Camel","Oont"]]},
 {id:"bollywood",name:"Bollywood",desc:"Films everyone in the room has seen (or quoted).",color:"#ffb3c7",words:[
-["Sholay","Jai aur Veeru ki kahani"],["Dilwale Dulhania Le Jayenge","Raj aur Simran ki love story"],["3 Idiots","Teen dost, ek college"],["Lagaan","Cricket se lagaan maafi"],["PK","Alien jo bhagwan dhoondhta hai"],["Dangal","Pehilwan betiyon ki kahani"],["Baahubali","Mahishmati ka yodha"],["Gully Boy","Gully ka rapper"],["Zindagi Na Milegi Dobara","Teen doston ki Spain trip"],["Hera Pheri","Raju, Shyam aur Baburao"],["Andaz Apna Apna","Amar-Prem ki comedy"],["Munna Bhai M.B.B.S.","Bhai jo doctor banta hai"],["Krrish","Mask wala superhero"],["Don","Don ko pakadna mushkil"],["Kabhi Khushi Kabhie Gham","Bade parivaar ki kahani"],["Kuch Kuch Hota Hai","Rahul, Anjali aur Tina"],["Jab We Met","Geet aur Aditya ki train yatra"],["Barfi","Goonnga ladka, pyaar bhari kahani"],["Queen","Rani ki akeli honeymoon trip"],["Taare Zameen Par","Bachche ki kahani, Aamir wali"],["Chak De! India","Mahila hockey team ki jeet"],["Rang De Basanti","Doston ki kranti"],["Dil Chahta Hai","Teen doston ki dosti"],["Om Shanti Om","Punarjanm wali kahani"],["Chennai Express","Rahul aur Meena ki train yatra"],["Pathaan","Desh bachane wala agent"]]},
+["Sholay","Jai aur Veeru ki kahani"],["Dilwale Dulhania Le Jayenge","Raj aur Simran ki love story"],["3 Idiots","Teen dost, ek college"],["Lagaan","Cricket se lagaan maafi"],["PK","Alien jo bhagwan dhoondhta hai"],["Dangal","Pehilwan betiyon ki kahani"],["Baahubali","Mahishmati ka yodha"],["Gully Boy","Gully ka rapper"],["Zindagi Na Milegi Dobara","Teen doston ki Spain trip"],["Hera Pheri","Raju, Shyam aur Baburao"],["Andaz Apna Apna","Amar-Prem ki comedy"],["Munna Bhai M.B.B.S.","Bhai jo doctor banta hai"],["Krrish","Mask wala superhero"],["Don","Don ko pakadna mushkil"],["Kabhi Khushi Kabhie Gham","Bade parivaar ki kahani"],["Kuch Kuch Hota Hai","Rahul, Anjali aur Tina"],["Jab We Met","Geet ki train yatra"],["Barfi","Goonnga ladka, pyaar bhari kahani"],["Queen","Rani ki akeli honeymoon trip"],["Taare Zameen Par","Bachche ki kahani, Aamir wali"],["Chak De! India","Mahila hockey team ki jeet"],["Rang De Basanti","Doston ki kranti"],["Dil Chahta Hai","Teen doston ki dosti"],["Om Shanti Om","Punarjanm wali kahani"],["Chennai Express","Rahul aur Meena ki train yatra"],["Pathaan","Desh bachane wala agent"]]},
 {id:"cricket",name:"Cricket",desc:"Sixes, wickets and everything in between.",color:"#9be7ff",words:[
 ["Cricket","Cricket"],["Bat","Balla"],["Ball","Gend"],["Six","Chhakka"],["Four","Chauka"],["Century","Shatak"],["Bowler","Gendbaaz"],["Batsman","Ballebaaz"],["Umpire","Umpire"],["Wicket","Teen dande"],["Stumps","Dande"],["Helmet","Sir ka kavach"],["Catch","Gend pakadna"],["Run Out","Run out"],["LBW","Paer ke saamne out"],["Yorker","Pairon par gend"],["Bouncer","Sir ke upar gend"],["Toss","Sikka uchhalna"],["Captain","Kaptaan"],["Stadium","Maidan"],["Trophy","Inaam ki cup"],["Super Over","Aakhri faisla over"],["Free Hit","Muft ki hit"],["No Ball","Galat gend"],["Wide Ball","Side wali gend"],["Test Match","Paanch din ka match"]]},
 {id:"food",name:"Food",desc:"Street food, sweets and everything delicious.",color:"#ffd166",words:[
@@ -1081,16 +1312,31 @@ function deckWords(deck){
   return deck.words.map(w=>({en:w[0],hi:w[1],deck:deck.name}));
 }
 const TEAM_COLORS=["#ff4d2e","#009e8c","#eab308","#3b82f6"];
-const TEAM_NAMES=["Team 1","Team 2","Team 3","Team 4"];
+const TEAM_NAMES=["Team A","Team B","Team C","Team D"];
 
 /* ---------- State ---------- */
 let selectedDeckIds=["mixed"];
-let timerSecs=60, mode="solo", teamCount=2;
+let timerSecs=60, mode="solo", teamCount=2, turnsPerTeam=1;
 let tiltOn=true, soundOn=true;
 let usedKeys=new Set();
 let customWords=[];
 let teams=[];
 let currentTeamIdx=0;
+/* Rotation state (Solo + Teams, offline): the player list drives the
+   turn order. Solo: every listed player guesses once, in list order.
+   Teams: turns cycle through the teams; each team gets turnsPerTeam
+   turns, and a different member guesses each time that team plays. */
+let offlinePlayers=[{name:"",team:"A"},{name:"",team:"A"}];
+let setupKind="decks"; // decks | teams | custom
+let soloOrder=[], soloTurnIdx=0, soloScores=[];
+/* Per-player / per-team word lists for the final ("Play again")
+   screen: every finished turn appends its correct/passed words to
+   its guesser's (Solo) or its team's (Teams) list, so tapping a
+   name on the final scoreboard can show that entity's words. */
+let soloWordLists=[], teamWordLists=[];
+let resultSel={isTeam:false, idx:0};
+let teamTurnsDone=0, teamTotalTurns=0, pendingGuesserIdx=0, currentIsCustom=false;
+let deckSheetContext="offline"; // offline | onlineLobby
 let round=null; // {queue, idx, correct:[], pass:[], deckName}
 let timerId=null, countdownId=null, endAt=0, remainingMs=0, paused=false, playing=false;
 let tiltBaseline=null, gravityBaseline=null; // baselines captured at the start of each round
@@ -1131,7 +1377,7 @@ function readStored(){
 }
 function saveStoredState(){
   try{
-    stored.prefs={timerSecs:timerSecs,mode:mode,teamCount:teamCount,tiltOn:tiltOn,soundOn:soundOn,selectedDeckIds:selectedDeckIds.slice()};
+    stored.prefs={timerSecs:timerSecs,mode:mode,teamCount:teamCount,turnsPerTeam:turnsPerTeam,tiltOn:tiltOn,soundOn:soundOn,selectedDeckIds:selectedDeckIds.slice(),players:offlinePlayers.map(p=>({name:p.name,team:p.team}))};
     stored.customWords=customWords.slice(0,200);
     stored.unlocked=DECKS.map(d=>d.id); // every deck unlocked; kept so a future locked deck can persist here
     if(window.localStorage) localStorage.setItem(STORE_KEY,JSON.stringify(stored));
@@ -1147,6 +1393,10 @@ function loadStoredState(){
   if([30,60,90,120].indexOf(p.timerSecs)!==-1) timerSecs=p.timerSecs;
   if(p.mode==="solo"||p.mode==="teams") mode=p.mode;
   if([2,3,4].indexOf(p.teamCount)!==-1) teamCount=p.teamCount;
+  if([1,2,3].indexOf(p.turnsPerTeam)!==-1) turnsPerTeam=p.turnsPerTeam;
+  if(Array.isArray(p.players) && p.players.length>=2){
+    offlinePlayers=p.players.slice(0,12).map((pl,i)=>({name:typeof pl.name==="string"?pl.name.slice(0,24):"",team:/^[A-D]$/.test(pl.team)?pl.team:"A"}));
+  }
   if(typeof p.tiltOn==="boolean") tiltOn=p.tiltOn;
   if(typeof p.soundOn==="boolean") soundOn=p.soundOn;
   if(Array.isArray(p.selectedDeckIds)){
@@ -1156,9 +1406,9 @@ function loadStoredState(){
   customWords=stored.customWords.filter(w=>w&&typeof w.en==="string"&&w.en.trim()).slice(0,200)
     .map(w=>({en:w.en,hi:(typeof w.hi==="string"&&w.hi)?w.hi:w.en,deck:"Your words"}));
   setSegPressed("timerSeg","secs",timerSecs);
-  setSegPressed("modeSeg","mode",mode);
   setSegPressed("teamSeg","teams",teamCount);
-  $("teamCountRow").hidden=(mode!=="teams");
+  setSegPressed("turnsSeg","turns",turnsPerTeam);
+  updateModeUI();
   $("tiltToggle").textContent=tiltOn?"On":"Off";
   $("tiltToggle").setAttribute("aria-pressed",String(tiltOn));
 }
@@ -1196,13 +1446,22 @@ const sfx={
   buzzer(){tone(180,.5,"sawtooth",.12);tone(180,.5,"sawtooth",.12,.55);},
   win(){[523,659,784,1047].forEach((f,i)=>tone(f,.22,"sine",.13,i*.12));}
 };
+/* Every sound control shows a speaker icon, not text: the waves
+   icon when sound is on, the crossed speaker when muted. The
+   icons live in the buttons' markup; this only flips which one
+   shows, the pressed state and the accessible label — the
+   toggle behaviour and the persisted soundOn choice are
+   unchanged. */
+function syncSoundButtons(){
+  ["soundToggle","soundToggle2","stageSoundBtn","onlineSoundBtn"].forEach(id=>{const b=$(id); if(!b) return;
+    b.dataset.sound=soundOn?"on":"off";
+    b.setAttribute("aria-pressed",String(soundOn));
+    b.setAttribute("aria-label",soundOn?"Sound on — tap to mute":"Sound off — tap to unmute");
+    b.title=soundOn?"Mute sound":"Unmute sound";});
+}
 function setSound(on){
   soundOn=on;
-  ["soundToggle","soundToggle2","stageSoundBtn"].forEach(id=>{const b=$(id); if(!b) return;
-    b.textContent=id==="soundToggle"?("Sound: "+(on?"On":"Off")):id==="stageSoundBtn"?("Sound: "+(on?"On":"Off")):(on?"On":"Off");
-    b.setAttribute("aria-pressed",String(!on));});
-  $("soundToggle").setAttribute("aria-pressed",String(on));
-  $("soundToggle2").setAttribute("aria-pressed",String(on));
+  syncSoundButtons();
   if(on) ac();
   saveStoredState();
 }
@@ -1223,12 +1482,42 @@ function deckLabel(){
   if(sel.length<=3) return sel.map(d=>d.name).join(" + ");
   return sel.length+" decks mixed";
 }
+/* Every selection is independent: toggling one deck never selects
+   or deselects another, and never touches Your Words (setupKind).
+   The one special case is Mixed, kept exactly as before except
+   for 18+: Mixed still replaces the regular decks, and its own
+   word list still excludes 18+ words — but 18+ may now sit
+   alongside Mixed, and selecting or deselecting either one
+   leaves the other alone. */
+function yourWordsSelected(){ return setupKind==="custom"; }
+function selectionWords(){
+  const seen=new Map();
+  combinedWords().forEach(w=>{ const k=keyOf(w); if(!seen.has(k)) seen.set(k,w); });
+  if(yourWordsSelected()) customWords.forEach(w=>{ const k=keyOf(w); if(!seen.has(k)) seen.set(k,w); });
+  return Array.from(seen.values());
+}
+function selectionLabel(){
+  const parts=[];
+  if(selectedDeckIds.length) parts.push(deckLabel());
+  if(yourWordsSelected()) parts.push("Your words");
+  return parts.length?parts.join(" + "):"No deck";
+}
 function toggleDeck(id){
   if(id==="mixed"){
-    selectedDeckIds=(selectedDeckIds.length===1 && selectedDeckIds[0]==="mixed")?[]:["mixed"];
-  }else{
-    selectedDeckIds=selectedDeckIds.filter(x=>x!=="mixed");
+    if(selectedDeckIds.includes("mixed")){
+      selectedDeckIds=selectedDeckIds.filter(x=>x!=="mixed");
+    }else{
+      /* Keep 18+ if it was already selected; drop the regular decks. */
+      selectedDeckIds=["mixed"].concat(selectedDeckIds.includes("adults")?["adults"]:[]);
+    }
+  }else if(id==="adults"){
+    /* 18+ toggles on its own: never drops Mixed or any other deck. */
     selectedDeckIds=selectedDeckIds.includes(id)?selectedDeckIds.filter(x=>x!==id):selectedDeckIds.concat(id);
+  }else{
+    /* A regular deck drops Mixed (Mixed already covers it) but
+       keeps 18+ and every other deck, and never touches Your Words. */
+    const kept=selectedDeckIds.filter(x=>x!=="mixed");
+    selectedDeckIds=kept.includes(id)?kept.filter(x=>x!==id):kept.concat(id);
   }
   refreshSelection();
 }
@@ -1241,7 +1530,8 @@ function refreshSelection(){
 }
 function renderSelectedChips(){
   const box=$("selectedChips"); box.innerHTML="";
-  $("selEmpty").hidden=selectedDeckIds.length>0;
+  const hasCustom=setupKind==="custom";
+  $("selEmpty").hidden=selectedDeckIds.length>0||hasCustom;
   selectedDeckObjects().forEach(d=>{
     const count=d.id==="mixed"?mixedWordCount():d.words.length;
     const chip=document.createElement("span"); chip.className="sel-chip";
@@ -1251,23 +1541,79 @@ function renderSelectedChips(){
     x.addEventListener("click",()=>toggleDeck(d.id));
     chip.appendChild(x); box.appendChild(chip);
   });
+  /* Your Words is a removable chip too, like any other selection:
+     its × deselects Your Words (back to the picked decks) without
+     opening its window. */
+  if(hasCustom){
+    const chip=document.createElement("span"); chip.className="sel-chip";
+    chip.innerHTML="Your Words <small>"+customWords.length+" words</small>";
+    const x=document.createElement("button"); x.type="button"; x.textContent="×";
+    x.setAttribute("aria-label","Remove Your Words from selection");
+    x.addEventListener("click",()=>{ setSetupKind("decks"); refreshSelection(); });
+    chip.appendChild(x); box.appendChild(chip);
+  }
 }
 function updateStartButtons(){
-  const empty=selectedDeckIds.length===0;
-  const label=empty?"Pick a deck to start":("Start round → · "+combinedWords().length+" words");
-  ["startBtn","startBtn3"].forEach(id=>{const b=$(id); if(b){b.disabled=empty; b.textContent=id==="startBtn"?"Start round →":label;}});
-  $("deckCountLine").textContent=empty?"0 decks selected":selectedDeckIds.length+" deck"+(selectedDeckIds.length>1?"s":"")+" selected · "+combinedWords().length+" words";
-  const ps=$("pickerSummary"); if(ps) ps.textContent=empty?"No deck selected":deckLabel()+" · "+combinedWords().length+" words";
+  const hasDecks=selectedDeckIds.length>0;
+  const hasYour=yourWordsSelected();
+  const total=selectionWords().length;
+  const selCount=selectedDeckIds.length+(hasYour?1:0);
+  const b=$("startBtn"); if(!b) return;
+  if(!hasDecks && !hasYour){
+    b.disabled=true;
+    b.textContent="Pick a deck to start";
+  }else if(!hasDecks && hasYour && customWords.length<4){
+    /* The 4-word minimum applies only when Your Words is the
+       only selection; mixed with decks, the decks carry the round. */
+    b.disabled=true;
+    b.textContent="Add at least 4 words to start";
+  }else{
+    b.disabled=false;
+    b.textContent="Start round → · "+total+" words";
+  }
+  $("deckCountLine").textContent=selCount===0?"0 decks selected":selCount+" deck"+(selCount>1?"s":"")+" selected · "+total+" words";
+  const ps=$("pickerSummary"); if(ps) ps.textContent=(hasDecks||hasYour)?(selectionLabel()+" · "+total+" words"):"No deck selected";
 }
 function updateSelectedLine(){
-  if(!selectedDeckIds.length){
+  if(!selectedDeckIds.length && !yourWordsSelected()){
     $("selectedLine").innerHTML="Selected: <b>none yet</b> · open “Choose decks” to pick one or more";
     return;
   }
-  $("selectedLine").innerHTML="Selected: <b>"+esc(deckLabel())+"</b> · "+combinedWords().length+" words · "+timerSecs+" seconds · "+(mode==="teams"?("Teams ("+teamCount+")"):"Solo");
+  $("selectedLine").innerHTML="Selected: <b>"+esc(selectionLabel())+"</b> · "+selectionWords().length+" words · "+timerSecs+" seconds · "+(mode==="teams"?("Teams ("+teamCount+") · "+turnsPerTeam+" turn"+(turnsPerTeam>1?"s":"")+" per team"):"Solo");
   const best=stored.scores.byDeck[scoreKey(deckLabel())]||0;
   const bl=$("bestLineSettings");
   if(bl) bl.textContent=best>0?("Personal best for this selection: "+best+" correct — saved on this device."):"";
+}
+function setSetupKind(kind){
+  setupKind=kind;
+  /* The deck button label always reads "Choose decks" — selecting
+     Your Words must never rename it. setupKind stays internal only. */
+  const t=$("deckPickerTitle"); if(t) t.textContent="Choose decks";
+}
+/* Game mode is chosen in the Play Offline chooser window, not in the
+   round settings: this keeps the settings panel in sync with it. */
+function updateModeUI(){
+  const isTeams=mode==="teams";
+  const row=$("teamCountRow"); if(row) row.hidden=!isTeams;
+  const srn=$("soloRulesNote"); if(srn) srn.style.display=isTeams?"none":"";
+  updateSelectedLine(); refreshPlayerSummary();
+}
+function showStartError(msg){
+  const el=$("startError"); if(!el) return;
+  if(msg){ el.textContent=msg; el.hidden=false; } else { el.textContent=""; el.hidden=true; }
+}
+/* Teams are formed ONLY by manual selection in the Player List —
+   no automatic distribution. Every team in play needs at least 2
+   players; uneven teams are fine. */
+function teamValidation(){
+  if(mode!=="teams") return {ok:true,message:""};
+  const letters=["A","B","C","D"].slice(0,teamCount);
+  const counts={}; letters.forEach(L=>{counts[L]=0;});
+  offlinePlayers.forEach(p=>{ if(counts[p.team]!==undefined) counts[p.team]++; });
+  const short=letters.filter(L=>counts[L]<2);
+  if(!short.length) return {ok:true,message:""};
+  const detail=short.map(L=>"Team "+L+" has "+counts[L]+" player"+(counts[L]===1?"":"s")).join(", ");
+  return {ok:false,message:"Each team needs at least 2 players. "+detail+". Tap a team letter under a player's name to move them, or add more players — teams don't need to be equal."};
 }
 function renderDecks(filter){
   const grid=$("deckGrid"); grid.innerHTML="";
@@ -1282,6 +1628,23 @@ function renderDecks(filter){
     b.addEventListener("click",()=>toggleDeck(d.id));
     grid.appendChild(b);
   });
+  /* Your Words is always the LAST tile in the grid. It is a
+     toggle: tapping it while unselected selects it and opens the
+     Your Words window; tapping it again while selected DESELECTS
+     it without opening the window; tapping a third time opens the
+     window again. It is not a regular deck. */
+  if(!q || "your words".includes(q) || "your own words".includes(q) || "custom".includes(q)){
+    shown++;
+    const b=document.createElement("button");
+    b.type="button"; b.className="deck"; b.setAttribute("aria-pressed",String(setupKind==="custom"));
+    b.setAttribute("aria-label","Your Words — open your own words");
+    b.innerHTML='<span class="check" aria-hidden="true">✓</span><span class="tile" style="background:#d7ff3e">✎</span><h3>Your Words</h3><span class="count">'+customWords.length+' words</span>';
+    b.addEventListener("click",()=>{
+      if(setupKind==="custom"){ setSetupKind("decks"); refreshSelection(); return; }
+      setSetupKind("custom"); refreshSelection(); openSheet("customSheet");
+    });
+    grid.appendChild(b);
+  }
   $("noDecks").style.display=shown?"none":"block";
 }
 function updateUsedLine(){ $("usedLine").textContent=usedKeys.size+" words shown so far."; }
@@ -1296,12 +1659,142 @@ function segSetup(containerId, attr, fn){
   });
 }
 segSetup("timerSeg","secs",v=>{timerSecs=parseInt(v,10); updateSelectedLine();});
-segSetup("modeSeg","mode",v=>{mode=v; $("teamCountRow").hidden=(v!=="teams"); updateSelectedLine();});
-segSetup("teamSeg","teams",v=>{teamCount=parseInt(v,10); updateSelectedLine();});
+segSetup("teamSeg","teams",v=>{teamCount=parseInt(v,10); clampPlayerTeams(); updateModeUI(); renderPlayerRows(); showStartError("");});
+segSetup("turnsSeg","turns",v=>{turnsPerTeam=parseInt(v,10); updateSelectedLine();});
+/* ---------- Views: home / offline setup / online create-join ---------- */
+function showView(name){
+  $("homeView").hidden=(name!=="home");
+  $("setupView").hidden=(name!=="setup");
+  $("onlineJoinView").hidden=(name!=="onlineJoin");
+  window.scrollTo({top:0});
+}
+function refreshPlayerSummary(){
+  const named=offlinePlayers.filter(p=>p.name.trim()).map(p=>p.name.trim());
+  let extra=named.length?" · "+named.join(", "):"";
+  if(mode==="teams"){
+    const letters=["A","B","C","D"].slice(0,teamCount);
+    extra+=" · "+letters.map(L=>"Team "+L+": "+offlinePlayers.filter(p=>p.team===L).length).join(" · ");
+  }
+  $("playerSummary").textContent=offlinePlayers.length+" player"+(offlinePlayers.length>1?"s":"")+extra;
+}
+function clampPlayerTeams(){
+  const letters=["A","B","C","D"].slice(0,teamCount);
+  offlinePlayers.forEach(p=>{ if(!letters.includes(p.team)) p.team="A"; });
+}
+function playerDisplayName(i){
+  const n=(offlinePlayers[i]&&offlinePlayers[i].name||"").trim();
+  return n||("Player "+(i+1));
+}
+function renderPlayerRows(){
+  const box=$("playerRows"); if(!box) return;
+  box.innerHTML="";
+  const sub=$("playerSheetSub");
+  if(sub) sub.textContent=mode==="teams"
+    ?"Add everyone's name. Turn order follows this list. Tap a letter under a name to put that player in a team — pick teams yourself, each team needs at least 2 players, and teams don't need to be equal."
+    :"Add everyone's name. Turn order follows this list.";
+  const letters=["A","B","C","D"].slice(0,teamCount);
+  offlinePlayers.forEach((p,i)=>{
+    const row=document.createElement("div"); row.className="prow";
+    /* Name on top, team letters + remove below it — for every player. */
+    const top=document.createElement("div"); top.className="prow-top";
+    const input=document.createElement("input");
+    input.type="text"; input.value=p.name; input.maxLength=24; input.autocomplete="off";
+    input.placeholder="Enter name"; input.setAttribute("aria-label","Player "+(i+1)+" name");
+    input.addEventListener("input",()=>{ offlinePlayers[i].name=input.value; refreshPlayerSummary(); saveStoredState(); });
+    top.appendChild(input);
+    row.appendChild(top);
+    const bottom=document.createElement("div"); bottom.className="prow-bottom";
+    if(mode==="teams"){
+      const tp=document.createElement("span"); tp.className="team-pick"; tp.setAttribute("role","group"); tp.setAttribute("aria-label","Team for player "+(i+1));
+      letters.forEach(L=>{
+        const b=document.createElement("button"); b.type="button"; b.textContent=L;
+        b.setAttribute("aria-pressed",String(p.team===L));
+        b.setAttribute("aria-label","Team "+L);
+        b.addEventListener("click",()=>{ offlinePlayers[i].team=L; renderPlayerRows(); refreshPlayerSummary(); showStartError(""); saveStoredState(); });
+        tp.appendChild(b);
+      });
+      bottom.appendChild(tp);
+    }else{
+      const note=document.createElement("span"); note.className="team-note"; note.textContent="Player "+(i+1);
+      bottom.appendChild(note);
+    }
+    const rm=document.createElement("button"); rm.type="button"; rm.className="remove-btn"; rm.textContent="×";
+    rm.setAttribute("aria-label","Remove player "+(i+1));
+    rm.disabled=offlinePlayers.length<=2;
+    rm.addEventListener("click",()=>{ if(offlinePlayers.length>2){ offlinePlayers.splice(i,1); renderPlayerRows(); refreshPlayerSummary(); showStartError(""); saveStoredState(); } });
+    bottom.appendChild(rm);
+    row.appendChild(bottom);
+    box.appendChild(row);
+  });
+}
+function openSetup(kind, presetMode){
+  /* Re-entering setup keeps the current deck / Your Words
+     selection, exactly like the picked decks do — opening the
+     setup page must not silently deselect anything. */
+  if(presetMode) mode=presetMode;
+  setSegPressed("turnsSeg","turns",turnsPerTeam);
+  updateModeUI();
+  showStartError("");
+  $("setupTitle").textContent="Play Decks";
+  refreshPlayerSummary(); renderPlayerRows(); refreshSelection(); updateSelectedLine();
+  showView("setup");
+}
+function openOnlineJoin(){
+  onlineClearError(); showView("onlineJoin");
+}
+$("setupBackBtn").addEventListener("click",()=>showView("home"));
+$("onlineJoinBackBtn").addEventListener("click",()=>showView("home"));
+/* Play Offline: first choose Solo or Team in a window; the setup
+   page (player list, deck button, settings, Start) follows the
+   chosen mode. */
+$("heroPlayBtn").addEventListener("click",()=>openSheet("modeSheet"));
+$("modeSoloBtn").addEventListener("click",()=>{ closeSheetEl($("modeSheet")); openSetup("decks","solo"); });
+$("modeTeamsBtn").addEventListener("click",()=>{ closeSheetEl($("modeSheet")); openSetup("decks","teams"); });
+/* "Are you sure?" confirm window: only the confirm button runs the
+   stored action; closing it any other way cancels. */
+let confirmAction=null;
+function askConfirm(opts){
+  $("confirmTitle").textContent=opts.title||"Are you sure?";
+  $("confirmText").textContent=opts.text||"";
+  $("confirmOkBtn").textContent=opts.okLabel||"Yes, leave";
+  confirmAction=opts.onOk||null;
+  openSheet("confirmSheet");
+}
+$("confirmOkBtn").addEventListener("click",()=>{
+  const fn=confirmAction; confirmAction=null;
+  closeSheetEl($("confirmSheet"));
+  if(fn) fn();
+});
+$("confirmCancelBtn").addEventListener("click",()=>{ confirmAction=null; closeSheetEl($("confirmSheet")); });
+$("playerListBtn").addEventListener("click",()=>{ renderPlayerRows(); openSheet("playerSheet"); });
+$("addPlayerBtn").addEventListener("click",()=>{
+  if(offlinePlayers.length>=12) return;
+  offlinePlayers.push({name:"",team:"A"});
+  renderPlayerRows(); refreshPlayerSummary(); saveStoredState();
+  const inputs=$("playerRows").querySelectorAll("input");
+  if(inputs.length) inputs[inputs.length-1].focus();
+});
+$("playerDoneBtn").addEventListener("click",()=>{ closeSheetEl($("playerSheet")); refreshPlayerSummary(); });
+
+/* ---------- Install (PWA prompt when the browser offers one) ---------- */
+let deferredInstallPrompt=null;
+window.addEventListener("beforeinstallprompt",e=>{ e.preventDefault(); deferredInstallPrompt=e; });
+window.addEventListener("appinstalled",()=>{ deferredInstallPrompt=null; });
+$("installMenuBtn").addEventListener("click",async ()=>{
+  closeMenu();
+  if(deferredInstallPrompt){
+    try{ deferredInstallPrompt.prompt(); await deferredInstallPrompt.userChoice; }catch(e){}
+    deferredInstallPrompt=null; return;
+  }
+  openSheet("installSheet");
+});
+
 $("deckSearch").addEventListener("input",e=>{renderDecks(e.target.value); $("clearSearchBtn").classList.toggle("show",!!e.target.value);});
 $("clearSearchBtn").addEventListener("click",()=>{$("deckSearch").value=""; renderDecks(""); $("clearSearchBtn").classList.remove("show"); $("deckSearch").focus();});
 $("clearDecksBtn").addEventListener("click",()=>{selectedDeckIds=[]; refreshSelection();});
 $("randomMixBtn").addEventListener("click",()=>{
+  /* Surprise mix replaces the picked decks only — Your Words,
+     if selected, stays selected (independent selections). */
   const pool=shuffle(DECKS.filter(d=>d.id!=="mixed"&&d.id!=="adults"));
   selectedDeckIds=pool.slice(0,3).map(d=>d.id); refreshSelection();
 });
@@ -1323,10 +1816,13 @@ $("menuBtn").addEventListener("click",()=>{ $("menuWrap").classList.contains("op
 
 /* ---------- Full screen ----------
    Home page (top-bar button, left of the menu button): portrait, so the
-   home page does not get forced sideways. Game screens (stage, handoff,
-   results, and auto full screen when a round starts): landscape, as
-   rounds are played with the phone sideways. Short windows (menu and
-   sheets) have no full-screen button at all. */
+   home page does not get forced sideways. Every full-screen toggle
+   button is portrait too: only a live round locks landscape, and that
+   happens through enterGameFullscreen(true) when the round starts,
+   never through a toggle button. The ready ("Tap when you're ready")
+   screen has no full-screen button at all, and the handoff / points
+   screen stays portrait. Short windows (menu and sheets) have no
+   full-screen button at all. */
 function isFullscreen(){ return !!(document.fullscreenElement||document.webkitFullscreenElement); }
 function syncFullscreenBtns(){
   const on=isFullscreen();
@@ -1387,9 +1883,17 @@ function toggleFullscreen(e){
   try{
     if(isFullscreen()){ autoFullscreen=false; unlockOrientation(); exitFullscreenBestEffort(); }
     else{
-      // The home-page button carries data-orient="portrait"; every
-      // in-game button defaults to landscape.
-      const orient=(e&&e.currentTarget&&e.currentTarget.dataset&&e.currentTarget.dataset.orient)||"landscape";
+      // Full-screen toggle buttons are portrait: the home, handoff /
+      // points and result screens are all held upright. Only a live
+      // round locks landscape, via enterGameFullscreen(true). Inside
+      // the online room the phase decides instead: a live/countdown
+      // round is landscape like an offline round, lobby/ready/result
+      // portrait.
+      let orient=(e&&e.currentTarget&&e.currentTarget.dataset&&e.currentTarget.dataset.orient)||"portrait";
+      if(typeof onlinePhase==="function" && $("onlineOverlay") && $("onlineOverlay").classList.contains("open")){
+        const ph=onlinePhase();
+        orient=(ph==="live"||ph==="countdown"||ph==="expired")?"landscape":"portrait";
+      }
       enterGameFullscreen(false, orient);
     }
   }catch(e){}
@@ -1404,26 +1908,45 @@ document.addEventListener("webkitfullscreenchange",()=>{ if(!isFullscreen()) unl
 /* The browser chrome appearing/disappearing (full screen on/off, URL
    bar showing/hiding) changes the visible height after the round has
    started — re-fit the words then, so nothing is left clipped. */
-function refitOnViewportChange(){ if(playing) fitWords(); }
+function refitOnViewportChange(){ if(playing) fitWords(); if(typeof onlinePhase==="function" && onlinePhase()==="live") onlineFitWords(); }
 document.addEventListener("fullscreenchange",refitOnViewportChange);
 document.addEventListener("webkitfullscreenchange",refitOnViewportChange);
 if(window.visualViewport) visualViewport.addEventListener("resize",refitOnViewportChange);
 syncFullscreenBtns();
+/* Standalone (installed) mode: hide every full screen button, since
+   the installed app already runs full screen. Covers iOS, where
+   navigator.standalone is the signal the CSS media query may miss.
+   Orientation locking during rounds is untouched in both cases. */
+function updateStandaloneMode(){
+  let standalone=false;
+  try{ standalone=window.matchMedia("(display-mode: standalone)").matches; }catch(e){}
+  if(!standalone && window.navigator && window.navigator.standalone) standalone=true;
+  document.documentElement.classList.toggle("standalone",standalone);
+}
+updateStandaloneMode();
+try{
+  const mq=window.matchMedia("(display-mode: standalone)");
+  if(mq && typeof mq.addEventListener==="function") mq.addEventListener("change",updateStandaloneMode);
+}catch(e){}
 document.querySelectorAll("[data-close-menu]").forEach(el=>el.addEventListener("click",closeMenu));
 document.querySelectorAll(".menu-item[data-sheet]").forEach(b=>b.addEventListener("click",()=>openSheet(b.dataset.sheet)));
 document.querySelectorAll(".sheet-overlay [data-close]").forEach(b=>b.addEventListener("click",()=>closeSheetEl(b.closest(".sheet-overlay"))));
 document.querySelectorAll(".sheet-overlay").forEach(ov=>ov.addEventListener("mousedown",e=>{ if(e.target===ov) closeSheetEl(ov); }));
-$("deckPickerBtn").addEventListener("click",()=>openSheet("deckSheet"));
-$("heroCustomBtn").addEventListener("click",()=>openSheet("customSheet"));
-/* Hero "Teams mode" shortcut: select Teams in Round settings (reusing
-   the segment's own handler, so the team-count row and summary line
-   update exactly as a direct tap would) and take the player there. */
-$("heroTeamsBtn").addEventListener("click",()=>{
-  const teamsBtn=$("modeSeg").querySelector('button[data-mode="teams"]');
-  if(teamsBtn) teamsBtn.click();
-  document.getElementById("play").scrollIntoView({behavior:"smooth"});
+function openDeckPicker(context){
+  deckSheetContext=context||"offline";
+  openSheet("deckSheet");
+}
+/* "Choose decks" always opens the deck picker — even when Your
+   Words is selected. The Your Words window opens only from the
+   Your Words tile in the deck grid. */
+$("deckPickerBtn").addEventListener("click",()=>{
+  openDeckPicker("offline");
 });
-$("startBtn3").addEventListener("click",()=>{ closeAllSheets(); startDeckRound(); });
+$("deckDoneBtn").addEventListener("click",()=>{
+  closeSheetEl($("deckSheet"));
+  if(deckSheetContext==="onlineLobby") pushOnlineSettings();
+});
+$("lobbyDeckBtn") && $("lobbyDeckBtn").addEventListener("click",()=>openDeckPicker("onlineLobby"));
 document.addEventListener("keydown",e=>{
   if(e.key!=="Escape") return;
   if($("menuWrap").classList.contains("open")){ closeMenu(); return; }
@@ -1452,9 +1975,14 @@ function renderCustom(){
     s.appendChild(x); list.appendChild(s);
   });
   $("customCount").textContent=customWords.length<4?(customWords.length+" words added · "+(4-customWords.length)+" more to start."):(customWords.length+" words added · ready to play!");
-  $("customLine").innerHTML="Your deck: <b>"+customWords.length+" words</b>";
-  $("startCustomBtn").disabled=customWords.length<4;
+  updateStartButtons();
+  /* Keep the "Your Words" chip's word count fresh on the setup page
+     too, not just the tile in the deck grid below. */
+  renderSelectedChips();
   saveStoredState();
+  /* Keep the Your Words tile's word count fresh while the deck
+     picker is open behind this window. */
+  if($("deckSheet") && $("deckSheet").classList.contains("open")) renderDecks($("deckSearch").value);
 }
 function addCustomWord(){
   const en=$("customEn").value.trim(), hi=$("customHi").value.trim();
@@ -1466,11 +1994,6 @@ $("addWordBtn").addEventListener("click",addCustomWord);
 $("customEn").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault(); addCustomWord();}});
 $("customHi").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault(); addCustomWord();}});
 $("clearCustomBtn").addEventListener("click",()=>{customWords=[]; renderCustom();});
-$("sampleWordsBtn").addEventListener("click",()=>{
-  const samples=[["Birthday Cake","Janmdin ka cake"],["Monsoon Rain","Baarish"],["Auto Rickshaw","Auto"],["Exam Pressure","Pariksha ka pressure"],["Sunday Nap","Ravivaar ki neend"],["Street Dog","Gali ka kutta"]];
-  samples.forEach(s=>{if(!customWords.some(w=>w.en===s[0])) customWords.push({en:s[0],hi:s[1],deck:"Your words"});});
-  renderCustom();
-});
 
 /* ---------- Game flow ---------- */
 function openOverlay(id){$(id).classList.add("open"); document.body.style.overflow="hidden";}
@@ -1482,18 +2005,37 @@ function freshQueue(words){
   if(fresh.length===0) return shuffle(words.slice()); // deck exhausted: reshuffle rather than dead-end
   return shuffle(fresh);
 }
-function setupTeams(){
-  teams=[]; for(let i=0;i<teamCount;i++) teams.push({name:TEAM_NAMES[i], color:TEAM_COLORS[i], score:0});
-  currentTeamIdx=0;
+function setupSolo(){
+  soloOrder=offlinePlayers.map((p,i)=>i);
+  soloTurnIdx=0;
+  soloScores=offlinePlayers.map(()=>0);
+  soloWordLists=offlinePlayers.map(()=>({correct:[],pass:[]}));
 }
-function beginRound(words, deckName, isCustom){
+function setupTeams(){
+  const letters=["A","B","C","D"].slice(0,teamCount);
+  teams=letters.map((L,i)=>({name:TEAM_NAMES[i],letter:L,color:TEAM_COLORS[i],score:0,members:[],lastGuesserPos:-1}));
+  offlinePlayers.forEach((p,i)=>{ const t=teams.find(x=>x.letter===p.team); if(t) t.members.push({name:playerDisplayName(i),pos:i}); });
+  /* No automatic distribution: teams are exactly what the player
+     picked in the Player List. Start is blocked earlier (see
+     teamValidation) unless every team has at least 2 players, so
+     an empty team here can only mean the game was already running. */
+  teams=teams.filter(t=>t.members.length);
+  teamWordLists=teams.map(()=>({correct:[],pass:[]}));
+  currentTeamIdx=0;
+  teamTurnsDone=0;
+  teamTotalTurns=teams.length*turnsPerTeam;
+}
+function beginRound(words, deckName, isCustom, guesserName, teamName){
   requestTilt(); // user gesture (Start tap): the earliest chance to ask for motion permission
   enterGameFullscreen(true); // game running = full screen; the in-game button can exit it
   round={queue:freshQueue(words), idx:0, correct:[], pass:[], deckName:deckName};
-  if(mode==="teams" && !isCustom){ /* team set by caller */ }
-  $("stageDeckLabel").textContent=deckName+(mode==="teams"?" · "+teams[currentTeamIdx].name:"");
-  $("readyKicker").textContent=mode==="teams"?teams[currentTeamIdx].name+" — your turn":"Your turn";
-  $("readyTitle").textContent=mode==="teams"?teams[currentTeamIdx].name+": phone on your forehead":"Phone on your forehead";
+  $("stageDeckLabel").textContent=deckName+(teamName?" · "+teamName:"")+(guesserName?" · "+guesserName:"");
+  $("readyKicker").textContent=teamName?teamName+" — "+guesserName+"'s turn":guesserName+"'s turn";
+  $("readyTitle").textContent=guesserName+": phone on your forehead";
+  /* Ready screen: no full-screen button on the "Tap when you're
+     ready" screen (or once the live round starts — it stays hidden
+     for both). There is no Back button on the ready screen either. */
+  $("stageFullscreenBtn").hidden=true;
   $("readyView").style.display="flex"; $("roundView").style.display="none";
   $("readyView").classList.remove("counting");
   /* The timer pill sits above the ready view too, so reset it here —
@@ -1504,46 +2046,96 @@ function beginRound(words, deckName, isCustom){
   $("timerPill").textContent=timerSecs;
   $("timerPill").classList.remove("low");
   $("progressBar").style.width="100%";
-  /* Ready screen: Pause / End round are not shown yet — they appear
-     only after "Tap when you're ready" is pressed (see the ready-tap
-     handler / startTimer), so the next round starts clean too. */
-  $("pauseBtn").hidden=true; $("endRoundBtn").hidden=true;
+  /* Ready screen: Pause is not shown yet — it appears only after
+     "Tap when you're ready" is pressed (see the ready-tap handler
+     / startTimer), so the next round starts clean too. */
+  $("pauseBtn").hidden=true;
   if(countdownId){ clearInterval(countdownId); countdownId=null; }
   $("countNum").hidden=true; $("readyTapBtn").hidden=false;
   openOverlay("playOverlay");
 }
-function startDeckRound(){
+/* A round plays the whole current selection: the picked decks
+   plus Your Words when it is selected. When Your Words is the
+   only selection it plays on its own; when it is not selected
+   the round is decks-only, as before. */
+function currentWords(isCustom){ return isCustom?selectionWords():combinedWords(); }
+function currentDeckName(isCustom){ return isCustom?selectionLabel():deckLabel(); }
+function startSelectedRound(){
+  /* Your Words can be edited from the lobby deck picker too, but an
+     offline round must not start on top of an online room. */
+  if($("onlineOverlay") && $("onlineOverlay").classList.contains("open")){ closeAllSheets(); return; }
+  const v=teamValidation(); if(!v.ok){ closeAllSheets(); showStartError(v.message); return; }
+  showStartError("");
+  const hasYour=yourWordsSelected();
+  if(!selectedDeckIds.length && !hasYour) return;
+  if(!selectedDeckIds.length && hasYour && customWords.length<4) return;
   closeAllSheets();
-  if(!selectedDeckIds.length) return;
-  if(mode==="teams") setupTeams();
-  if(mode==="teams"){ showHandoff(); return; }
-  beginRound(combinedWords(), deckLabel(), false);
+  currentIsCustom=hasYour;
+  if(mode==="teams"){ setupTeams(); showHandoff(hasYour); return; }
+  setupSolo();
+  showHandoff(hasYour);
 }
-$("startBtn").addEventListener("click",startDeckRound);
-$("startCustomBtn").addEventListener("click",()=>{
-  closeAllSheets();
-  if(customWords.length<4) return;
-  if(mode==="teams") setupTeams();
-  if(mode==="teams"){ showHandoff(true); return; }
-  beginRound(customWords.slice(), "Your words", true);
-});
+$("startBtn").addEventListener("click",startSelectedRound);
+let lastTurnSummary="";
 function showHandoff(isCustom){
-  const t=teams[currentTeamIdx];
-  $("handoffKicker").textContent="Round "+(currentTeamIdx+1)+" of "+teams.length;
-  $("handoffTitle").textContent=t.name;
-  $("handoffBoard").innerHTML=teams.map((tm,i)=>'<div class="team-row'+(i===currentTeamIdx?" winner":"")+'"><span><span class="dot" style="background:'+tm.color+'"></span>'+esc(tm.name)+'</span><span>'+tm.score+' pts</span></div>').join("");
+  /* The handoff screen shows the points tally, held upright: if full
+     screen is already on with the round's landscape lock, swap it
+     back to portrait here, whatever path reached this screen. */
+  keepPortraitFullscreen();
+  /* Solo: pass the phone to the next named guesser. Teams: pick this
+     team's guesser (a different member than last time that team
+     played, when the team has more than one member). */
+  if(mode==="teams"){
+    const t=teams[currentTeamIdx];
+    const eligible=t.members.map((m,i)=>i).filter(i=>!(t.members.length>1 && i===t.lastGuesserPos));
+    pendingGuesserIdx=eligible.length?eligible[0]:0;
+    $("handoffKicker").textContent="Turn "+(teamTurnsDone+1)+" of "+teamTotalTurns+" · "+t.name;
+    $("handoffTitle").textContent=t.name;
+    $("handoffText").textContent=(lastTurnSummary?lastTurnSummary+" ":"")+"Pick this team's guesser — only "+t.name+"'s other members give clues, the other teams sit out. Turn the phone sideways when you're ready.";
+    const box=$("handoffMembers"); box.hidden=false; box.innerHTML="";
+    t.members.forEach((m,i)=>{
+      const b=document.createElement("button"); b.type="button"; b.textContent=m.name;
+      b.setAttribute("aria-pressed",String(i===pendingGuesserIdx));
+      b.disabled=(t.members.length>1 && i===t.lastGuesserPos);
+      b.title=b.disabled?"Guessed last time this team played — pick someone else":"";
+      b.addEventListener("click",()=>{ pendingGuesserIdx=i; box.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); });
+      box.appendChild(b);
+    });
+    $("handoffBoard").innerHTML=teams.map((tm,i)=>'<div class="team-row'+(i===currentTeamIdx?" winner":"")+'"><span><span class="dot" style="background:'+tm.color+'"></span>'+esc(tm.name)+'</span><span>'+tm.score+' pts</span></div>').join("");
+    $("handoffBoard").style.background="transparent";
+    $("handoffStartBtn").textContent="Start this team's round →";
+    closeOverlay("resultOverlay"); openOverlay("handoffOverlay");
+    $("handoffStartBtn").onclick=()=>{
+      closeOverlay("handoffOverlay");
+      t.lastGuesserPos=pendingGuesserIdx;
+      const g=t.members[pendingGuesserIdx];
+      beginRound(currentWords(isCustom), currentDeckName(isCustom), !!isCustom, g.name, t.name);
+    };
+    return;
+  }
+  const name=playerDisplayName(soloOrder[soloTurnIdx]);
+  $("handoffKicker").textContent="Guesser "+(soloTurnIdx+1)+" of "+soloOrder.length;
+  $("handoffTitle").textContent=name;
+  $("handoffText").textContent=(lastTurnSummary?lastTurnSummary+" ":"")+"Pass the phone to "+name+". Everyone else gives the clues at the same time. Turn the phone sideways when you're ready.";
+  $("handoffMembers").hidden=true; $("handoffMembers").innerHTML="";
+  $("handoffBoard").innerHTML=offlinePlayers.map((p,i)=>'<div class="team-row'+(i===soloOrder[soloTurnIdx]?" winner":"")+'"><span>'+esc(playerDisplayName(i))+'</span><span>'+soloScores[i]+' pts</span></div>').join("");
   $("handoffBoard").style.background="transparent";
+  $("handoffStartBtn").textContent="Start "+name+"'s round →";
   closeOverlay("resultOverlay"); openOverlay("handoffOverlay");
   $("handoffStartBtn").onclick=()=>{
     closeOverlay("handoffOverlay");
-    const words=isCustom?customWords.slice():combinedWords();
-    const name=isCustom?"Your words":deckLabel();
-    beginRound(words, name, !!isCustom);
+    beginRound(currentWords(isCustom), currentDeckName(isCustom), !!isCustom, name, null);
   };
 }
-$("handoffHomeBtn").addEventListener("click",()=>{closeAllOverlays(); stopTimer(); keepPortraitFullscreen();});
-$("readyHomeBtn").addEventListener("click",()=>{closeAllOverlays(); stopTimer(); keepPortraitFullscreen();});
-
+/* Score-count (handoff) screen: "Back to decks" asks first. */
+$("handoffHomeBtn").addEventListener("click",()=>{
+  askConfirm({
+    title:"Are you sure?",
+    text:"You'll leave this game and go back to the decks setup. The scores from this game will be lost.",
+    okLabel:"Back to decks",
+    onOk:()=>{ closeAllOverlays(); stopTimer(); keepPortraitFullscreen(); showView("setup"); }
+  });
+});
 /* Tilt: gravity is the primary signal, so it works in landscape too.
    The old code only watched deviceorientation beta, which barely moves
    when the phone is held sideways (the forehead position the game asks
@@ -1660,9 +2252,9 @@ $("enableTiltBtn2").addEventListener("click",()=>{ requestTilt(); });
 $("readyTapBtn").addEventListener("click",()=>{
   ac(); requestTilt(); enterGameFullscreen(true);
   $("readyTapBtn").hidden=true;
-  /* "Tap when you're ready" pressed: Pause / End round appear now
-     (countdown + live round). They were hidden on the ready screen. */
-  $("pauseBtn").hidden=false; $("endRoundBtn").hidden=false;
+  /* "Tap when you're ready" pressed: Pause appears now
+     (countdown + live round). It was hidden on the ready screen. */
+  $("pauseBtn").hidden=false;
   $("readyView").classList.add("counting");
   const num=$("countNum"); num.hidden=false;
   let n=3; num.textContent=n; sfx.tick();
@@ -1687,7 +2279,7 @@ function fitWords(){
     size-=3; card.style.setProperty("--word-size",size+"px"); guard++;
   }
 }
-window.addEventListener("resize",()=>{ if(playing) fitWords(); });
+window.addEventListener("resize",()=>{ if(playing) fitWords(); if(typeof onlinePhase==="function" && onlinePhase()==="live") onlineFitWords(); });
 function showWord(){
   const w=round.queue[round.idx];
   if(!w){ endRound("exhausted"); return; }
@@ -1726,8 +2318,11 @@ document.addEventListener("keydown",e=>{
 /* Timer */
 function startTimer(){
   $("readyView").style.display="none"; $("roundView").style.display="flex";
+  /* Live round stage: no full screen button while the word and the
+     tilt/tap zones are showing. */
+  $("stageFullscreenBtn").hidden=true;
   playing=true; paused=false; $("pauseBtn").textContent="Pause";
-  $("pauseBtn").hidden=false; $("endRoundBtn").hidden=false;
+  $("pauseBtn").hidden=false;
   captureTiltBaseline(); // phone is on the forehead now — this is the neutral pose
   remainingMs=timerSecs*1000; endAt=Date.now()+remainingMs;
   showWord();
@@ -1751,8 +2346,6 @@ $("pauseBtn").addEventListener("click",()=>{
   if(!paused){ paused=true; remainingMs=Math.max(0,endAt-Date.now()); $("pauseBtn").textContent="Resume"; }
   else{ paused=false; endAt=Date.now()+remainingMs; $("pauseBtn").textContent="Pause"; captureTiltBaseline(); }
 });
-$("endRoundBtn").addEventListener("click",()=>endRound("ended"));
-
 /* Tilt — motion (gravity) primary, orientation fallback */
 let liveOrientBaseline=null;
 function orientTiltDeg(beta,gamma,base){
@@ -1823,62 +2416,132 @@ window.addEventListener("deviceorientation",onOrientation);
 let orientChangeTimer=null;
 function recaptureOnRotate(){
   clearTimeout(orientChangeTimer);
-  orientChangeTimer=setTimeout(()=>{ if(playing&&!paused) captureTiltBaseline(); },250);
+  orientChangeTimer=setTimeout(()=>{
+    // Offline: a live, unpaused round. Online: the guesser in a live
+    // synced round — the same stale-baseline problem, same fix. The
+    // shared sensor handlers already route online tilts through the
+    // same smoothed processTilt path as offline ones.
+    if(playing&&!paused) captureTiltBaseline();
+    else if(typeof onlinePhase==="function" && typeof onlineIsGuesser==="function" && onlinePhase()==="live" && onlineIsGuesser()) captureTiltBaseline();
+  },250);
 }
 window.addEventListener("orientationchange",recaptureOnRotate);
 try{ if(window.screen&&screen.orientation&&typeof screen.orientation.addEventListener==="function") screen.orientation.addEventListener("change",recaptureOnRotate); }catch(e){}
 
 /* Results */
 function endRound(reason){
-  if(countdownId){ clearInterval(countdownId); countdownId=null; } // End pressed during the 3-2-1 countdown: the round must not start afterwards
-  if(!playing && reason!=="exhausted") { /* allow exhausted path */ }
+  if(countdownId){ clearInterval(countdownId); countdownId=null; } // a pending countdown must not start a round after this one ended
   stopTimer(); playing=false;
   const deckName=round.deckName;
   const scored=round?recordScore(deckName,round.correct.length):{best:0,isNew:false};
   $("bestLine").textContent=scored.best>0?("Best for this deck: "+scored.best+" correct"+(scored.isNew?" — new best!":"")+" · saved on this device."):"";
-  if(mode==="teams") teams[currentTeamIdx].score+=round.correct.length;
   sfx.buzzer();
-  $("resultKicker").textContent=reason==="exhausted"?"Deck finished":reason==="time"?"Time's up":"Round ended";
-  $("resultTitle").textContent=reason==="exhausted"?"You used every word!":reason==="time"?"Time's up!":"Round over";
-  const who=mode==="teams"?teams[currentTeamIdx].name+" got ":"You got ";
-  $("resultSub").textContent=who+round.correct.length+" right and passed "+round.pass.length+" · "+deckName+".";
-  $("correctCount").textContent=round.correct.length;
-  $("passCount").textContent=round.pass.length;
-  $("correctListBtn").setAttribute("aria-label","View correct words, "+round.correct.length+" words");
-  $("passListBtn").setAttribute("aria-label","View passed words, "+round.pass.length+" words");
-  const sb=$("scoreboard"), banner=$("winnerBanner"), next=$("nextBtn");
+  /* Rotation: a finished turn hands off to the next guesser/team.
+     The result screen with Play Again appears ONLY after the final
+     turn — never between turns. */
+  let isFinal=false, whoName="";
   if(mode==="teams"){
-    sb.hidden=false;
+    const t=teams[currentTeamIdx];
+    t.score+=round.correct.length;
+    /* This turn's words belong to this team, for the final screen. */
+    if(teamWordLists[currentTeamIdx]){ teamWordLists[currentTeamIdx].correct.push.apply(teamWordLists[currentTeamIdx].correct,round.correct); teamWordLists[currentTeamIdx].pass.push.apply(teamWordLists[currentTeamIdx].pass,round.pass); }
+    teamTurnsDone++;
+    whoName=t.name;
+    lastTurnSummary=t.name+" got "+round.correct.length+" right and passed "+round.pass.length+".";
+    if(teamTurnsDone>=teamTotalTurns) isFinal=true;
+    else currentTeamIdx=teamTurnsDone%teams.length;
+  }else{
+    const gi=soloOrder[soloTurnIdx];
+    soloScores[soloTurnIdx]+=round.correct.length;
+    /* This turn's words belong to this guesser, for the final screen. */
+    if(soloWordLists[gi]){ soloWordLists[gi].correct.push.apply(soloWordLists[gi].correct,round.correct); soloWordLists[gi].pass.push.apply(soloWordLists[gi].pass,round.pass); }
+    whoName=playerDisplayName(gi);
+    lastTurnSummary=whoName+" got "+round.correct.length+" right and passed "+round.pass.length+".";
+    if(soloTurnIdx>=soloOrder.length-1) isFinal=true;
+    else soloTurnIdx++;
+  }
+  if(!isFinal){
+    closeOverlay("playOverlay");
+    keepPortraitFullscreen();
+    showHandoff(currentIsCustom);
+    return;
+  }
+  $("resultKicker").textContent=reason==="exhausted"?"Deck finished":reason==="time"?"Time's up":"Game over";
+  $("resultTitle").textContent=reason==="exhausted"?"You used every word!":reason==="time"?"Time's up!":"Game over";
+  $("resultSub").textContent=lastTurnSummary+" · "+deckName+".";
+  const sb=$("scoreboard"), banner=$("winnerBanner"), next=$("nextBtn");
+  sb.hidden=false;
+  if(mode==="teams"){
     const lead=Math.max.apply(null,teams.map(t=>t.score));
-    sb.innerHTML=teams.map((t,i)=>'<div class="team-row'+(t.score===lead&&lead>0?" winner":"")+'"><span><span class="dot" style="background:'+t.color+'"></span>'+esc(t.name)+'</span><span>'+t.score+' pts</span></div>').join("");
-    const more=currentTeamIdx<teams.length-1;
-    if(more){ banner.hidden=true; next.textContent="Next team →"; }
-    else{
-      const top=Math.max.apply(null,teams.map(t=>t.score));
-      const winners=teams.filter(t=>t.score===top);
-      banner.hidden=false;
-      banner.textContent=winners.length>1?"It's a tie! "+winners.map(w=>w.name).join(" & ")+" finish level on "+top+" points.":winners[0].name+" wins with "+top+" points!";
-      if(winners.length===1) sfx.win();
-      next.textContent="Play again (all teams) →";
-    }
-  } else { sb.hidden=true; banner.hidden=true; next.textContent="Play again →"; }
+    sb.innerHTML=teams.map((t,i)=>'<button type="button" class="team-row'+(t.score===lead&&lead>0?" winner":"")+'" data-idx="'+i+'" aria-pressed="false" aria-label="Show '+esc(t.name)+'\'s words"><span><span class="dot" style="background:'+t.color+'"></span>'+esc(t.name)+'</span><span>'+t.score+' pts</span></button>').join("");
+    const top=Math.max.apply(null,teams.map(t=>t.score));
+    const winners=teams.filter(t=>t.score===top);
+    banner.hidden=false;
+    banner.textContent=winners.length>1?"It's a tie! "+winners.map(w=>w.name).join(" & ")+" finish level on "+top+" points.":winners[0].name+" wins with "+top+" points!";
+    if(winners.length===1) sfx.win();
+    next.textContent="Play again (fresh game) →";
+    /* Default: the winner's Correct / Pass box, as before. Tapping a
+       team name swaps the same box to that team's words. */
+    resultSel={isTeam:true, idx:Math.max(0,teams.indexOf(winners[0]))};
+    sb.querySelectorAll(".team-row").forEach(btn=>btn.addEventListener("click",()=>selectResultEntity(true,parseInt(btn.dataset.idx,10))));
+  } else {
+    const top=Math.max.apply(null,soloScores);
+    const winners=soloOrder.filter(i=>soloScores[i]===top);
+    sb.innerHTML=offlinePlayers.map((p,i)=>'<button type="button" class="team-row'+(soloScores[i]===top&&top>0?" winner":"")+'" data-idx="'+i+'" aria-pressed="false" aria-label="Show '+esc(playerDisplayName(i))+'\'s words"><span>'+esc(playerDisplayName(i))+'</span><span>'+soloScores[i]+' pts</span></button>').join("");
+    banner.hidden=false;
+    banner.textContent=winners.length>1?"It's a tie! "+winners.map(i=>playerDisplayName(i)).join(" & ")+" finish level on "+top+" points.":playerDisplayName(winners[0])+" wins with "+top+" points!";
+    if(winners.length===1) sfx.win();
+    next.textContent="Play again (fresh game) →";
+    /* Default: the winner's Correct / Pass box, as before. Tapping a
+       player name swaps the same box to that player's words. */
+    resultSel={isTeam:false, idx:winners.length?winners[0]:0};
+    sb.querySelectorAll(".team-row").forEach(btn=>btn.addEventListener("click",()=>selectResultEntity(false,parseInt(btn.dataset.idx,10))));
+  }
+  refreshResultLists();
   closeOverlay("playOverlay"); openOverlay("resultOverlay");
-  /* The result ("Play again") screen comes up in portrait: swap the
-     round's landscape lock for portrait, keeping full screen on. A
-     timer-expired round has no user gesture behind it, and some
-     browsers refuse a lock without one — the first tap on the result
-     screen retries it (see the capture listener below), so the
-     screen still turns portrait as soon as the player touches it. */
   keepPortraitFullscreen();
 }
+/* Final screen word lists: the Correct / Pass box in place shows the
+   selected player/team's words (winner first). Tapping a name swaps
+   the selection; the box itself opens exactly as before. */
+function resultEntityLists(){
+  if(resultSel.isTeam){
+    const lists=teamWordLists[resultSel.idx]||{correct:[],pass:[]};
+    return {name:teams[resultSel.idx]?teams[resultSel.idx].name:"", correct:lists.correct, pass:lists.pass};
+  }
+  const lists=soloWordLists[resultSel.idx]||{correct:[],pass:[]};
+  return {name:playerDisplayName(resultSel.idx), correct:lists.correct, pass:lists.pass};
+}
+function selectResultEntity(isTeam, idx){
+  resultSel={isTeam:!!isTeam, idx:idx};
+  refreshResultLists();
+}
+function refreshResultLists(){
+  const ent=resultEntityLists();
+  $("correctCount").textContent=ent.correct.length;
+  $("passCount").textContent=ent.pass.length;
+  $("correctListBtn").setAttribute("aria-label","View correct words, "+ent.correct.length+" words");
+  $("passListBtn").setAttribute("aria-label","View passed words, "+ent.pass.length+" words");
+  const ch=$("correctListHint"), ph=$("passListHint");
+  if(ch) ch.textContent="Tap to view "+ent.name+"'s words";
+  if(ph) ph.textContent="Tap to view "+ent.name+"'s words";
+  const hint=$("resultListsHint");
+  if(hint) hint.textContent="Showing "+ent.name+"'s words — tap a name above to switch.";
+  $("scoreboard").querySelectorAll(".team-row").forEach(r=>{
+    r.setAttribute("aria-pressed",String(resultSel.isTeam===(mode==="teams")&&parseInt(r.dataset.idx,10)===resultSel.idx));
+  });
+}
 /* Word lists in a short window: tapping Correct / Pass on the result
-   screen opens this sheet with that round's words. */
+   screen opens this sheet with the SELECTED player/team's words
+   (winner by default; tapping a name swaps the selection). The
+   open behaviour itself is unchanged. */
 function openWordList(kind){
   if(!round) return;
   const isCorrect=kind==="correct";
-  const words=isCorrect?round.correct:round.pass;
+  const ent=resultEntityLists();
+  const words=isCorrect?ent.correct:ent.pass;
   $("wordListTitle").textContent=isCorrect?"✓ Correct words":"Pass words";
-  $("wordListSub").textContent=words.length+" word"+(words.length===1?"":"s")+" · "+round.deckName;
+  $("wordListSub").textContent=ent.name+" · "+words.length+" word"+(words.length===1?"":"s")+" · "+round.deckName;
   const list=$("wordListSheetList");
   list.className="word-sheet-list "+(isCorrect?"good":"bad");
   list.innerHTML=words.length
@@ -1891,22 +2554,18 @@ $("passListBtn").addEventListener("click",()=>openWordList("pass"));
 $("resultOverlay").addEventListener("pointerdown",()=>{ if($("resultOverlay").classList.contains("open")) keepPortraitFullscreen(); },true);
 $("nextBtn").addEventListener("click",()=>{
   closeOverlay("resultOverlay");
-  if(mode==="teams"){
-    if(currentTeamIdx<teams.length-1){ currentTeamIdx++; showHandoff($("stageDeckLabel").textContent.includes("Your words")); }
-    else{ currentTeamIdx=0; teams.forEach(t=>t.score=0); showHandoff($("stageDeckLabel").textContent.includes("Your words")); }
-    return;
-  }
-  const isCustom=$("stageDeckLabel").textContent.includes("Your words");
-  beginRound(isCustom?customWords.slice():combinedWords(), isCustom?"Your words":deckLabel(), isCustom);
+  lastTurnSummary="";
+  if(mode==="teams"){ setupTeams(); showHandoff(currentIsCustom); }
+  else{ setupSolo(); showHandoff(currentIsCustom); }
 });
-$("changeDeckBtn").addEventListener("click",()=>{closeAllOverlays(); stopTimer(); keepPortraitFullscreen(); document.getElementById("play").scrollIntoView({behavior:"smooth"});});
-$("homeBtn").addEventListener("click",()=>{closeAllOverlays(); stopTimer(); keepPortraitFullscreen(); window.scrollTo({top:0,behavior:"smooth"});});
+$("changeDeckBtn").addEventListener("click",()=>{closeAllOverlays(); stopTimer(); keepPortraitFullscreen(); showView("setup");});
+$("homeBtn").addEventListener("click",()=>{closeAllOverlays(); stopTimer(); keepPortraitFullscreen(); showView("home");});
 
 /* ---------- Init ---------- */
 /* Restore saved preferences / scores / custom words first, so the
    first render already shows the player's own settings. */
 loadStoredState();
-refreshSelection(); updateUsedLine(); renderCustom(); setSound(soundOn); updateTiltStatus(); updateSensorDiag();
+refreshSelection(); updateUsedLine(); renderCustom(); refreshPlayerSummary(); setSound(soundOn); updateTiltStatus(); updateSensorDiag();
 setInterval(()=>{ updateTiltStatus(); updateSensorDiag(); },500); // watchdog: silence (0 events) must stay visible, not just "checking…"
 
 /* ---------- ONLINE MULTIPLAYER (Firebase Realtime Database) ----------
@@ -1978,18 +2637,66 @@ function onlineSetBusy(busy){
   ["onlineCreateBtn", "onlineJoinBtn"].forEach(function(id){ const b = $(id); if (b) b.disabled = busy; });
   const c = $("onlineCreateBtn"); if (c) c.textContent = busy ? "Connecting…" : "Create a room →";
 }
-function refreshOnlineSettings(){
-  const s = deckLabel() + " · " + combinedWords().length + " words · " + timerSecs + " seconds";
-  const a = $("onlineSettingsSummary"); if (a) a.textContent = s;
-  const b = $("onlineLobbySettings"); if (b && onlineRoom && onlineRoom.settings) b.textContent = onlineRoom.settings.deckLabel + " · " + onlineRoom.settings.timerSecs + " seconds";
-  else if (b) b.textContent = s;
+function onlineSettings(){
+  const s = (onlineRoom && onlineRoom.settings) || null;
+  return s || { deckIds: selectedDeckIds.slice(), deckLabel: deckLabel(), timerSecs: timerSecs, mode: mode, teamCount: teamCount, turnsPerTeam: turnsPerTeam, wordCount: combinedWords().length };
 }
-function openOnlineSheet(){ refreshOnlineSettings(); closeMenu(); openSheet("onlineSheet"); }
+function refreshOnlineSettings(){
+  /* Lobby deck/settings display: the synced room settings are the
+     source of truth; local state mirrors them while in a room. */
+  const s = onlineSettings();
+  const d = $("lobbyDeckSummary");
+  if (d) d.textContent = s.deckLabel + " · " + (s.wordCount || "") + " words";
+}
+function syncLobbySettingsUI(){
+  const s = onlineSettings();
+  const host = onlineIsHost();
+  setSegPressed("lobbyTimerSeg","secs",s.timerSecs);
+  setSegPressed("lobbyModeSeg","mode",s.mode);
+  setSegPressed("lobbyTeamSeg","teams",s.teamCount);
+  setSegPressed("lobbyTurnsSeg","turns",s.turnsPerTeam);
+  $("lobbyTeamRow").hidden=(s.mode!=="teams");
+  ["lobbyTimerSeg","lobbyModeSeg","lobbyTeamSeg","lobbyTurnsSeg"].forEach(function(id){
+    $(id).querySelectorAll("button").forEach(function(b){ b.disabled=!host; });
+  });
+  const db = $("lobbyDeckBtn"); if (db) db.disabled = !host;
+  const note = $("lobbySettingsNote");
+  if (note) note.textContent = host ? "You're the host — decks & settings you change here sync to everyone." : "Only the host can change decks & settings — they sync to everyone.";
+  /* Mirror the synced settings locally so a round started from the
+     lobby uses exactly what the lobby shows. No save: room settings
+     must not overwrite the player's own offline preferences. */
+  if (onlineRoom && onlineRoom.settings && Array.isArray(s.deckIds)) {
+    const valid = s.deckIds.filter(function(id){ return DECKS.some(function(d){ return d.id === id; }); });
+    if (valid.length) selectedDeckIds = valid;
+  }
+  if (s.timerSecs) timerSecs = s.timerSecs;
+  if (s.mode === "solo" || s.mode === "teams") mode = s.mode;
+  if ([2,3,4].indexOf(s.teamCount) !== -1) teamCount = s.teamCount;
+  if ([1,2,3].indexOf(s.turnsPerTeam) !== -1) turnsPerTeam = s.turnsPerTeam;
+}
+function pushOnlineSettings(){
+  if (!onlineRoomRef || !onlineIsHost()) return;
+  onlineRoomRef.child("settings").update({
+    deckIds: selectedDeckIds.slice(), deckLabel: deckLabel(), timerSecs: timerSecs,
+    mode: mode, teamCount: teamCount, turnsPerTeam: turnsPerTeam, wordCount: combinedWords().length
+  });
+}
+function lobbySegSetup(containerId, attr, fn){
+  const c = $(containerId);
+  c.addEventListener("click", function(e){
+    const b = e.target.closest("button"); if (!b || b.disabled) return;
+    if (!onlineIsHost()) return;
+    c.querySelectorAll("button").forEach(function(x){ x.setAttribute("aria-pressed","false"); });
+    b.setAttribute("aria-pressed","true");
+    fn(b.dataset[attr]);
+    pushOnlineSettings();
+  });
+}
 function onlinePlayersSorted(){
   if (!onlineRoom || !onlineRoom.players) return [];
   return Object.keys(onlineRoom.players).map(function(uid){
     const p = onlineRoom.players[uid] || {};
-    return { uid: uid, name: p.name || "Player", joinedAt: p.joinedAt || 0, score: p.score || 0 };
+    return { uid: uid, name: p.name || "Player", joinedAt: p.joinedAt || 0, score: p.score || 0, team: p.team || null };
   }).sort(function(a, b){ return (a.joinedAt - b.joinedAt) || (a.uid < b.uid ? -1 : 1); });
 }
 function onlineIsHost(){ return !!(onlineRoom && onlineUid && onlineRoom.hostUid === onlineUid); }
@@ -2003,6 +2710,37 @@ function onlinePhase(){
   if (r.countdownEndsAt && now < r.countdownEndsAt) return "countdown";
   if (r.endsAt && now < r.endsAt) return "live";
   return "expired";
+}
+/* Orientation follows the synced phase, mirroring offline rounds:
+   landscape once the round has actually started (countdown/live),
+   portrait again for lobby/ready/result. Only swaps the lock when
+   full screen is already on — it never forces full screen back on,
+   and never runs for the offline game (onlinePhase is "none" and
+   the room is not open there). */
+function syncOnlineOrientation(phase){
+  if (!isFullscreen()) return;
+  if (phase === "live" || phase === "countdown" || phase === "expired") tryOrientationLock("landscape");
+  else tryOrientationLock("portrait");
+}
+/* Shrink the online words just enough that both lines fit between
+   the Pass / Got it zones, whatever the viewport height or word
+   length — the same shrink loop fitWords() runs offline, applied
+   to the synced word (or the guesser's hidden "???" block). */
+function onlineFitWords(){
+  const block = $("onlineWordBlock"), area = $("onlineWordArea");
+  if (!block || !area || !$("onlineLiveView").classList.contains("show")) return;
+  if (!block.clientHeight) return;
+  const clue = $("onlineClueWord"), hidden = $("onlineHiddenWord");
+  const visible = (clue && !clue.hidden) ? clue : ((hidden && !hidden.hidden) ? hidden : null);
+  if (!visible) return;
+  const probe = visible.querySelector(".big") || visible.querySelector(".online-hidden") || visible;
+  area.style.setProperty("--online-word-size", "");
+  let size = parseFloat(getComputedStyle(probe).fontSize) || 32;
+  let guard = 0;
+  const needed = function(){ return visible.offsetHeight + 8; };
+  while (needed() > block.clientHeight + 1 && size > 24 && guard < 30) {
+    size -= 3; area.style.setProperty("--online-word-size", size + "px"); guard++;
+  }
 }
 function wordsFromDeckIds(ids){
   const seen = new Map();
@@ -2027,46 +2765,159 @@ function onlinePlayerName(uid){
   const p = list.filter(function(x){ return x.uid === uid; })[0];
   return p ? p.name : "Player";
 }
+function onlineTeamTitle(letter){ return "Team " + letter; }
+function onlineGameTeams(){
+  /* Frozen at game start: {A:[uids], B:[uids]} in letter order. */
+  if (onlineRoom && onlineRoom.gameTeams) return onlineRoom.gameTeams;
+  return null;
+}
+function onlineTurnsTotal(){
+  if (onlineRoom && onlineRoom.turnsTotal) return onlineRoom.turnsTotal;
+  return 1;
+}
+function onlineIsFinalTurn(){
+  return (onlineRoom.roundIndex || 1) >= onlineTurnsTotal();
+}
+function onlineTeamTotals(){
+  const gt = onlineGameTeams() || {};
+  const players = onlinePlayersSorted();
+  const byUid = {};
+  players.forEach(function(p){ byUid[p.uid] = p.score || 0; });
+  return Object.keys(gt).sort().map(function(L){
+    const members = gt[L] || [];
+    return { letter: L, name: onlineTeamTitle(L), score: members.reduce(function(s, uid){ return s + (byUid[uid] || 0); }, 0), members: members };
+  });
+}
 function renderOnlineRoom(){
   if (!onlineRoom) return;
   const players = onlinePlayersSorted();
   const phase = onlinePhase();
+  /* Full screen button: the lobby and result screens in the room
+     get it, in portrait. The ready ("tap when ready") screen, the
+     countdown and the live round stage itself do not — the word +
+     tilt/tap zones are showing from the ready tap onwards. */
+  $("onlineFullscreenBtn").hidden = (phase === "live" || phase === "expired" || phase === "ready" || phase === "countdown");
   $("onlineStageLabel").textContent = "Online · Room " + (onlineRoomCode || "");
   $("onlineRoomCodeBig").textContent = onlineRoomCode || "····";
   refreshOnlineSettings();
-  /* Lobby */
-  const listEl = $("onlinePlayerList");
-  listEl.innerHTML = players.map(function(p, i){
-    const tags = [];
-    if (p.uid === onlineRoom.hostUid) tags.push("Host");
-    if (p.uid === onlineUid) tags.push("You");
-    tags.push("#" + (i + 1) + " in turn order");
-    return '<div class="player-row"><span>' + esc(p.name) + '</span><span class="tag' + (p.uid === onlineUid ? " you" : "") + '">' + tags.join(" · ") + '</span></div>';
-  }).join("") || '<div class="player-row"><span>No players yet</span></div>';
+  /* Lobby: unified layout — big room code + copy, player cards in
+     the centre, deck button + round settings below the cards. */
   if (onlineRoom.status === "lobby") {
+    syncLobbySettingsUI();
+    refreshOnlineSettings();
     onlineShowView("onlineLobbyView");
+    /* Back in the lobby the timer pill shows the full round time
+       again, never the previous round's leftover seconds. */
+    $("onlineTimerPill").textContent = (onlineRoom.settings && onlineRoom.settings.timerSecs) || timerSecs;
+    $("onlineTimerPill").classList.remove("low");
+    $("onlineProgressBar").style.width = "100%";
+    const cards = $("onlinePlayerCards");
+    const s = onlineSettings();
+    const letters = ["A","B","C","D"].slice(0, s.teamCount);
+    cards.innerHTML = "";
+    players.forEach(function(p, i){
+      const card = document.createElement("div"); card.className = "player-card";
+      const isMe = p.uid === onlineUid, isHost = p.uid === onlineRoom.hostUid;
+      let tags = "";
+      if (isHost) tags += '<span class="pc-tag">👑 Host</span>';
+      if (isMe) tags += '<span class="pc-tag you">You</span>';
+      tags += '<span class="pc-tag">#' + (i + 1) + ' in turn order</span>';
+      card.innerHTML = '<div class="pc-name">' + esc(p.name) + '</div><div class="pc-tags">' + tags + '</div>';
+      if (s.mode === "teams") {
+        const teamRow = document.createElement("div"); teamRow.className = "pc-team";
+        const lab = document.createElement("span"); lab.className = "pc-team-label"; lab.textContent = "Team"; teamRow.appendChild(lab);
+        letters.forEach(function(L){
+          const b = document.createElement("button"); b.type = "button"; b.textContent = "Team " + L;
+          const myTeam = p.team || "A";
+          b.setAttribute("aria-pressed", String(myTeam === L));
+          b.disabled = !isMe; /* each player taps a team on their own card */
+          b.setAttribute("aria-label", "Choose Team " + L);
+          if (isMe) b.addEventListener("click", function(){
+            if (onlineRoomRef) onlineRoomRef.child("players/" + onlineUid + "/team").set(L);
+          });
+          teamRow.appendChild(b);
+        });
+        card.appendChild(teamRow);
+      }
+      cards.appendChild(card);
+    });
+    const waiting = document.createElement("div"); waiting.className = "player-card waiting";
+    waiting.innerHTML = "<b>Waiting for friend…</b><span>Share the room code above — anyone with it can join.</span>";
+    cards.appendChild(waiting);
     const start = $("onlineStartBtn");
     const enough = players.length >= 2;
-    start.disabled = !(onlineIsHost() && enough);
-    start.textContent = onlineIsHost() ? (enough ? "Start game →" : "Start game → (need " + (2 - players.length) + " more)") : "Waiting for the host to start…";
+    let teamOk = true, teamMsg = "";
+    if (s.mode === "teams") {
+      const seen = {};
+      players.forEach(function(p){ seen[p.team || "A"] = true; });
+      const distinct = letters.filter(function(L){ return seen[L]; }).length;
+      teamOk = distinct >= 2;
+      if (!teamOk) teamMsg = " Split into at least 2 teams — tap a team on your own card.";
+    }
+    const canStart = onlineIsHost() && enough && teamOk;
+    start.disabled = !canStart;
+    start.textContent = onlineIsHost() ? (enough ? (teamOk ? "Start game →" : "Start game →") : "Start game → (need " + (2 - players.length) + " more)") : "Waiting for the host to start…";
     $("onlineLobbyStatus").textContent = enough
-      ? (onlineIsHost() ? "Everyone is in. Start when you're ready — the first player in turn order guesses first." : "The host will start the game. First guesser: " + (players[0] ? players[0].name : "—") + ".")
+      ? (onlineIsHost() ? "Everyone is in. Start when you're ready — " + (s.mode === "teams" ? "turns rotate through the teams." : "the first player in turn order guesses first.") + teamMsg : "The host will start the game." + (s.mode === "teams" ? " Tap a team on your card to choose your team." : " First guesser: " + (players[0] ? players[0].name : "—") + "."))
       : "Waiting for players… need at least 2 to start. Share the room code above.";
     return;
   }
-  if (onlineRoom.status !== "playing" || !onlineRoom.round) { onlineShowView("onlineLobbyView"); return; }
+  if (onlineRoom.status !== "playing" || !onlineRoom.round) {
+    onlineShowView("onlineLobbyView");
+    $("onlineTimerPill").textContent = (onlineRoom.settings && onlineRoom.settings.timerSecs) || timerSecs;
+    $("onlineTimerPill").classList.remove("low");
+    $("onlineProgressBar").style.width = "100%";
+    return;
+  }
   const r = onlineRoom.round;
   const guesserName = onlinePlayerName(r.guesserUid);
   const roundNo = onlineRoom.roundIndex || 1;
   if (phase === "ready") {
     onlineShowView("onlineReadyView");
-    $("onlineReadyKicker").textContent = "Round " + roundNo + " · " + r.deckLabel;
-    if (onlineIsGuesser()) {
+    /* The next round's ready screen resets the pill to the full
+       round time at once — the previous round's leftover seconds
+       must not flash here while the tick catches up. */
+    $("onlineTimerPill").textContent = r.timerSecs || timerSecs;
+    $("onlineTimerPill").classList.remove("low");
+    $("onlineProgressBar").style.width = "100%";
+    $("onlineReadyKicker").textContent = "Turn " + roundNo + " of " + onlineTurnsTotal() + " · " + r.deckLabel + (r.teamLetter ? " · " + onlineTeamTitle(r.teamLetter) : "");
+    const claimRow = $("onlineClaimRow");
+    const needsClaim = (onlineRoom.gameMode === "teams" || onlineSettings().mode === "teams") && !r.guesserUid;
+    if (needsClaim) {
+      /* Team turn: a member of this team taps their name to be the
+         guesser. The previous guesser for this team (if the team has
+         more than one member) cannot claim again. */
+      const gt = onlineGameTeams() || {};
+      const members = (gt[r.teamLetter] || []).map(function(uid){ return { uid: uid, name: onlinePlayerName(uid) }; });
+      const lastUid = (onlineRoom.lastGuesserByTeam || {})[r.teamLetter];
+      const suggested = r.suggestedGuesserUid;
+      claimRow.hidden = false;
+      claimRow.innerHTML = "";
+      const hint = document.createElement("p");
+      hint.style.cssText = "width:100%;color:#aebddf;margin:0;font-size:14px";
+      hint.textContent = "This team's turn — tap your name to be the Guesser. Only this team's other members give clues.";
+      claimRow.appendChild(hint);
+      members.forEach(function(m){
+        const b = document.createElement("button"); b.type = "button"; b.textContent = m.name;
+        if (m.uid === suggested) b.className = "suggested";
+        const inTeam = members.some(function(x){ return x.uid === onlineUid; });
+        b.disabled = !inTeam || (members.length > 1 && m.uid === lastUid);
+        b.title = b.disabled && m.uid === lastUid ? "Guessed last time this team played" : "";
+        b.addEventListener("click", function(){ onlineClaimGuesser(m.uid); });
+        claimRow.appendChild(b);
+      });
+      $("onlineReadyTitle").textContent = onlineTeamTitle(r.teamLetter) + " — choose the Guesser";
+      $("onlineReadyText").textContent = "A different member guesses each time this team plays.";
+      $("onlineReadyBtn").style.display = "none";
+      $("onlineReadyWait").textContent = "Waiting for " + onlineTeamTitle(r.teamLetter) + " to choose a guesser…";
+    } else if (onlineIsGuesser()) {
+      claimRow.hidden = true;
       $("onlineReadyTitle").textContent = "Your turn — phone on your forehead";
       $("onlineReadyText").textContent = "Turn the phone sideways, screen facing away from you. The word stays hidden on your phone; everyone else can see it and will give you clues over the call. Tilt down = got it, tilt up = pass — or tap the zones.";
       $("onlineReadyBtn").style.display = "";
       $("onlineReadyWait").textContent = "";
     } else {
+      claimRow.hidden = true;
       $("onlineReadyTitle").textContent = guesserName + " is guessing";
       $("onlineReadyText").textContent = "Get on a call with the room. When the round starts you will see the word on your phone — " + guesserName + " will not. Give clues, don't say the word itself.";
       $("onlineReadyBtn").style.display = "none";
@@ -2076,6 +2927,9 @@ function renderOnlineRoom(){
   }
   if (phase === "countdown") {
     onlineShowView("onlineCountdownView");
+    $("onlineTimerPill").textContent = r.timerSecs || timerSecs;
+    $("onlineTimerPill").classList.remove("low");
+    $("onlineProgressBar").style.width = "100%";
     $("onlineCountdownKicker").textContent = onlineIsGuesser() ? "Phone on your forehead — " + guesserName + " is guessing" : guesserName + " is guessing · get ready to give clues";
     $("onlineCountdownNote").textContent = onlineIsGuesser() ? "The word stays hidden on your phone." : "The word appears on your phone when the round starts.";
     return;
@@ -2095,26 +2949,59 @@ function renderOnlineRoom(){
     $("onlineClueNote").textContent = isG ? "You're guessing — tilt down for Got it, up for Pass." : "You're giving clues — " + guesserName + " is guessing and can't see this word.";
     $("onlinePassZone").hidden = !isG;
     $("onlineGotZone").hidden = !isG;
-    $("onlineEndRoundBtn").style.display = (isG || onlineIsHost()) ? "" : "none";
+    onlineFitWords();
     return;
   }
   if (phase === "done") {
     onlineShowView("onlineResultView");
     const correctWords = r.correctWords || [], passWords = r.passWords || [];
+    const isFinal = onlineIsFinalTurn();
+    const gameMode = onlineRoom.gameMode || onlineSettings().mode;
+    $("onlineResultKicker").textContent = isFinal ? "Game over" : "Round over";
     $("onlineResultTitle").textContent = "Time's up!";
     $("onlineResultSub").textContent = guesserName + " got " + (r.correct || 0) + " right and passed " + (r.pass || 0) + " · " + r.deckLabel + ".";
-    const board = players.slice().sort(function(a, b){ return b.score - a.score; });
-    const lead = board.length ? board[0].score : 0;
-    $("onlineScoreboard").innerHTML = board.map(function(p){
-      return '<div class="team-row' + (p.score === lead && lead > 0 ? " winner" : "") + '"><span>' + esc(p.name) + (p.uid === onlineUid ? " (you)" : "") + '</span><span>' + p.score + ' pts</span></div>';
-    }).join("");
+    const banner = $("onlineWinnerBanner");
+    if (gameMode === "teams") {
+      const totals = onlineTeamTotals();
+      const top = Math.max.apply(null, totals.map(function(t){ return t.score; }));
+      const winners = totals.filter(function(t){ return t.score === top; });
+      $("onlineScoreboard").innerHTML = totals.map(function(t){
+        return '<div class="team-row' + (t.score === top && top > 0 ? " winner" : "") + '"><span>' + esc(t.name) + '</span><span>' + t.score + ' pts</span></div>';
+      }).join("");
+      if (isFinal) {
+        banner.hidden = false;
+        banner.textContent = winners.length > 1 ? "It's a tie! " + winners.map(function(w){ return w.name; }).join(" & ") + " finish level on " + top + " points." : winners[0].name + " wins with " + top + " points!";
+        if (winners.length === 1) sfx.win();
+      } else banner.hidden = true;
+    } else {
+      const board = players.slice().sort(function(a, b){ return b.score - a.score; });
+      const lead = board.length ? board[0].score : 0;
+      $("onlineScoreboard").innerHTML = board.map(function(p){
+        return '<div class="team-row' + (p.score === lead && lead > 0 ? " winner" : "") + '"><span>' + esc(p.name) + (p.uid === onlineUid ? " (you)" : "") + '</span><span>' + p.score + ' pts</span></div>';
+      }).join("");
+      if (isFinal) {
+        const winners = board.filter(function(p){ return p.score === lead; });
+        banner.hidden = false;
+        banner.textContent = winners.length > 1 ? "It's a tie! " + winners.map(function(p){ return p.name; }).join(" & ") + " finish level on " + lead + " points." : winners[0].name + " wins with " + lead + " points!";
+        if (winners.length === 1) sfx.win();
+      } else banner.hidden = true;
+    }
     $("onlineScoreboard").hidden = false;
     $("onlineCorrectList").innerHTML = correctWords.length ? correctWords.map(function(w){ return "<li><b>" + esc(w.en) + "</b><small>" + esc(w.hi) + "</small></li>"; }).join("") : "<li>None yet.</li>";
     $("onlinePassList").innerHTML = passWords.length ? passWords.map(function(w){ return "<li><b>" + esc(w.en) + "</b><small>" + esc(w.hi) + "</small></li>"; }).join("") : "<li>Nothing passed.</li>";
-    const nextIdx = (players.findIndex(function(p){ return p.uid === r.guesserUid; }) + 1) % Math.max(1, players.length);
-    const nextName = players[nextIdx] ? players[nextIdx].name : "—";
-    $("onlineNextBtn").style.display = onlineIsHost() ? "" : "none";
-    $("onlineNextNote").textContent = onlineIsHost() ? "Next guesser: " + nextName + " (rotation order)." : "Waiting for the host to start the next round. Next guesser: " + nextName + ".";
+    /* Rotation, not Play Again, between turns: the host advances to
+       the next turn; only after the final turn does Back to lobby
+       appear. */
+    const nextBtn = $("onlineNextBtn"), finishBtn = $("onlineFinishBtn");
+    nextBtn.style.display = (onlineIsHost() && !isFinal) ? "" : "none";
+    finishBtn.hidden = !(onlineIsHost() && isFinal);
+    if (!isFinal) {
+      const turnNo = onlineRoom.roundIndex || 1;
+      const total = onlineTurnsTotal();
+      $("onlineNextNote").textContent = onlineIsHost() ? "Turn " + (turnNo + 1) + " of " + total + " next." : "Waiting for the host to start the next turn (" + (turnNo + 1) + " of " + total + ").";
+    } else {
+      $("onlineNextNote").textContent = onlineIsHost() ? "Everyone has guessed. Back to the lobby to play again." : "Everyone has guessed. Waiting for the host…";
+    }
     return;
   }
 }
@@ -2124,12 +3011,16 @@ function onlineTick(){
   if (phase !== onlineLastPhase) {
     const was = onlineLastPhase;
     onlineLastPhase = phase;
+    /* Phase change = the moment the lock must follow the round:
+       countdown/live go landscape (guesser and clue-givers alike,
+       while full screen stays on); ready/done/lobby go portrait. */
+    syncOnlineOrientation(phase);
     if (phase === "done" && was !== null) sfx.buzzer();
     renderOnlineRoom();
   }
   const r = onlineRoom.round;
   const pill = $("onlineTimerPill"), bar = $("onlineProgressBar");
-  $("onlineSoundBtn").textContent = "Sound: " + (soundOn ? "On" : "Off");
+  syncSoundButtons();
   if (!r || onlineRoom.status !== "playing") { pill.textContent = timerSecs; bar.style.width = "100%"; return; }
   const total = (r.timerSecs || timerSecs) * 1000;
   const now = Date.now();
@@ -2188,14 +3079,14 @@ function attachOnlineListener(){
       // Room was removed (last player left). Leave quietly.
       const wasOpen = $("onlineOverlay").classList.contains("open");
       onlineDetachOnly();
-      if (wasOpen) { onlineShowError("That room was closed."); openOnlineSheet(); }
+      if (wasOpen) { onlineShowError("That room was closed."); showView("onlineJoin"); }
       return;
     }
     onlineRoom = data;
     onlineClaimHostIfMissing();
     renderOnlineRoom();
   }, function(err){
-    onlineShowError("Couldn't read the room (" + (err && err.code ? err.code : "permission denied") + "). Check the database rules — see the Security & setup guide.");
+    onlineShowError("Couldn't read the room (" + (err && err.code ? err.code : "permission denied") + "). Check the database rules.");
   });
 }
 function onlineDetachOnly(){
@@ -2204,17 +3095,23 @@ function onlineDetachOnly(){
   onlineRoomRef = null; onlineRoom = null; onlineRoomCode = null;
   onlineLastPhase = null; onlineBaselineKey = null;
   closeOverlay("onlineOverlay");
+  keepPortraitFullscreen();
 }
 function onlineRoomObject(uid, name){
   return {
     createdAt: Date.now(),
     hostUid: uid,
     status: "lobby",
-    settings: { deckIds: selectedDeckIds.slice(), deckLabel: deckLabel(), timerSecs: timerSecs, wordCount: combinedWords().length },
-    players: (function(){ const o = {}; o[uid] = { name: name, joinedAt: Date.now(), score: 0 }; return o; })(),
+    settings: { deckIds: selectedDeckIds.slice(), deckLabel: deckLabel(), timerSecs: timerSecs, mode: mode, teamCount: teamCount, turnsPerTeam: turnsPerTeam, wordCount: combinedWords().length },
+    players: (function(){ const o = {}; o[uid] = { name: name, joinedAt: Date.now(), score: 0, team: null }; return o; })(),
     roundIndex: 0,
     round: null,
-    used: []
+    used: [],
+    gameMode: "solo",
+    gameOrder: null,
+    gameTeams: null,
+    turnsTotal: 0,
+    lastGuesserByTeam: {}
   };
 }
 function makeRoomCode(){
@@ -2231,17 +3128,21 @@ async function joinOnlineRoom(code, name){
   onlineRoomCode = code; onlineRoomRef = ref;
   const playerRef = ref.child("players/" + onlineUid);
   try { playerRef.onDisconnect().remove(); } catch (e) {}
-  await playerRef.set({ name: name, joinedAt: Date.now(), score: 0 });
+  await playerRef.set({ name: name, joinedAt: Date.now(), score: 0, team: null });
   attachOnlineListener();
   onlineRoom = data;
   openOverlay("onlineOverlay");
   enterGameFullscreen(false, "portrait");
+  /* Already full screen (e.g. landscape from a round just left)?
+     Swap the lock to portrait for the lobby instead of keeping the
+     landscape lock — full screen itself stays on. */
+  keepPortraitFullscreen();
   onlineStartTick();
   renderOnlineRoom();
 }
 async function onlineCreateRoom(){
   if (onlineBusy) return;
-  if (!selectedDeckIds.length) { onlineShowError("Pick at least one deck in Round settings first."); return; }
+  if (!selectedDeckIds.length) selectedDeckIds = ["mixed"];
   onlineClearError(); onlineSetBusy(true);
   try {
     await ensureOnlineAuth();
@@ -2265,6 +3166,7 @@ async function onlineCreateRoom(){
     attachOnlineListener();
     openOverlay("onlineOverlay");
     enterGameFullscreen(false, "portrait");
+    keepPortraitFullscreen();
     onlineStartTick();
     renderOnlineRoom();
   } catch (e) {
@@ -2280,12 +3182,11 @@ async function onlineJoinRoom(){
     await ensureOnlineAuth();
     const name = ($("onlineNameInput").value || "").trim().slice(0, 24) || ("Player-" + onlineUid.slice(-4));
     onlineName = name;
-    closeAllSheets();
     await joinOnlineRoom(raw, name);
   } catch (e) {
     onlineShowError(e && e.message ? e.message : "Couldn't join that room. Check the code and your internet connection.");
     closeOverlay("onlineOverlay");
-    openSheet("onlineSheet");
+    showView("onlineJoin");
   } finally { onlineSetBusy(false); }
 }
 async function onlineLeaveRoom(){
@@ -2296,6 +3197,7 @@ async function onlineLeaveRoom(){
   onlineRoomRef = null; onlineRoom = null; onlineRoomCode = null;
   closeOverlay("onlineOverlay");
   keepPortraitFullscreen();
+  showView("home");
   if (!ref || !uid || !room) return;
   try {
     const players = Object.keys(room.players || {});
@@ -2318,12 +3220,30 @@ function onlinePlayersSortedFrom(room){
     return { uid: uid, name: p.name || "Player", joinedAt: p.joinedAt || 0, score: p.score || 0 };
   }).sort(function(a, b){ return (a.joinedAt - b.joinedAt) || (a.uid < b.uid ? -1 : 1); });
 }
-function onlineStartRound(nextGuesserUid){
+function onlineTurnPlan(turnNo){
+  const s = onlineSettings();
+  const gameMode = (onlineRoom && onlineRoom.gameMode) || s.mode;
+  if (gameMode === "teams") {
+    const gt = onlineGameTeams() || {};
+    const letters = Object.keys(gt).sort();
+    const t = turnNo - 1;
+    const letter = letters[t % Math.max(1, letters.length)] || "A";
+    const members = gt[letter] || [];
+    const teamTurnNo = Math.floor(t / Math.max(1, letters.length));
+    return { gameMode: gameMode, teamLetter: letter, guesserUid: null, suggestedGuesserUid: members[teamTurnNo % Math.max(1, members.length)] || null };
+  }
+  const order = (onlineRoom && onlineRoom.gameOrder) || onlinePlayersSorted().map(function(p){ return p.uid; });
+  return { gameMode: gameMode, teamLetter: null, guesserUid: order[(turnNo - 1) % Math.max(1, order.length)] || null, suggestedGuesserUid: null };
+}
+function onlineStartRound(turnNo){
   if (!onlineRoomRef || !onlineRoom) return;
+  const plan = onlineTurnPlan(turnNo);
   const queue = onlineBuildQueue();
   const settings = onlineRoom.settings;
   const round = {
-    guesserUid: nextGuesserUid,
+    guesserUid: plan.guesserUid,
+    suggestedGuesserUid: plan.suggestedGuesserUid,
+    teamLetter: plan.teamLetter,
     state: "ready",
     timerSecs: settings.timerSecs,
     deckLabel: settings.deckLabel,
@@ -2334,7 +3254,7 @@ function onlineStartRound(nextGuesserUid){
   };
   onlineRoomRef.update({
     status: "playing",
-    roundIndex: (onlineRoom.roundIndex || 0) + 1,
+    roundIndex: turnNo,
     round: round
   });
 }
@@ -2343,18 +3263,64 @@ function onlineStartGame(){
   const players = onlinePlayersSorted();
   if (players.length < 2) return;
   requestTilt();
-  onlineStartRound(players[0].uid);
+  const s = onlineSettings();
+  let gameOrder = null, gameTeams = null, turnsTotal = players.length;
+  if (s.mode === "teams") {
+    const letters = ["A","B","C","D"].slice(0, s.teamCount);
+    gameTeams = {};
+    letters.forEach(function(L){ gameTeams[L] = []; });
+    players.forEach(function(p){
+      const L = (p.team && letters.indexOf(p.team) !== -1) ? p.team : "A";
+      gameTeams[L].push(p.uid);
+    });
+    const populated = letters.filter(function(L){ return gameTeams[L].length; });
+    if (populated.length < 2) {
+      letters.forEach(function(L){ gameTeams[L] = []; });
+      players.forEach(function(p, i){ gameTeams[letters[i % letters.length]].push(p.uid); });
+    }
+    Object.keys(gameTeams).forEach(function(L){ if (!gameTeams[L].length) delete gameTeams[L]; });
+    turnsTotal = Object.keys(gameTeams).length * s.turnsPerTeam;
+  } else {
+    gameOrder = players.map(function(p){ return p.uid; });
+    turnsTotal = players.length;
+  }
+  /* Freeze the plan locally too: onlineStartRound reads it from the
+     local snapshot before the listener echo arrives. */
+  onlineRoom.gameMode = s.mode;
+  onlineRoom.gameOrder = gameOrder;
+  onlineRoom.gameTeams = gameTeams;
+  onlineRoom.turnsTotal = turnsTotal;
+  onlineRoom.lastGuesserByTeam = {};
+  const updates = { status: "playing", gameMode: s.mode, gameOrder: gameOrder, gameTeams: gameTeams, turnsTotal: turnsTotal, lastGuesserByTeam: {} };
+  players.forEach(function(p){ updates["players/" + p.uid + "/score"] = 0; });
+  onlineRoomRef.update(updates).catch(function(){});
+  onlineStartRound(1);
 }
 function onlineNextRound(){
   if (!onlineIsHost() || !onlineRoom || !onlineRoom.round) return;
+  if ((onlineRoom.roundIndex || 1) >= onlineTurnsTotal()) { onlineFinishGame(); return; }
   const players = onlinePlayersSorted();
   if (players.length < 2) {
     onlineRoomRef.update({ status: "lobby", round: null });
     return;
   }
-  const cur = players.findIndex(function(p){ return p.uid === onlineRoom.round.guesserUid; });
-  const next = players[(cur + 1) % players.length];
-  onlineStartRound(next.uid);
+  onlineStartRound((onlineRoom.roundIndex || 1) + 1);
+}
+function onlineFinishGame(){
+  if (!onlineIsHost() || !onlineRoomRef) return;
+  onlineRoomRef.update({ status: "lobby", round: null, roundIndex: 0 });
+}
+function onlineClaimGuesser(uid){
+  if (!onlineRoomRef || !onlineRoom || !onlineRoom.round) return;
+  const r = onlineRoom.round;
+  if (r.state !== "ready" || r.guesserUid) return;
+  const gt = onlineGameTeams() || {};
+  const members = gt[r.teamLetter] || [];
+  if (members.indexOf(uid) === -1) return; /* only this team's members */
+  if (members.indexOf(onlineUid) === -1) return; /* only a team member picks */
+  const lastUid = (onlineRoom.lastGuesserByTeam || {})[r.teamLetter];
+  if (members.length > 1 && uid === lastUid) return; /* different member next time */
+  onlineRoomRef.child("round/guesserUid").set(uid);
 }
 function onlineGuesserReady(){
   if (!onlineIsGuesser() || !onlineRoomRef || onlinePhase() !== "ready") return;
@@ -2418,6 +3384,9 @@ function tryFinalizeRound(){
     if (guesserUid && correct > 0) {
       onlineRoomRef.child("players/" + guesserUid + "/score").transaction(function(s){ return (s || 0) + correct; });
     }
+    if (guesserUid && cur.teamLetter) {
+      onlineRoomRef.child("lastGuesserByTeam/" + cur.teamLetter).set(guesserUid);
+    }
     const shown = (cur.queue || []).slice(0, cur.wordIndex || 0).map(function(w){ return keyOf(w); });
     if (shown.length) {
       onlineRoomRef.child("used").transaction(function(curUsed){
@@ -2429,8 +3398,7 @@ function tryFinalizeRound(){
   });
 }
 /* Online controls */
-$("heroOnlineBtn").addEventListener("click", openOnlineSheet);
-$("onlineMenuBtn").addEventListener("click", openOnlineSheet);
+$("heroOnlineBtn").addEventListener("click", openOnlineJoin);
 $("onlineCreateBtn").addEventListener("click", onlineCreateRoom);
 $("onlineJoinBtn").addEventListener("click", onlineJoinRoom);
 $("onlineCodeInput").addEventListener("input", function(e){ e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 4); });
@@ -2438,28 +3406,28 @@ $("onlineCodeInput").addEventListener("keydown", function(e){ if (e.key === "Ent
 $("onlineStartBtn").addEventListener("click", onlineStartGame);
 $("onlineReadyBtn").addEventListener("click", onlineGuesserReady);
 $("onlineNextBtn").addEventListener("click", onlineNextRound);
-$("onlineEndRoundBtn").addEventListener("click", tryFinalizeRound);
+$("onlineFinishBtn").addEventListener("click", onlineFinishGame);
+/* Online controls: no End round button — an online round ends
+   only when its synced timer runs out (see tryFinalizeRound). */
 $("onlinePassZone").addEventListener("click", function(){ onlineAnswer("pass"); });
 $("onlineGotZone").addEventListener("click", function(){ onlineAnswer("correct"); });
 $("onlineLeaveBtn").addEventListener("click", onlineLeaveRoom);
 $("onlineLeaveBtn2").addEventListener("click", onlineLeaveRoom);
 $("onlineLeaveTopBtn").addEventListener("click", onlineLeaveRoom);
 $("onlineSoundBtn").addEventListener("click", function(){ setSound(!soundOn); });
-$("onlineDownloadRulesBtn").addEventListener("click", function(){
-  const text = $("onlineRulesCode").textContent;
-  const blob = new Blob([text], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = "security-rules.json";
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
-});
-$("onlineCopyRulesBtn").addEventListener("click", function(){
-  const text = $("onlineRulesCode").textContent;
-  const done = function(){ $("onlineCopyRulesBtn").textContent = "Copied ✓"; setTimeout(function(){ $("onlineCopyRulesBtn").textContent = "Copy rules"; }, 1600); };
-  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, done);
+$("onlineCopyCodeBtn").addEventListener("click", function(){
+  const code = onlineRoomCode || "";
+  if (!code) return;
+  const btn = $("onlineCopyCodeBtn");
+  const done = function(){ btn.textContent = "Copied ✓"; setTimeout(function(){ btn.textContent = "Copy code"; }, 1600); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(done, done);
   else done();
 });
+/* Lobby settings: host-only, synced to the room on every change. */
+lobbySegSetup("lobbyTimerSeg","secs",function(v){ timerSecs = parseInt(v, 10); });
+lobbySegSetup("lobbyModeSeg","mode",function(v){ mode = v; });
+lobbySegSetup("lobbyTeamSeg","teams",function(v){ teamCount = parseInt(v, 10); });
+lobbySegSetup("lobbyTurnsSeg","turns",function(v){ turnsPerTeam = parseInt(v, 10); });
 
 /* ---------- PWA: service worker (offline) ----------
    Try the site-root worker first (full scope when the files are
