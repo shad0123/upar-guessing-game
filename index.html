@@ -754,6 +754,127 @@ footer .wrap{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
 @media (max-height:520px){
   .online-center h2{font-size:clamp(22px,5dvh,28px)}
 }
+/* ---------- Online v27: avatars, ready start, bottom tab bar,
+   voice chat (WebRTC push-to-talk), speaking indicators, text chat,
+   all-mute. Online only — nothing here touches the offline game. */
+/* Nickname row: avatar picker button on the LEFT of the input. */
+.online-name-row{display:flex;gap:10px;align-items:stretch}
+.online-name-row input{flex:1;min-width:0}
+.avatar-pick-btn{flex:none;width:50px;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:3px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.avatar-pick-btn:hover{border-color:var(--accent)}
+.avatar-pick-btn svg{width:40px;height:40px;display:block}
+.avatar-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.avatar-opt{border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:8px 4px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:700;font-size:12px;color:var(--ink)}
+.avatar-opt svg{width:44px;height:44px;display:block}
+.avatar-opt[aria-pressed="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
+@media (max-width:520px){.avatar-grid{grid-template-columns:repeat(3,1fr)}}
+/* Lobby player cards carry the avatar next to the name. */
+.pc-name{display:flex;align-items:center;gap:9px}
+.pc-avatar{flex:none;width:34px;height:34px;border-radius:50%;overflow:hidden;background:#22314f;display:inline-flex}
+.pc-avatar svg{width:100%;height:100%;display:block}
+.pc-name .pc-name-text{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Ready button state in the lobby. */
+#onlineLobbyReadyBtn[aria-pressed="true"]{background:var(--teal);color:#0c1222}
+/* Bottom tab bar: Game/Lobby/Result on the left, Chat on the right.
+   Sits at the very bottom of every online room screen (never on
+   sheets, and never for the Guesser during a live turn). */
+.online-tabbar{flex:none;display:flex;gap:10px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:#0d1730;border-top:1px solid #2b3d6b}
+.online-tabbar[hidden]{display:none!important}
+.online-tab-btn{flex:1;border:1px solid #2b3d6b;background:#1b2a4e;color:#aebddf;border-radius:12px;padding:12px 10px;font-family:"Outfit";font-weight:900;font-size:16px;letter-spacing:.03em;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.online-tab-btn.active{background:var(--lime);color:#0c1222;border-color:var(--lime)}
+/* All-mute button in the nav bar: people + slash, deliberately a
+   different icon from the game-sounds speaker beside it. */
+.allmute-btn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;display:block}
+.allmute-btn .am-slash{display:none}
+.allmute-btn[aria-pressed="true"]{color:var(--lime);border-color:var(--lime)}
+.allmute-btn[aria-pressed="true"] .am-slash{display:block}
+/* Voice chat screen: avatar boxes 3 per row, grid scrolls; the
+   push-to-talk button is fixed at the bottom of the screen, above
+   the Chat tab, with the text-chat button fixed to its left. */
+#onlineChatView{position:relative}
+.online-chat-scroll{flex:1;min-height:0;overflow-y:auto;padding:16px 20px 8px;text-align:center}
+.online-chat-title{font-size:clamp(26px,5vw,36px);margin:0 0 6px;color:#fff}
+.online-chat-sub{color:#aebddf;margin:0 auto 14px;max-width:32rem;font-size:14.5px}
+.voice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:560px;margin:0 auto;text-align:center}
+.voice-box{background:#1b2a4e;border:2px solid #2b3d6b;border-radius:16px;padding:12px 6px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.voice-box .vb-avatar{width:56px;height:56px;border-radius:50%;overflow:hidden;background:#22314f;flex:none}
+.voice-box .vb-avatar svg{width:100%;height:100%;display:block}
+.voice-box .vb-name{font-weight:800;font-size:13.5px;color:#fff;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.voice-box .vb-tag{font-size:10.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#8ea0c8}
+.voice-box.speaking{border-color:var(--lime);box-shadow:0 0 0 2px color-mix(in srgb,var(--lime) 55%,transparent)}
+.voice-box.speaking .vb-tag{color:var(--lime)}
+.voice-box.away{opacity:.55}
+.voice-actions{flex:none;display:flex;gap:10px;align-items:stretch;padding:10px 16px 6px}
+.voice-side-btn{flex:none;width:58px;border-radius:14px;border:1px solid #2b3d6b;background:#22314f;color:#aebddf;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
+.voice-side-btn svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;display:block}
+.voice-side-btn[hidden]{display:none!important}
+.ptt-btn{flex:1;border-radius:14px;border:1px solid #2b3d6b;background:#22314f;color:#fff;font-family:"Outfit";font-weight:900;font-size:17px;letter-spacing:.03em;padding:14px 16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.ptt-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ptt-btn.held{background:var(--lime);color:#0c1222;border-color:var(--lime)}
+.ptt-btn.ptt-small{flex:0 0 auto;padding:10px 14px;font-size:14px;min-width:86px}
+/* Speaking indicator: small box, avatar in a circle, name under it.
+   Clue-givers: pinned top-right of the live screen, under the nav
+   bar. Guesser: the same box sits in the middle of the control row
+   between Pass (left) and push-to-talk (right). */
+#onlineLiveView{position:relative}
+#onlineLiveView:has(#onlineSpeakInd:not([hidden])) .online-round-meta{padding-right:106px}
+.speak-ind{position:absolute;top:8px;right:12px;z-index:3;background:rgba(16,26,52,.92);border:2px solid var(--lime);border-radius:14px;padding:7px 10px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:76px;max-width:110px}
+.speak-ind[hidden]{display:none!important}
+.speak-avatar{width:38px;height:38px;border-radius:50%;overflow:hidden;background:#22314f;flex:none}
+.speak-avatar svg{width:100%;height:100%;display:block}
+.speak-name{font-size:11.5px;font-weight:800;color:#fff;text-align:center;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.15}
+.speak-box{background:rgba(16,26,52,.92);border:2px solid #2b3d6b;border-radius:14px;padding:6px 8px 5px;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:82px;max-width:118px;flex:0 1 auto}
+.speak-box.live{border-color:var(--lime)}
+.speak-box .speak-avatar{width:34px;height:34px}
+.speak-box .speak-name{color:#aebddf}
+.speak-box.live .speak-name{color:#fff}
+/* Guesser control row under the input box: Pass a little to the
+   left, speaking box in the centre, push-to-talk on the right. */
+.online-guess-controls{display:flex;gap:10px;align-items:stretch;justify-content:space-between;width:100%}
+.online-guess-controls .online-guess-pass{min-width:88px}
+/* Text chat sheet (light sheet theme). */
+.chat-body{display:flex;flex-direction:column}
+.chat-list{display:flex;flex-direction:column;gap:12px;overflow-y:auto;min-height:120px}
+.chat-empty{color:var(--muted);text-align:center;margin:12px 0}
+.chat-msg{display:flex;gap:10px;align-items:flex-start;text-align:left}
+.chat-msg .cm-avatar{flex:none;width:34px;height:34px;border-radius:50%;overflow:hidden;background:var(--surface2)}
+.chat-msg .cm-avatar svg{width:100%;height:100%;display:block}
+.chat-msg .cm-main{min-width:0}
+.chat-msg .cm-name{font-size:12.5px;font-weight:800;color:var(--muted);margin:0 0 1px}
+.chat-msg .cm-text{font-size:15px;color:var(--ink);margin:0;overflow-wrap:anywhere;word-break:break-word}
+.chat-msg.mine .cm-name{color:var(--accent)}
+.chat-foot{flex-direction:column;align-items:stretch;gap:10px}
+.chat-emoji-row{display:flex;gap:6px;flex-wrap:wrap}
+.chat-emoji-row button{border:1px solid var(--line);background:var(--surface);border-radius:10px;font-size:19px;padding:5px 9px;cursor:pointer;line-height:1.2}
+.chat-input-row{display:flex;gap:10px}
+.chat-input-row input{flex:1;min-width:0;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:12px 14px;font-size:16px}
+.chat-input-row .btn{flex:none}
+/* Live game screen fit: the whole online live screen — word, input,
+   controls and keyboard — must fit ONE viewport with nothing cut.
+   Sizes below are viewport-height driven so short screens shrink
+   the keyboard and boxes instead of clipping them. */
+.online-stage{padding-bottom:0}
+.online-kbd-key{height:clamp(36px,6.4dvh,50px)}
+.online-guess-wrap{margin-top:10px;gap:8px}
+@media (max-height:700px){
+  .online-word{padding:4px 14px 6px}
+  .online-clue-note{font-size:12px;margin-top:2px}
+  .online-guess-input{padding:10px 12px}
+  .online-guess-pass{padding:10px 12px}
+  .online-mirror-box{padding:9px 12px;min-height:44px}
+  .online-mirror-wrap{margin-top:10px}
+  .online-word-block.guesser-top{padding-top:4px}
+  .online-word-block.clue-top{padding-top:6px}
+  .voice-actions{padding-top:6px}
+  .ptt-btn{padding:11px 14px}
+}
+@media (max-height:560px){
+  .online-kbd{gap:4px}
+  .online-kbd-row{gap:4px}
+  .speak-box .speak-avatar{width:28px;height:28px}
+  .speak-ind .speak-avatar{width:30px;height:30px}
+}
+
 /* Installed web app (standalone display mode) already runs full
    screen: the full screen button is useless there, so it never
    appears — in a browser tab it shows as normal. */
@@ -911,7 +1032,7 @@ html.standalone .fs-toggle{display:none!important}
         <h2>Play Online</h2>
       </div>
       <div class="setup-stack">
-        <p class="setup-rules"><b>How it works:</b> each player is on their own phone. One player is the Guesser — phone on their forehead, word hidden — and everyone else sees the word on their own phone and gives clues over a call. The Guesser rotates every round; +1 point for every correct guess, 0 for a pass. In Team mode, turns rotate through the teams and each team's score adds up. The highest score wins.</p>
+        <p class="setup-rules"><b>How it works:</b> each player is on their own phone. One player is the Guesser — phone on their forehead, word hidden — and everyone else sees the word on their own phone and gives clues with the built-in voice chat (hold the mic button to talk). The Guesser rotates every round; +1 point for every correct guess, 0 for a pass. In Team mode, turns rotate through the teams and each team's score adds up. The highest score wins.</p>
         <div class="panel" style="padding:18px">
           <div class="rejoin-box" id="onlineRejoinBox" hidden>
             <h3>Welcome back</h3>
@@ -922,7 +1043,7 @@ html.standalone .fs-toggle{display:none!important}
             </div>
           </div>
           <div class="online-form">
-            <div class="online-field"><label for="onlineNameInput">Your nickname</label><input id="onlineNameInput" type="text" placeholder="Enter your nickname" autocomplete="off" maxlength="24" /></div>
+            <div class="online-field"><label for="onlineNameInput">Your nickname</label><div class="online-name-row"><button class="avatar-pick-btn" id="onlineAvatarBtn" type="button" aria-label="Choose your avatar" title="Choose your avatar"></button><input id="onlineNameInput" type="text" placeholder="Enter your nickname" autocomplete="off" maxlength="24" /></div></div>
             <button class="btn btn-primary" id="onlineCreateBtn" type="button" style="justify-content:center">Create a room →</button>
             <div class="online-divider">or join a room</div>
             <div class="online-field"><label for="onlineCodeInput">Room code (4 letters)</label><input id="onlineCodeInput" type="text" placeholder="ABCD" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" /></div>
@@ -1026,6 +1147,46 @@ html.standalone .fs-toggle{display:none!important}
     <div class="sheet-foot">
       <button class="btn btn-ghost" id="confirmCancelBtn" type="button">Cancel</button>
       <button class="btn btn-primary" id="confirmOkBtn" type="button">Yes, leave</button>
+    </div>
+  </div>
+</div>
+
+<!-- AVATAR PICKER (online nickname) -->
+<div class="sheet-overlay" id="avatarSheet" role="dialog" aria-modal="true" aria-label="Choose your avatar">
+  <div class="sheet sheet-narrow">
+    <div class="sheet-head">
+      <div>
+        <h2>Choose your avatar</h2>
+        <p>Pick a cartoon animal face — it shows next to your nickname everywhere in the online room.</p>
+      </div>
+      <button class="x-btn" type="button" data-close aria-label="Close">×</button>
+    </div>
+    <div class="sheet-body">
+      <div class="avatar-grid" id="avatarGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TEXT CHAT (online, clue-givers) -->
+<div class="sheet-overlay" id="onlineTextChatSheet" role="dialog" aria-modal="true" aria-label="Text chat">
+  <div class="sheet sheet-narrow">
+    <div class="sheet-head">
+      <div>
+        <h2>Text chat</h2>
+        <p>Messages for the clue-givers in this room. The Guesser never sees this chat.</p>
+      </div>
+      <button class="x-btn" type="button" data-close aria-label="Close">×</button>
+    </div>
+    <div class="sheet-body chat-body">
+      <div class="chat-list" id="onlineChatList"><p class="chat-empty" id="onlineChatEmpty">No messages yet — say hello!</p></div>
+    </div>
+    <div class="sheet-foot chat-foot">
+      <div class="chat-emoji-row" id="onlineChatEmojiRow"></div>
+      <div class="chat-input-row">
+        <label class="sr-only" for="onlineChatInput">Type a message</label>
+        <input id="onlineChatInput" type="text" placeholder="Type a message…" autocomplete="off" maxlength="300" />
+        <button class="btn btn-primary" id="onlineChatSendBtn" type="button">Send</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1322,6 +1483,7 @@ html.standalone .fs-toggle{display:none!important}
       <span style="font-weight:700;color:#aebddf" id="onlineStageLabel">Online</span>
       <span class="spacer"></span>
       <button class="stage-btn sound-btn" id="onlineSoundBtn" type="button" aria-pressed="true" aria-label="Sound on — tap to mute" title="Mute sound"><svg class="snd-icon snd-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18 6a8.5 8.5 0 0 1 0 12"/></svg><svg class="snd-icon snd-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg></button>
+      <button class="stage-btn allmute-btn" id="onlineAllMuteBtn" type="button" aria-pressed="false" aria-label="Mute all voices except the Guesser" title="All mute — silence everyone except the Guesser (your own push-to-talk still works)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7.5" cy="8" r="2.6"/><circle cx="16.5" cy="8" r="2.6"/><path d="M2.8 19c.6-2.7 2.4-4 4.7-4s4.1 1.3 4.7 4M11.8 19c.6-2.7 2.4-4 4.7-4 1.5 0 2.8.6 3.7 1.7"/><path class="am-slash" d="M3.5 3.5l17 17"/></svg></button>
       <button class="stage-btn fs-toggle" id="onlineFullscreenBtn" type="button" data-orient="portrait" aria-pressed="false">Full screen</button>
       <button class="stage-btn" id="onlineLeaveTopBtn" type="button">Leave room</button>
     </div>
@@ -1372,7 +1534,7 @@ html.standalone .fs-toggle{display:none!important}
           <p class="lobby-note" id="lobbySettingsNote">Only the host can change decks &amp; settings — they sync to everyone.</p>
         </div>
         <div class="big-actions">
-          <button class="btn btn-primary" id="onlineStartBtn" type="button">Start game →</button>
+          <button class="btn btn-primary" id="onlineLobbyReadyBtn" type="button">Ready</button>
           <button class="btn btn-ghost" id="onlineLeaveBtn" type="button" style="background:#1b2a4e;color:#fff;border-color:#2b3d6b">Leave room</button>
         </div>
       </div>
@@ -1400,6 +1562,7 @@ html.standalone .fs-toggle{display:none!important}
     </div>
 
     <div class="online-view" id="onlineLiveView" style="flex:1">
+      <div class="speak-ind" id="onlineSpeakInd" hidden><div class="speak-avatar" id="onlineSpeakAvatar"></div><div class="speak-name" id="onlineSpeakName"></div></div>
       <div class="online-word" id="onlineWordArea">
         <div class="online-round-meta">
           <p class="kicker" id="onlineWordKicker" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#8ea0c8;font-weight:800">Word 1</p>
@@ -1420,13 +1583,15 @@ html.standalone .fs-toggle{display:none!important}
             <div class="online-mirror-box" id="onlineMirrorBox" role="status" aria-live="polite" aria-label="Guesser's current guess, shown live"><span class="online-mirror-placeholder">Waiting for a guess…</span></div>
           </div>
           <div id="onlineHiddenWord" hidden>
-            <p class="online-hidden">???</p>
-            <p>The word is hidden from you.<br/>Your friends can see it — listen for their clues.</p>
             <div class="online-guess-wrap" id="onlineGuessWrap">
               <div class="online-guess-row">
-                <button class="online-guess-pass" id="onlinePassBtn" type="button">▲ Pass</button>
                 <label class="sr-only" for="onlineGuessInput">Type your guess</label>
                 <input class="online-guess-input" id="onlineGuessInput" type="text" placeholder="Type your guess…" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="none" readonly />
+              </div>
+              <div class="online-guess-controls">
+                <button class="online-guess-pass" id="onlinePassBtn" type="button">▲ Pass</button>
+                <div class="speak-box" id="onlineSpeakBoxGuess"><div class="speak-avatar" id="onlineSpeakAvatarGuess"></div><div class="speak-name" id="onlineSpeakNameGuess">No one talking</div></div>
+                <button class="ptt-btn ptt-small" id="onlinePttBtnGuess" type="button" aria-label="Hold to talk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3.5 3.5 0 0 0 3.5-3.5v-5a3.5 3.5 0 1 0-7 0v5A3.5 3.5 0 0 0 12 15z"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18.5V21"/></svg><span>Hold</span></button>
               </div>
               <p class="online-guess-feedback" id="onlineGuessFeedback" aria-live="polite"></p>
               <div class="online-kbd" id="onlineKbd" role="group" aria-label="On-screen keyboard"></div>
@@ -1454,6 +1619,23 @@ html.standalone .fs-toggle{display:none!important}
         </div>
         <p id="onlineNextNote" style="font-size:13px;color:#7e90b8">Scores show for 2 seconds — the next turn starts automatically.</p>
       </div>
+    </div>
+
+    <div class="online-view" id="onlineChatView">
+      <div class="online-chat-scroll">
+        <h2 class="online-chat-title">Voice chat</h2>
+        <p class="online-chat-sub" id="onlineVoiceNote">Hold the mic button below to talk — everyone in the room hears you while you hold it. Let go to stop.</p>
+        <div class="voice-grid" id="onlineVoiceGrid"></div>
+      </div>
+      <div class="voice-actions">
+        <button class="voice-side-btn" id="onlineTextChatBtn" type="button" aria-label="Open text chat" title="Text chat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5z"/></svg></button>
+        <button class="ptt-btn" id="onlinePttBtn" type="button" aria-label="Hold to talk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3.5 3.5 0 0 0 3.5-3.5v-5a3.5 3.5 0 1 0-7 0v5A3.5 3.5 0 0 0 12 15z"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18.5V21"/></svg><span>Hold to talk</span></button>
+      </div>
+    </div>
+
+    <div class="online-tabbar" id="onlineTabbar">
+      <button class="online-tab-btn active" id="onlineTabGameBtn" type="button"><span id="onlineTabGameLabel">Lobby</span></button>
+      <button class="online-tab-btn" id="onlineTabChatBtn" type="button">Chat</button>
     </div>
   </div>
 </div>
@@ -3677,6 +3859,94 @@ let onlineDisconnectHandledKey = null, onlineAbsentSkipKey = null;
 let onlineRejoinCandidate = null;
 const ONLINE_DISCONNECT_WAIT_MS = 10000;
 const ONLINE_REJOIN_KEY = "upar-online-rejoin-v1";
+/* v27 state: lobby ready-up, bottom tab bar, avatars, voice chat,
+   text chat, all-mute. All online-only; the offline game never
+   reads any of this. */
+let onlineStartingGame = false;
+let onlineTab = "game"; /* "game" | "chat" — which bottom-tab screen is showing */
+let onlineVoiceGridSig = "";
+let onlineChatListening = false;
+const ONLINE_AVATAR_KEY = "upar-online-avatar-v1";
+
+/* ---------- Avatars: cartoon animal faces (online identity) ----------
+   Ten hand-drawn SVG animal faces. A player picks one from the
+   short window beside the nickname field; the choice is stored on
+   their player record (players/<uid>/avatar) and shown in the
+   lobby cards, the voice-chat grid, the speaking indicators and
+   the text chat. The pick itself is kept on this device only. */
+const ONLINE_AVATARS = {
+  fox:   { name: "Fox",   face: "#f08c3a", ear: "#d96f22", muzzle: "#fff1de", earType: "pointy", extra: "fox" },
+  cat:   { name: "Cat",   face: "#9aa7bd", ear: "#7e8ca3", muzzle: "#eef1f6", earType: "pointy", extra: "cat" },
+  dog:   { name: "Dog",   face: "#c99a5e", ear: "#8a5a2e", muzzle: "#f3e3c8", earType: "floppy", extra: "dog" },
+  panda: { name: "Panda", face: "#f4f4f2", ear: "#33333a", muzzle: "#ffffff", earType: "round",  extra: "panda" },
+  owl:   { name: "Owl",   face: "#8a6fc9", ear: "#7158ab", muzzle: "#e9e2fa", earType: "none",   extra: "owl" },
+  frog:  { name: "Frog",  face: "#62b84f", ear: "#4da33e", muzzle: "#d9f2cf", earType: "none",   extra: "frog" },
+  bear:  { name: "Bear",  face: "#a9743f", ear: "#87592c", muzzle: "#ecd3ac", earType: "round",  extra: "bear" },
+  bunny: { name: "Bunny", face: "#e8e4ef", ear: "#cfc8dd", muzzle: "#ffffff", earType: "long",   extra: "bunny" },
+  tiger: { name: "Tiger", face: "#f5a83d", ear: "#dd8a22", muzzle: "#ffedd2", earType: "pointy", extra: "tiger" },
+  koala: { name: "Koala", face: "#aeb9c6", ear: "#8d9bab", muzzle: "#dde4ec", earType: "round",  extra: "koala" }
+};
+function avatarSVG(id){
+  const a = ONLINE_AVATARS[id] || ONLINE_AVATARS.fox;
+  let ears = "";
+  if (a.earType === "pointy") ears = '<path d="M15 27 L19 7 L33 18 Z" fill="' + a.ear + '"/><path d="M49 27 L45 7 L31 18 Z" fill="' + a.ear + '"/>';
+  else if (a.earType === "round") ears = '<circle cx="14" cy="18" r="8.5" fill="' + a.ear + '"/><circle cx="50" cy="18" r="8.5" fill="' + a.ear + '"/><circle cx="14" cy="18" r="4.2" fill="' + a.muzzle + '" opacity=".8"/><circle cx="50" cy="18" r="4.2" fill="' + a.muzzle + '" opacity=".8"/>';
+  else if (a.earType === "floppy") ears = '<ellipse cx="10" cy="34" rx="7" ry="15" fill="' + a.ear + '" transform="rotate(14 10 34)"/><ellipse cx="54" cy="34" rx="7" ry="15" fill="' + a.ear + '" transform="rotate(-14 54 34)"/>';
+  else if (a.earType === "long") ears = '<ellipse cx="22" cy="12" rx="5.5" ry="13" fill="' + a.ear + '" transform="rotate(-8 22 12)"/><ellipse cx="42" cy="12" rx="5.5" ry="13" fill="' + a.ear + '" transform="rotate(8 42 12)"/><ellipse cx="22" cy="13" rx="2.4" ry="8" fill="#f2a7bb" transform="rotate(-8 22 13)"/><ellipse cx="42" cy="13" rx="2.4" ry="8" fill="#f2a7bb" transform="rotate(8 42 13)"/>';
+  let head = '<circle cx="32" cy="36" r="21" fill="' + a.face + '"/>';
+  let face = "";
+  if (a.extra === "frog") {
+    face = '<circle cx="20" cy="16" r="7.5" fill="' + a.face + '"/><circle cx="44" cy="16" r="7.5" fill="' + a.face + '"/>'
+      + '<circle cx="20" cy="16" r="3.4" fill="#fff"/><circle cx="44" cy="16" r="3.4" fill="#fff"/>'
+      + '<circle cx="20" cy="16.5" r="2" fill="#26221f"/><circle cx="44" cy="16.5" r="2" fill="#26221f"/>'
+      + '<path d="M21 43 Q32 51 43 43" fill="none" stroke="#2c5b24" stroke-width="2.4" stroke-linecap="round"/>'
+      + '<circle cx="17" cy="40" r="3.4" fill="#f2a7bb" opacity=".65"/><circle cx="47" cy="40" r="3.4" fill="#f2a7bb" opacity=".65"/>';
+    return '<svg viewBox="0 0 64 64" aria-hidden="true">' + ears + head + face + "</svg>";
+  }
+  if (a.extra === "panda") face += '<ellipse cx="24" cy="34" rx="5.2" ry="6.8" fill="#33333a" transform="rotate(14 24 34)"/><ellipse cx="40" cy="34" rx="5.2" ry="6.8" fill="#33333a" transform="rotate(-14 40 34)"/>';
+  if (a.extra === "owl") face += '<circle cx="24" cy="34" r="6.4" fill="#fff"/><circle cx="40" cy="34" r="6.4" fill="#fff"/>';
+  if (a.extra === "tiger") face += '<path d="M32 16v6M24 18l2.5 5M40 18l-2.5 5" stroke="#b35f16" stroke-width="2.6" stroke-linecap="round" fill="none"/>';
+  if (a.extra === "dog") face += '<ellipse cx="41" cy="31" rx="6" ry="7.5" fill="#8a5a2e" opacity=".5"/>';
+  if (a.extra === "fox") face += '<ellipse cx="19" cy="45" rx="7" ry="6" fill="#fff1de" opacity=".85"/><ellipse cx="45" cy="45" rx="7" ry="6" fill="#fff1de" opacity=".85"/>';
+  face += '<ellipse cx="32" cy="44" rx="8.4" ry="6.2" fill="' + a.muzzle + '"/>';
+  if (a.extra === "koala") {
+    face += '<circle cx="24" cy="34" r="2.7" fill="#26221f"/><circle cx="40" cy="34" r="2.7" fill="#26221f"/><ellipse cx="32" cy="42" rx="5" ry="7" fill="#5d6a7a"/>';
+  } else if (a.extra === "owl") {
+    face += '<circle cx="24" cy="34" r="2.9" fill="#26221f"/><circle cx="40" cy="34" r="2.9" fill="#26221f"/><path d="M28 42 L36 42 L32 47 Z" fill="#f5a83d"/>';
+  } else {
+    face += '<circle cx="24" cy="34" r="2.8" fill="#26221f"/><circle cx="40" cy="34" r="2.8" fill="#26221f"/>';
+    face += '<ellipse cx="32" cy="41.5" rx="3.1" ry="2.3" fill="' + (a.extra === "bunny" ? "#e77b98" : "#4a3428") + '"/>';
+    face += '<path d="M32 43.8 Q32 47 28.5 47.5M32 43.8 Q32 47 35.5 47.5" fill="none" stroke="#4a3428" stroke-width="1.7" stroke-linecap="round"/>';
+    if (a.extra === "bunny") face += '<rect x="29.6" y="47.6" width="4.8" height="3.6" rx="1" fill="#fff" stroke="#cbbfd8" stroke-width=".7"/>';
+    if (a.extra === "cat") face += '<path d="M6 40h9M7 46l9-1.5M58 40h-9M57 46l-9-1.5" stroke="#6d7a8f" stroke-width="1.6" stroke-linecap="round"/>';
+  }
+  return '<svg viewBox="0 0 64 64" aria-hidden="true">' + ears + head + face + "</svg>";
+}
+let onlineAvatar = "fox";
+try {
+  const savedAvatar = window.localStorage ? localStorage.getItem(ONLINE_AVATAR_KEY) : null;
+  if (savedAvatar && ONLINE_AVATARS[savedAvatar]) onlineAvatar = savedAvatar;
+} catch (e) { /* default fox */ }
+function syncAvatarPickBtn(){ const b = $("onlineAvatarBtn"); if (b) b.innerHTML = avatarSVG(onlineAvatar); }
+function buildAvatarGrid(){
+  const grid = $("avatarGrid");
+  if (!grid || grid.childNodes.length) return;
+  Object.keys(ONLINE_AVATARS).forEach(function(id){
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "avatar-opt"; b.dataset.avatar = id;
+    b.setAttribute("aria-pressed", String(id === onlineAvatar));
+    b.setAttribute("aria-label", "Choose the " + ONLINE_AVATARS[id].name + " avatar");
+    b.innerHTML = avatarSVG(id) + "<span>" + ONLINE_AVATARS[id].name + "</span>";
+    b.addEventListener("click", function(){
+      onlineAvatar = id;
+      try { if (window.localStorage) localStorage.setItem(ONLINE_AVATAR_KEY, id); } catch (e) {}
+      grid.querySelectorAll(".avatar-opt").forEach(function(x){ x.setAttribute("aria-pressed", String(x.dataset.avatar === id)); });
+      syncAvatarPickBtn();
+      closeSheetEl($("avatarSheet"));
+    });
+    grid.appendChild(b);
+  });
+}
 
 function onlineLoadScript(src){
   return new Promise(function(resolve, reject){
@@ -3814,7 +4084,7 @@ function onlinePlayersSorted(){
   if (!onlineRoom || !onlineRoom.players) return [];
   return Object.keys(onlineRoom.players).map(function(uid){
     const p = onlineRoom.players[uid] || {};
-    return { uid: uid, name: p.name || "Player", joinedAt: p.joinedAt || 0, score: p.score || 0, team: p.team || null, leftVoluntarily: !!p.leftVoluntarily, away: !!p.away, lastSeenAt: p.lastSeenAt || 0 };
+    return { uid: uid, name: p.name || "Player", avatar: p.avatar || "fox", joinedAt: p.joinedAt || 0, score: p.score || 0, team: p.team || null, leftVoluntarily: !!p.leftVoluntarily, away: !!p.away, lastSeenAt: p.lastSeenAt || 0 };
   }).sort(function(a, b){ return (a.joinedAt - b.joinedAt) || (a.uid < b.uid ? -1 : 1); });
 }
 function onlineIsHost(){ return !!(onlineRoom && onlineUid && onlineRoom.hostUid === onlineUid); }
@@ -3890,6 +4160,18 @@ function onlineBuildQueue(){
 function onlineShowView(id){
   document.querySelectorAll("#onlineOverlay .online-view").forEach(function(v){ v.classList.toggle("show", v.id === id); });
 }
+/* Phase views inside renderOnlineRoom go through this wrapper: if
+   the player is on the Chat tab, the room render must not yank them
+   back to a game screen — the chat view stays up (voice keeps
+   running across screens) until they tap the game tab, or the game
+   forces it (Guesser's own live turn). */
+function onlineShowPhaseView(id){
+  if (onlineTab === "chat") {
+    const guesserForced = onlineIsGuesser() && onlineRoom && onlineRoom.status === "playing" && !!onlineRoom.round;
+    if (!guesserForced) { onlineShowView("onlineChatView"); return; }
+  }
+  onlineShowView(id);
+}
 function onlinePlayerName(uid){
   const list = onlinePlayersSorted();
   const p = list.filter(function(x){ return x.uid === uid; })[0];
@@ -3926,11 +4208,13 @@ function renderOnlineRoom(){
      starts when a disconnect marker appears, clears when the player
      is back (marker gone) or the wait has been handled. */
   syncOnlineDisconnectWatch();
-  /* Full screen button: the lobby and result screens in the room
-     get it, in portrait. The ready ("tap when ready") screen, the
-     countdown and the live round stage itself do not — the word +
-     tilt/tap zones are showing from the ready tap onwards. */
-  $("onlineFullscreenBtn").hidden = (phase === "live" || phase === "expired" || phase === "ready" || phase === "countdown");
+  /* Full screen button: ALWAYS visible on every online room
+     screen — lobby, ready, countdown, live and result. (Sheets
+     never have it; they close with their × as before.) */
+  $("onlineFullscreenBtn").hidden = false;
+  syncOnlineChrome(phase);
+  renderVoiceGrid();
+  if (voiceInitStarted) voiceSyncPeers();
   $("onlineStageLabel").textContent = "Online · Room " + (onlineRoomCode || "");
   $("onlineRoomCodeBig").textContent = onlineRoomCode || "····";
   refreshOnlineSettings();
@@ -3939,7 +4223,7 @@ function renderOnlineRoom(){
   if (onlineRoom.status === "lobby") {
     syncLobbySettingsUI();
     refreshOnlineSettings();
-    onlineShowView("onlineLobbyView");
+    onlineShowPhaseView("onlineLobbyView");
     /* Back in the lobby the timer pill shows the full round time
        again, never the previous round's leftover seconds. */
     $("onlineTimerPill").textContent = (onlineRoom.settings && onlineRoom.settings.timerSecs) || timerSecs;
@@ -3958,7 +4242,7 @@ function renderOnlineRoom(){
       if (p.leftVoluntarily || p.away) tags += '<span class="pc-tag">Away</span>';
       else if ((onlineRoom.disconnects || {})[p.uid]) tags += '<span class="pc-tag">Disconnected…</span>';
       tags += '<span class="pc-tag">#' + (i + 1) + ' in turn order</span>';
-      card.innerHTML = '<div class="pc-name">' + esc(p.name) + '</div><div class="pc-tags">' + tags + '</div>';
+      card.innerHTML = '<div class="pc-name"><span class="pc-avatar">' + avatarSVG(p.avatar) + '</span><span class="pc-name-text">' + esc(p.name) + '</span></div><div class="pc-tags">' + tags + '</div>';
       if (s.mode === "teams") {
         const teamRow = document.createElement("div"); teamRow.className = "pc-team";
         const lab = document.createElement("span"); lab.className = "pc-team-label"; lab.textContent = "Team"; teamRow.appendChild(lab);
@@ -3980,7 +4264,11 @@ function renderOnlineRoom(){
     const waiting = document.createElement("div"); waiting.className = "player-card waiting";
     waiting.innerHTML = "<b>Waiting for friend…</b><span>Share the room code above — anyone with it can join.</span>";
     cards.appendChild(waiting);
-    const start = $("onlineStartBtn");
+    /* Ready-up start (replaces the host's Start button): EVERY
+       player — host included — taps Ready; the button shows the
+       live count ("2/4 ready"). The moment everyone present is
+       ready, the host's client starts the game automatically —
+       nobody has to press Start. */
     const activePlayers = players.filter(function(p){ return !p.leftVoluntarily && !p.away; });
     const enough = activePlayers.length >= 2;
     let teamOk = true, teamMsg = "";
@@ -3991,16 +4279,28 @@ function renderOnlineRoom(){
       teamOk = distinct >= 2;
       if (!teamOk) teamMsg = " Split into at least 2 teams — tap a team on your own card.";
     }
-    const canStart = onlineIsHost() && enough && teamOk;
-    start.disabled = !canStart;
-    start.textContent = onlineIsHost() ? (enough ? (teamOk ? "Start game →" : "Start game →") : "Start game → (need " + (2 - players.length) + " more)") : "Waiting for the host to start…";
-    $("onlineLobbyStatus").textContent = enough
-      ? (onlineIsHost() ? "Everyone is in. Start when you're ready — " + (s.mode === "teams" ? "turns rotate through the teams." : "the first player in turn order guesses first.") + teamMsg : "The host will start the game." + (s.mode === "teams" ? " Tap a team on your card to choose your team." : " First guesser: " + (players[0] ? players[0].name : "—") + "."))
-      : "Waiting for players… need at least 2 to start. Share the room code above.";
+    const readyMap = onlineRoom.lobbyReady || {};
+    const readyCount = activePlayers.filter(function(p){ return !!readyMap[p.uid]; }).length;
+    const myReady = !!readyMap[onlineUid];
+    const readyBtn = $("onlineLobbyReadyBtn");
+    readyBtn.setAttribute("aria-pressed", String(myReady));
+    readyBtn.textContent = myReady ? ("✓ Ready — " + readyCount + "/" + activePlayers.length + " ready") : ("Ready — " + readyCount + "/" + activePlayers.length + " ready");
+    $("onlineLobbyStatus").textContent = !enough
+      ? "Waiting for players… need at least 2 to start. Share the room code above."
+      : (!teamOk
+        ? "Everyone taps Ready and the game starts by itself." + teamMsg
+        : (readyCount >= activePlayers.length
+          ? "Everyone is ready — starting…"
+          : "Everyone taps Ready and the game starts by itself — no Start button needed. " + readyCount + "/" + activePlayers.length + " ready." + (s.mode === "teams" ? " Turns rotate through the teams." : " First guesser: " + (players[0] ? players[0].name : "—") + ".")));
+    if (enough && teamOk && activePlayers.length > 0 && readyCount >= activePlayers.length && onlineIsHost() && !onlineStartingGame) {
+      onlineStartingGame = true;
+      setTimeout(function(){ onlineStartingGame = false; }, 4000);
+      onlineStartGame();
+    }
     return;
   }
   if (onlineRoom.status !== "playing" || !onlineRoom.round) {
-    onlineShowView("onlineLobbyView");
+    onlineShowPhaseView("onlineLobbyView");
     $("onlineTimerPill").textContent = (onlineRoom.settings && onlineRoom.settings.timerSecs) || timerSecs;
     $("onlineTimerPill").classList.remove("low");
     $("onlineProgressBar").style.width = "100%";
@@ -4010,7 +4310,7 @@ function renderOnlineRoom(){
   const guesserName = onlinePlayerName(r.guesserUid);
   const roundNo = onlineRoom.roundIndex || 1;
   if (phase === "ready") {
-    onlineShowView("onlineReadyView");
+    onlineShowPhaseView("onlineReadyView");
     /* The next round's ready screen resets the pill to the full
        round time at once — the previous round's leftover seconds
        must not flash here while the tick catches up. */
@@ -4053,7 +4353,7 @@ function renderOnlineRoom(){
     } else if (onlineIsGuesser()) {
       claimRow.hidden = true;
       $("onlineReadyTitle").textContent = "Your turn — phone on your forehead";
-      $("onlineReadyText").textContent = "Keep the phone upright (portrait), screen facing away from you. The word stays hidden on your phone; everyone else can see it and will give you clues over the call. " + (onlineDetectTouchInput() ? "Type your guess with the on-screen keyboard under the ???" : "Type your guess in the box under the ??? with your keyboard") + " — the game checks as you type and accepts it the moment it's right. Tap Pass to skip a word.";
+      $("onlineReadyText").textContent = "Keep the phone upright (portrait), screen facing away from you. The word stays hidden on your phone; everyone else can see it and will give you clues. " + (onlineDetectTouchInput() ? "Type your guess with the on-screen keyboard in the box at the top of your screen" : "Type your guess in the box at the top of your screen with your keyboard") + " — the game checks as you type and accepts it the moment it's right. Tap Pass to skip a word. Hold the mic button to talk to your clue-givers.";
       $("onlineReadyBtn").style.display = "";
       $("onlineReadyWait").textContent = "";
     } else {
@@ -4066,7 +4366,7 @@ function renderOnlineRoom(){
     return;
   }
   if (phase === "countdown") {
-    onlineShowView("onlineCountdownView");
+    onlineShowPhaseView("onlineCountdownView");
     $("onlineTimerPill").textContent = r.timerSecs || timerSecs;
     $("onlineTimerPill").classList.remove("low");
     $("onlineProgressBar").style.width = "100%";
@@ -4075,7 +4375,7 @@ function renderOnlineRoom(){
     return;
   }
   if (phase === "live" || phase === "expired") {
-    onlineShowView("onlineLiveView");
+    onlineShowPhaseView("onlineLiveView");
     const idx = r.wordIndex || 0;
     const w = (r.queue && r.queue[idx]) || null;
     const isG = onlineIsGuesser();
@@ -4127,7 +4427,7 @@ function renderOnlineRoom(){
     $("onlineLivePass").textContent = "Pass: " + (r.pass || 0);
     $("onlineWordsLeft").textContent = "Words left: " + Math.max(0, (r.queue || []).length - idx - 1);
     if (isG) onlineApplyGuessInputMode();
-    $("onlineClueNote").textContent = isG ? (onlineTouchInput ? "You're guessing — type your guess on the keyboard under the ???; the moment it's right, it's accepted. Tap Pass to skip to the next word." : "You're guessing — type your guess in the box under the ??? with your keyboard; the moment it's right, it's accepted. Tap Pass to skip to the next word.") : "You're giving clues — " + guesserName + " is guessing and can't see this word. What they type appears live in the box under the word.";
+    $("onlineClueNote").textContent = isG ? (onlineTouchInput ? "You're guessing — the word is hidden from you. Type your guess in the box above; the moment it's right, it's accepted. Tap Pass to skip, hold the mic to talk." : "You're guessing — the word is hidden from you. Type your guess in the box above with your keyboard; the moment it's right, it's accepted. Tap Pass to skip, hold the mic to talk.") : "You're giving clues — " + guesserName + " is guessing and can't see this word. What they type appears live in the box under the word.";
     /* New word = fresh input: clear the guess box and any feedback
        only when the word actually changes, so a snapshot echo
        mid-typing never wipes what the guesser is writing. */
@@ -4152,7 +4452,7 @@ function renderOnlineRoom(){
     return;
   }
   if (phase === "done") {
-    onlineShowView("onlineResultView");
+    onlineShowPhaseView("onlineResultView");
     const correctWords = r.correctWords || [], passWords = r.passWords || [];
     const isFinal = onlineIsFinalTurn();
     const gameMode = onlineRoom.gameMode || onlineSettings().mode;
@@ -4358,6 +4658,7 @@ function onlineMaybeSkipAbsentGuesser(){
 }
 function onlineTick(){
   if (!onlineRoom || !$("onlineOverlay").classList.contains("open")) return;
+  voiceUpdateIndicators();
   onlineMaybeSkipAbsentGuesser();
   const phase = onlinePhase();
   if (phase !== onlineLastPhase) {
@@ -4428,6 +4729,7 @@ function onlineClaimHostIfMissing(){
 function attachOnlineListener(){
   if (!onlineRoomRef) return;
   onlineRoomRef.off();
+  onlineChatListen();
   onlineRoomRef.on("value", function(snap){
     const data = snap.val();
     if (!data) {
@@ -4448,6 +4750,8 @@ function attachOnlineListener(){
   });
 }
 function onlineDetachOnly(){
+  voiceTeardown();
+  onlineChatReset();
   if (onlineRoomRef) { try { onlineRoomRef.off(); } catch (e) {} }
   onlineStopTick();
   stopOnlineDisconnectWatch();
@@ -4455,6 +4759,7 @@ function onlineDetachOnly(){
   onlineGuessWordKey = null;
   onlineRoomRef = null; onlineRoom = null; onlineRoomCode = null;
   onlineLastPhase = null; onlineBaselineKey = null;
+  onlineTab = "game"; onlineVoiceGridSig = ""; onlineStartingGame = false;
   closeOverlay("onlineOverlay");
   keepPortraitFullscreen();
 }
@@ -4464,7 +4769,7 @@ function onlineRoomObject(uid, name){
     hostUid: uid,
     status: "lobby",
     settings: { deckIds: selectedDeckIds.slice(), deckLabel: deckLabel(), timerSecs: timerSecs, mode: mode, teamCount: teamCount, turnsPerTeam: turnsPerTeam, wordCount: combinedWords().length },
-    players: (function(){ const o = {}; o[uid] = { name: name, joinedAt: Date.now(), score: 0, team: null, leftVoluntarily: false, away: false }; return o; })(),
+    players: (function(){ const o = {}; o[uid] = { name: name, avatar: onlineAvatar, joinedAt: Date.now(), score: 0, team: null, leftVoluntarily: false, away: false }; return o; })(),
     roundIndex: 0,
     round: null,
     used: [],
@@ -4486,18 +4791,34 @@ async function joinOnlineRoom(code, name){
   const data = snap.val();
   if (!data) throw new Error("No room with code " + code + " — check the code and try again.");
   const existing = (data.players && data.players[onlineUid]) || null;
+  /* Nickname check, BEFORE joining: two players in one room can
+     never share a nickname (compared trimmed + case-insensitive).
+     It applies to brand-new joiners AND to players coming back —
+     anyone whose nickname is already taken by someone else in the
+     room stays on the Join Room screen (code still filled in) and
+     is asked to pick a different nickname. Your own seat never
+     counts against you. */
+  const normNick = function(s){ return String(s || "").trim().toLowerCase(); };
+  const nickTaken = Object.keys(data.players || {}).some(function(uid){
+    const p = (data.players || {})[uid] || {};
+    return uid !== onlineUid && !p.leftVoluntarily && normNick(p.name) === normNick(name) && normNick(name) !== "";
+  });
+  if (nickTaken) throw new Error("The nickname \"" + name + "\" is already taken in this room — change your nickname above and try again.");
   /* A game in progress is closed to new players — but a member who
      dropped out rejoins their own seat, keeping name, score and
      turn position (joinedAt/team/score are never overwritten). */
   if (data.status !== "lobby" && !existing) throw new Error("That game has already started — ask the host to finish, then create a new room.");
-  if (existing && existing.leftVoluntarily) throw new Error("You left that room with the Leave Room button, so you can't rejoin it.");
+  /* Leaving mid-game is final — but leaving from the LOBBY is not:
+     the lobby rule brings the player straight back to the same
+     lobby (see checkOnlineRejoin). */
+  if (existing && existing.leftVoluntarily && data.status !== "lobby") throw new Error("You left that room with the Leave Room button, so you can't rejoin it.");
   onlineRoomCode = code; onlineRoomRef = ref;
   onlineVoluntaryLeave = false;
   const playerRef = ref.child("players/" + onlineUid);
   if (existing) {
-    await playerRef.update({ name: name, leftVoluntarily: false, away: false, lastSeenAt: firebase.database.ServerValue.TIMESTAMP });
+    await playerRef.update({ name: name, avatar: onlineAvatar, leftVoluntarily: false, away: false, lastSeenAt: firebase.database.ServerValue.TIMESTAMP });
   } else {
-    await playerRef.set({ name: name, joinedAt: Date.now(), score: 0, team: null, leftVoluntarily: false, away: false });
+    await playerRef.set({ name: name, avatar: onlineAvatar, joinedAt: Date.now(), score: 0, team: null, leftVoluntarily: false, away: false });
   }
   try { await ref.child("disconnects/" + onlineUid).remove(); } catch (e) {}
   onlineRegisterPresence();
@@ -4581,12 +4902,17 @@ async function onlineLeaveRoom(){
   /* Voluntary leave is NOT a disconnect: flag it first (so the
      .info/connected watcher stays silent), cancel the pending
      onDisconnect writes (so no disconnect marker or lastSeenAt
-     stamp ever lands for this exit), clear the rejoin pointer and
-     mark the seat leftVoluntarily in the room. After this, the
-     rejoin background check will never offer this room again. */
+     stamp ever lands for this exit) and mark the seat
+     leftVoluntarily in the room. The rejoin pointer is cleared
+     ONLY for a mid-game leave (final — no way back). A LOBBY leave
+     keeps the pointer: the lobby rule brings the player straight
+     back to the same lobby next time they tap Play Online. */
   onlineVoluntaryLeave = true;
-  onlineClearRejoinPointer();
+  const leftFromLobby = !!(room && room.status === "lobby");
+  if (!leftFromLobby) onlineClearRejoinPointer();
   onlineRejoinCandidate = null; hideOnlineRejoinBox();
+  voiceTeardown();
+  onlineChatReset();
   if (ref && uid) {
     try { await ref.child("players/" + uid).onDisconnect().cancel(); } catch (e) {}
     try { await ref.child("disconnects/" + uid).onDisconnect().cancel(); } catch (e) {}
@@ -4597,6 +4923,7 @@ async function onlineLeaveRoom(){
   clearOnlineAutoAdvance();
   onlineGuessWordKey = null;
   onlineRoomRef = null; onlineRoom = null; onlineRoomCode = null;
+  onlineTab = "game"; onlineVoiceGridSig = ""; onlineStartingGame = false;
   closeOverlay("onlineOverlay");
   keepPortraitFullscreen();
   showView("home");
@@ -4696,7 +5023,7 @@ function onlineStartGame(){
   onlineRoom.gameTeams = gameTeams;
   onlineRoom.turnsTotal = turnsTotal;
   onlineRoom.lastGuesserByTeam = {};
-  const updates = { status: "playing", gameMode: s.mode, gameOrder: gameOrder, gameTeams: gameTeams, turnsTotal: turnsTotal, lastGuesserByTeam: {} };
+  const updates = { status: "playing", gameMode: s.mode, gameOrder: gameOrder, gameTeams: gameTeams, turnsTotal: turnsTotal, lastGuesserByTeam: {}, lobbyReady: null };
   players.forEach(function(p){ updates["players/" + p.uid + "/score"] = 0; });
   onlineRoomRef.update(updates).catch(function(){});
   onlineStartRound(1);
@@ -4713,7 +5040,7 @@ function onlineNextRound(){
 }
 function onlineFinishGame(){
   if (!onlineIsHost() || !onlineRoomRef) return;
-  onlineRoomRef.update({ status: "lobby", round: null, roundIndex: 0 });
+  onlineRoomRef.update({ status: "lobby", round: null, roundIndex: 0, lobbyReady: null });
 }
 function onlineClaimGuesser(uid){
   if (!onlineRoomRef || !onlineRoom || !onlineRoom.round) return;
@@ -4943,18 +5270,407 @@ function tryFinalizeRound(){
     }
   });
 }
+/* ---------- Bottom tab bar (online room) ----------
+   Left button switches between the game screens; its label follows
+   the room: "Lobby" in the lobby, "Game" from the ready screen
+   onwards, "Result" on the result screen. Right button is always
+   "Chat" and opens the voice chat screen. The Guesser gets NO tab
+   bar during the countdown / live turn — just the game screen. */
+function syncOnlineChrome(phase){
+  const bar = $("onlineTabbar");
+  if (!bar || !onlineRoom) return;
+  const inGame = onlineRoom.status === "playing" && !!onlineRoom.round;
+  const iAmGuesser = onlineIsGuesser();
+  if (iAmGuesser && inGame && (phase === "live" || phase === "expired" || phase === "countdown")) onlineTab = "game";
+  if (iAmGuesser && inGame && phase === "ready") onlineTab = "game";
+  const guesserLive = iAmGuesser && inGame && (phase === "live" || phase === "expired" || phase === "countdown");
+  bar.hidden = guesserLive;
+  const label = !inGame ? "Lobby" : (phase === "done" ? "Result" : "Game");
+  $("onlineTabGameLabel").textContent = label;
+  $("onlineTabGameBtn").classList.toggle("active", onlineTab === "game");
+  $("onlineTabChatBtn").classList.toggle("active", onlineTab === "chat");
+  /* The text-chat button lives on the voice chat screen, fixed to
+     the left of push-to-talk — clue-givers only. The Guesser never
+     sees text chat at all. */
+  const tcBtn = $("onlineTextChatBtn");
+  if (tcBtn) tcBtn.hidden = !!(inGame && iAmGuesser);
+  if (onlineTab === "chat" && !guesserLive) onlineShowView("onlineChatView");
+}
+function onlineSetTab(tab){
+  onlineTab = tab;
+  if (!onlineRoom) return;
+  if (tab === "chat") { onlineShowView("onlineChatView"); voiceInit(); }
+  else renderOnlineRoom();
+  syncOnlineChrome(onlinePhase());
+}
+
+/* ---------- Voice chat: WebRTC mesh, Firebase signalling only ----------
+   Push-to-talk voice between the phones in the room. Firebase is
+   used ONLY to exchange WebRTC offers/answers/ICE (voiceSig /
+   voiceIce under the room) and tiny presence/speaking flags
+   (voicePresence / voice) — the audio itself flows peer-to-peer.
+   No new account, service or cost. Peers are full-mesh: the lower
+   uid of each pair sends the offer. A player's mic track stays
+   disabled except while they hold a push-to-talk button. */
+let voiceStream = null, voiceCtx = null, voiceAnalyser = null, voiceFreqData = null;
+let voicePeers = {}, voiceAudioEls = {}, voiceIceQueue = {}, voiceRemoteReady = {};
+let voiceSigSeen = {};
+let voiceInitStarted = false, voiceHasMic = false;
+let voicePttHeld = false, voiceSpeakingNow = false, voiceSpeakTimer = null, voiceSpeakBeatAt = 0;
+let allMuteOn = false;
+
+function voiceAttachAudio(uid, stream){
+  let el = voiceAudioEls[uid];
+  if (!el) {
+    el = document.createElement("audio");
+    el.autoplay = true; el.setAttribute("playsinline", "");
+    el.style.display = "none";
+    document.body.appendChild(el);
+    voiceAudioEls[uid] = el;
+  }
+  el.srcObject = stream;
+  voiceApplyMute();
+  const p = el.play(); if (p && p.catch) p.catch(function(){});
+}
+function voiceApplyMute(){
+  /* All mute: every voice is silenced EXCEPT the current Guesser's.
+     My own push-to-talk is sending, never playback, so it is never
+     affected. Applied locally to the <audio> elements only. */
+  const guesserUid = onlineRoom && onlineRoom.round ? onlineRoom.round.guesserUid : null;
+  Object.keys(voiceAudioEls).forEach(function(uid){
+    voiceAudioEls[uid].muted = !!(allMuteOn && uid !== guesserUid);
+  });
+}
+function voiceSendSig(toUid, msg){
+  if (!onlineRoomRef) return;
+  msg.at = Date.now();
+  try { onlineRoomRef.child("voiceSig/" + toUid + "/" + onlineUid).set(msg); } catch (e) {}
+}
+function voiceMakeOffer(uid){
+  const pc = voicePeers[uid];
+  if (!pc) return;
+  pc.createOffer().then(function(o){ return pc.setLocalDescription(o); }).then(function(){
+    voiceSendSig(uid, { type: "offer", sdp: pc.localDescription.sdp });
+  }).catch(function(){});
+}
+function voiceFlushIce(uid){
+  const pc = voicePeers[uid];
+  const q = voiceIceQueue[uid] || [];
+  voiceIceQueue[uid] = [];
+  q.forEach(function(c){ try { pc.addIceCandidate(new RTCIceCandidate(c)); } catch (e) {} });
+}
+function voiceHandleIce(fromUid, raw){
+  let cand = null;
+  try { cand = JSON.parse(raw); } catch (e) { return; }
+  const pc = voicePeers[fromUid];
+  if (pc && voiceRemoteReady[fromUid]) { try { pc.addIceCandidate(new RTCIceCandidate(cand)); } catch (e) {} }
+  else { (voiceIceQueue[fromUid] = voiceIceQueue[fromUid] || []).push(cand); }
+}
+function voiceHandleSignal(fromUid, msg){
+  if (!msg || !msg.type) return;
+  const key = fromUid + ":" + msg.type + ":" + (msg.at || 0);
+  if (voiceSigSeen[key]) return;
+  voiceSigSeen[key] = true;
+  const pc = voiceEnsurePeer(fromUid);
+  if (!pc) return;
+  if (msg.type === "offer") {
+    pc.setRemoteDescription(new RTCSessionDescription({ type: "offer", sdp: msg.sdp })).then(function(){
+      voiceRemoteReady[fromUid] = true; voiceFlushIce(fromUid);
+      return pc.createAnswer();
+    }).then(function(a){ return pc.setLocalDescription(a); }).then(function(){
+      voiceSendSig(fromUid, { type: "answer", sdp: pc.localDescription.sdp });
+    }).catch(function(){});
+  } else if (msg.type === "answer") {
+    pc.setRemoteDescription(new RTCSessionDescription({ type: "answer", sdp: msg.sdp })).then(function(){
+      voiceRemoteReady[fromUid] = true; voiceFlushIce(fromUid);
+    }).catch(function(){});
+  } else if (msg.type === "reinvite") {
+    /* The other side just got a mic — if I am this pair's offerer,
+       send a fresh offer so their track reaches me. */
+    if (onlineUid < fromUid) voiceMakeOffer(fromUid);
+  }
+}
+function voiceEnsurePeer(uid){
+  if (!onlineRoomRef || !onlineUid || uid === onlineUid) return null;
+  if (voicePeers[uid]) return voicePeers[uid];
+  if (!window.RTCPeerConnection) return null;
+  let pc = null;
+  try { pc = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:stun1.l.google.com:19302" }] }); } catch (e) { return null; }
+  voicePeers[uid] = pc;
+  voiceIceQueue[uid] = voiceIceQueue[uid] || [];
+  if (voiceStream) voiceStream.getTracks().forEach(function(t){ try { pc.addTrack(t, voiceStream); } catch (e) {} });
+  else { try { pc.addTransceiver("audio", { direction: "recvonly" }); } catch (e) {} }
+  pc.onicecandidate = function(e){
+    if (e.candidate && onlineRoomRef) {
+      try { onlineRoomRef.child("voiceIce/" + uid + "/" + onlineUid).push(JSON.stringify(e.candidate)); } catch (err) {}
+    }
+  };
+  pc.ontrack = function(e){ if (e.streams && e.streams[0]) voiceAttachAudio(uid, e.streams[0]); };
+  try {
+    onlineRoomRef.child("voiceSig/" + onlineUid + "/" + uid).on("value", function(snap){ const m = snap.val(); if (m) voiceHandleSignal(uid, m); });
+    onlineRoomRef.child("voiceIce/" + onlineUid + "/" + uid).on("child_added", function(snap){ const v = snap.val(); if (v) voiceHandleIce(uid, v); });
+  } catch (e) {}
+  if (onlineUid < uid) voiceMakeOffer(uid);
+  return pc;
+}
+function voiceSyncPeers(){
+  if (!onlineRoom || !onlineRoomRef || !onlineUid) return;
+  const presence = onlineRoom.voicePresence || {};
+  Object.keys(presence).forEach(function(uid){ if (uid !== onlineUid) voiceEnsurePeer(uid); });
+}
+async function voiceInit(){
+  if (voiceInitStarted) return;
+  voiceInitStarted = true;
+  if (!window.RTCPeerConnection) return;
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    try {
+      voiceStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      voiceHasMic = true;
+      voiceStream.getAudioTracks().forEach(function(t){ t.enabled = false; }); /* silent until push-to-talk */
+      try {
+        voiceCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const src = voiceCtx.createMediaStreamSource(voiceStream);
+        voiceAnalyser = voiceCtx.createAnalyser();
+        voiceAnalyser.fftSize = 512;
+        voiceFreqData = new Uint8Array(voiceAnalyser.frequencyBinCount);
+        src.connect(voiceAnalyser);
+      } catch (e) { voiceAnalyser = null; }
+    } catch (e) { voiceHasMic = false; /* mic denied — still connects receive-only */ }
+  }
+  if (!onlineRoomRef || !onlineUid) return;
+  try {
+    const pr = onlineRoomRef.child("voicePresence/" + onlineUid);
+    pr.set(firebase.database.ServerValue.TIMESTAMP);
+    pr.onDisconnect().remove();
+  } catch (e) {}
+  /* Peers built before the mic arrived get the track + a fresh
+     round of offers, so a late mic still reaches everyone. */
+  Object.keys(voicePeers).forEach(function(uid){
+    const pc = voicePeers[uid];
+    if (voiceStream) voiceStream.getTracks().forEach(function(t){ try { pc.addTrack(t, voiceStream); } catch (e) {} });
+    if (onlineUid < uid) voiceMakeOffer(uid);
+    else voiceSendSig(uid, { type: "reinvite" });
+  });
+  voiceSyncPeers();
+  const note = $("onlineVoiceNote");
+  if (note && !voiceHasMic) note.textContent = "Microphone is off or blocked — you can still hear everyone. Hold the mic button and allow microphone access to talk.";
+}
+function voiceSetSpeaking(v){
+  if (!onlineRoomRef || !onlineUid) return;
+  if (v) {
+    if (voiceSpeakingNow && Date.now() - voiceSpeakBeatAt < 900) return; /* heartbeat only */
+    voiceSpeakingNow = true; voiceSpeakBeatAt = Date.now();
+    try { onlineRoomRef.child("voice/" + onlineUid).set({ speaking: true, at: firebase.database.ServerValue.TIMESTAMP }); } catch (e) {}
+  } else {
+    if (!voiceSpeakingNow) return;
+    voiceSpeakingNow = false; voiceSpeakBeatAt = 0;
+    try { onlineRoomRef.child("voice/" + onlineUid).set({ speaking: false, at: firebase.database.ServerValue.TIMESTAMP }); } catch (e) {}
+  }
+}
+function voiceSpeakTick(){
+  if (!voicePttHeld) return;
+  let loud = true; /* no analyser (mic via another path) — holding the button means talking */
+  if (voiceAnalyser && voiceFreqData) {
+    voiceAnalyser.getByteFrequencyData(voiceFreqData);
+    let sum = 0;
+    for (let i = 0; i < voiceFreqData.length; i++) sum += voiceFreqData[i];
+    loud = (sum / voiceFreqData.length) > 10;
+  }
+  voiceSetSpeaking(loud && voiceHasMic);
+}
+function voicePttStart(e){
+  if (e) e.preventDefault();
+  if (!onlineRoomRef) return;
+  voiceInit();
+  if (voicePttHeld) return;
+  voicePttHeld = true;
+  document.querySelectorAll(".ptt-btn").forEach(function(b){ b.classList.add("held"); });
+  const begin = function(){
+    if (!voicePttHeld || !voiceStream) return;
+    if (voiceCtx && voiceCtx.state === "suspended") voiceCtx.resume();
+    voiceStream.getAudioTracks().forEach(function(t){ t.enabled = true; });
+    voiceSetSpeaking(voiceHasMic);
+    if (voiceSpeakTimer) clearInterval(voiceSpeakTimer);
+    voiceSpeakTimer = setInterval(voiceSpeakTick, 150);
+  };
+  if (voiceStream) begin();
+  else {
+    const iv = setInterval(function(){
+      if (voiceStream || !voicePttHeld) { clearInterval(iv); begin(); }
+    }, 120);
+  }
+}
+function voicePttEnd(){
+  if (!voicePttHeld) return;
+  voicePttHeld = false;
+  document.querySelectorAll(".ptt-btn").forEach(function(b){ b.classList.remove("held"); });
+  if (voiceSpeakTimer) { clearInterval(voiceSpeakTimer); voiceSpeakTimer = null; }
+  if (voiceStream) voiceStream.getAudioTracks().forEach(function(t){ t.enabled = false; });
+  voiceSetSpeaking(false);
+}
+function voiceTeardown(){
+  voicePttEnd();
+  Object.keys(voicePeers).forEach(function(uid){ try { voicePeers[uid].close(); } catch (e) {} });
+  voicePeers = {}; voiceIceQueue = {}; voiceRemoteReady = {}; voiceSigSeen = {};
+  Object.keys(voiceAudioEls).forEach(function(uid){ const el = voiceAudioEls[uid]; try { el.pause(); el.srcObject = null; el.remove(); } catch (e) {} });
+  voiceAudioEls = {};
+  if (voiceStream) { voiceStream.getTracks().forEach(function(t){ try { t.stop(); } catch (e) {} }); voiceStream = null; }
+  if (voiceCtx) { try { voiceCtx.close(); } catch (e) {} voiceCtx = null; }
+  voiceAnalyser = null; voiceFreqData = null;
+  voiceInitStarted = false; voiceHasMic = false; voiceSpeakingNow = false;
+  if (onlineRoomRef && onlineUid) {
+    try { onlineRoomRef.child("voicePresence/" + onlineUid).remove(); } catch (e) {}
+    try { onlineRoomRef.child("voice/" + onlineUid).remove(); } catch (e) {}
+  }
+}
+/* Who is talking right now (fresh speaking flag, < 3 s old). */
+function voiceCurrentSpeaker(){
+  const v = (onlineRoom && onlineRoom.voice) || {};
+  let best = null;
+  Object.keys(v).forEach(function(uid){
+    const s = v[uid];
+    if (s && s.speaking && Date.now() - (s.at || 0) < 3000) {
+      if (!best || (s.at || 0) > best.at) best = { uid: uid, at: s.at || 0 };
+    }
+  });
+  return best;
+}
+/* Speaking indicators: clue-givers get the box pinned top-right of
+   the live screen; the Guesser gets the same box in the centre of
+   their control row. Both show the speaker's avatar in a small
+   circle with their name underneath. */
+function voiceUpdateIndicators(){
+  if (!onlineRoom) return;
+  const sp = voiceCurrentSpeaker();
+  const phase = onlinePhase();
+  const inGame = onlineRoom.status === "playing" && !!onlineRoom.round;
+  const iAmGuesser = onlineIsGuesser();
+  const ind = $("onlineSpeakInd");
+  if (ind) {
+    const show = !!(sp && inGame && !iAmGuesser && (phase === "live" || phase === "expired"));
+    ind.hidden = !show;
+    if (show) {
+      const p = onlinePlayersSorted().filter(function(x){ return x.uid === sp.uid; })[0];
+      $("onlineSpeakAvatar").innerHTML = avatarSVG(p ? p.avatar : "fox");
+      $("onlineSpeakName").textContent = p ? p.name : "Player";
+    }
+  }
+  const box = $("onlineSpeakBoxGuess");
+  if (box && inGame && iAmGuesser) {
+    box.classList.toggle("live", !!sp);
+    if (sp) {
+      const p2 = onlinePlayersSorted().filter(function(x){ return x.uid === sp.uid; })[0];
+      $("onlineSpeakAvatarGuess").innerHTML = avatarSVG(p2 ? p2.avatar : "fox");
+      $("onlineSpeakNameGuess").textContent = p2 ? p2.name : "Player";
+    } else {
+      $("onlineSpeakAvatarGuess").innerHTML = "";
+      $("onlineSpeakNameGuess").textContent = "No one talking";
+    }
+  }
+  document.querySelectorAll("#onlineVoiceGrid .voice-box").forEach(function(b){
+    b.classList.toggle("speaking", !!(sp && b.dataset.uid === sp.uid));
+  });
+  voiceApplyMute();
+}
+/* Voice chat screen grid: one avatar box per player, 3 per row,
+   rebuilt only when the player set or the speaking state changes
+   (renders arrive on every keystroke of the live guess sync). */
+function renderVoiceGrid(){
+  const grid = $("onlineVoiceGrid");
+  if (!grid || !onlineRoom) return;
+  const sp = voiceCurrentSpeaker();
+  const players = onlinePlayersSorted();
+  const sig = players.map(function(p){ return p.uid + "|" + p.name + "|" + p.avatar + "|" + (p.leftVoluntarily || p.away ? "1" : "0"); }).join(",")
+    + "#" + (sp ? sp.uid : "") + "#" + (onlineRoom.round ? onlineRoom.round.guesserUid || "" : "");
+  if (sig === onlineVoiceGridSig) return;
+  onlineVoiceGridSig = sig;
+  grid.innerHTML = "";
+  players.forEach(function(p){
+    const box = document.createElement("div");
+    box.className = "voice-box" + (p.leftVoluntarily || p.away ? " away" : "") + (sp && sp.uid === p.uid ? " speaking" : "");
+    box.dataset.uid = p.uid;
+    const isGuesser = !!(onlineRoom.round && onlineRoom.round.guesserUid === p.uid);
+    box.innerHTML = '<div class="vb-avatar">' + avatarSVG(p.avatar) + '</div><div class="vb-name">' + esc(p.name) + '</div><div class="vb-tag">'
+      + (sp && sp.uid === p.uid ? "Speaking…" : (p.uid === onlineUid ? "You" : (isGuesser ? "Guesser" : (p.leftVoluntarily || p.away ? "Away" : "Listening")))) + "</div>";
+    grid.appendChild(box);
+  });
+}
+
+/* ---------- Text chat (online, clue-givers only) ----------
+   Messages live under room.chat and update live for everyone in
+   the room; each shows the sender's avatar + nickname. The
+   Guesser never sees it: no button, no sheet, while they guess. */
+let onlineChatRef = null;
+function onlineChatListen(){
+  if (onlineChatListening || !onlineRoomRef) return;
+  onlineChatListening = true;
+  onlineChatRef = onlineRoomRef.child("chat");
+  const list = $("onlineChatList");
+  if (list) list.innerHTML = '<p class="chat-empty" id="onlineChatEmpty">No messages yet — say hello!</p>';
+  try {
+    onlineChatRef.limitToLast(100).on("child_added", function(snap){ onlineChatRenderMessage(snap.val()); });
+  } catch (e) {}
+}
+function onlineChatReset(){
+  if (onlineChatRef) { try { onlineChatRef.off(); } catch (e) {} onlineChatRef = null; }
+  onlineChatListening = false;
+  const list = $("onlineChatList");
+  if (list) list.innerHTML = '<p class="chat-empty" id="onlineChatEmpty">No messages yet — say hello!</p>';
+}
+function onlineChatRenderMessage(m){
+  const list = $("onlineChatList");
+  if (!list || !m || typeof m.text !== "string") return;
+  const empty = $("onlineChatEmpty");
+  if (empty) empty.remove();
+  const row = document.createElement("div");
+  row.className = "chat-msg" + (m.uid === onlineUid ? " mine" : "");
+  row.innerHTML = '<span class="cm-avatar">' + avatarSVG(m.avatar || "fox") + '</span><div class="cm-main"><p class="cm-name">' + esc(m.name || "Player") + '</p><p class="cm-text">' + esc(m.text) + "</p></div>";
+  list.appendChild(row);
+  while (list.childNodes.length > 120) list.removeChild(list.firstChild);
+  const sheet = $("onlineTextChatSheet");
+  if (sheet && sheet.classList.contains("open")) list.scrollTop = list.scrollHeight;
+}
+function onlineChatSend(){
+  const input = $("onlineChatInput");
+  if (!input || !onlineRoomRef) return;
+  const text = input.value.trim().slice(0, 300);
+  if (!text) return;
+  input.value = "";
+  try {
+    onlineRoomRef.child("chat").push({
+      uid: onlineUid, name: onlineName || onlinePlayerName(onlineUid), avatar: onlineAvatar,
+      text: text, at: firebase.database.ServerValue.TIMESTAMP
+    });
+  } catch (e) {}
+}
+function onlineOpenTextChat(){
+  if (!onlineRoom) return;
+  if (onlineRoom.status === "playing" && onlineIsGuesser()) return; /* the Guesser never sees text chat */
+  openSheet("onlineTextChatSheet");
+  const list = $("onlineChatList");
+  if (list) list.scrollTop = list.scrollHeight;
+}
+
 /* ---------- Rejoin: background check when "Play Online" is tapped ----------
    Runs silently: if nothing is found, nothing happens and the
-   normal Create/Join form is simply there. A rejoin is offered only
-   when ALL of these hold, read fresh from the room itself:
-   - a local pointer names a room code (saved on create/join),
-   - the room still exists (room closed = no rejoin),
-   - at least one other player is still in the room and present
-     (if everyone disconnected, the room counts as closed),
-   - this player was a member and did NOT leave via Leave Room,
-   - there is evidence of a disconnect (a disconnect marker, the
-     away flag from a skipped turn, or an onDisconnect lastSeenAt
-     stamp on their player record). */
+   normal Create/Join form is simply there. Read fresh from the
+   room itself:
+   - LOBBY rooms (the lobby rule): if the room is still in the
+     lobby and this player is a member, tapping Play Online brings
+     them STRAIGHT back into the same lobby automatically — whether
+     they disconnected or tapped Leave Room — and nothing about
+     their seat changes. The room stays open while at least one
+     player is in it; with nobody left it is closed (removed).
+   - A game in progress: a rejoin is offered (window above the
+     form) only when the player was a member, did NOT leave via
+     Leave Room (mid-game leave is final), at least one other
+     player is still present, and there is evidence of a disconnect
+     (a disconnect marker, the away flag from a skipped turn, or an
+     onDisconnect lastSeenAt stamp on their player record).
+   - Either way the nickname check in joinOnlineRoom still applies:
+     if the nickname has been taken meanwhile, the join is refused
+     and the player lands on the Join Room screen with the code
+     already filled in, asked to change their nickname. */
 function onlineSaveRejoinPointer(code, name){
   try {
     if (window.localStorage) localStorage.setItem(ONLINE_REJOIN_KEY, JSON.stringify({ code: code, name: name || onlineName || "", uid: onlineUid || "", at: Date.now() }));
@@ -4996,15 +5712,21 @@ async function checkOnlineRejoin(){
     const players = data.players || {};
     const me = players[onlineUid];
     if (!me) { onlineClearRejoinPointer(); return; } /* was never / no longer a member */
-    if (me.leftVoluntarily) { onlineClearRejoinPointer(); return; } /* Leave Room = no rejoin */
     const othersPresent = Object.keys(players).some(function(uid){
       return uid !== onlineUid && !onlinePlayerGone(players[uid]);
     });
     if (!othersPresent) { onlineClearRejoinPointer(); return; } /* everyone gone — room counts as closed */
+    const status = data.status || "lobby";
+    onlineRejoinCandidate = { code: ptr.code, name: me.name || ptr.name || onlineName || "Player", status: status };
+    if (status === "lobby") {
+      /* Lobby rule: automatic return, no window, nothing changes. */
+      onlineRejoinRoom();
+      return;
+    }
+    if (me.leftVoluntarily) { onlineClearRejoinPointer(); onlineRejoinCandidate = null; return; } /* mid-game Leave Room = no rejoin */
     const disc = (data.disconnects || {})[onlineUid];
     const hasDisconnectEvidence = !!disc || !!me.away || !!me.lastSeenAt;
-    if (!hasDisconnectEvidence) return; /* in the room but no disconnect on record — normal flow */
-    onlineRejoinCandidate = { code: ptr.code, name: me.name || ptr.name || onlineName || "Player", status: data.status || "lobby" };
+    if (!hasDisconnectEvidence) { onlineRejoinCandidate = null; return; } /* in the room but no disconnect on record — normal flow */
     showOnlineRejoinBox(onlineRejoinCandidate);
   } catch (e) { /* offline / rules / any failure: stay silent, normal Create/Join flow */ }
 }
@@ -5021,6 +5743,13 @@ async function onlineRejoinRoom(){
     onlineRejoinCandidate = null;
     hideOnlineRejoinBox();
   } catch (e) {
+    /* Refused (e.g. the nickname check — the name was taken while
+       away): land on the Join Room screen with the room code
+       already filled in and the reason showing, so the player only
+       has to change their nickname and tap Join. */
+    const codeInput = $("onlineCodeInput");
+    if (codeInput) codeInput.value = candidate.code;
+    showView("onlineJoin");
     onlineShowError(e && e.message ? e.message : "Couldn't rejoin that room.");
   } finally { onlineSetBusy(false); }
 }
@@ -5032,7 +5761,62 @@ $("onlineCreateBtn").addEventListener("click", onlineCreateRoom);
 $("onlineJoinBtn").addEventListener("click", onlineJoinRoom);
 $("onlineCodeInput").addEventListener("input", function(e){ e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 4); });
 $("onlineCodeInput").addEventListener("keydown", function(e){ if (e.key === "Enter") { e.preventDefault(); onlineJoinRoom(); } });
-$("onlineStartBtn").addEventListener("click", onlineStartGame);
+/* Lobby Ready button: toggles my ready flag in the room; the game
+   starts by itself once everyone present is ready. */
+$("onlineLobbyReadyBtn").addEventListener("click", function(){
+  if (!onlineRoomRef || !onlineUid || !onlineRoom || onlineRoom.status !== "lobby") return;
+  const mine = !!((onlineRoom.lobbyReady || {})[onlineUid]);
+  const ref = onlineRoomRef.child("lobbyReady/" + onlineUid);
+  if (mine) ref.remove(); else ref.set(true);
+});
+/* Bottom tab bar: Game (label follows the room) / Chat (voice). */
+$("onlineTabGameBtn").addEventListener("click", function(){ onlineSetTab("game"); });
+$("onlineTabChatBtn").addEventListener("click", function(){ onlineSetTab("chat"); });
+/* All mute (nav bar): silences every voice except the Guesser's;
+   my own push-to-talk keeps working. Distinct icon from the
+   game-sounds speaker button beside it. */
+$("onlineAllMuteBtn").addEventListener("click", function(){
+  allMuteOn = !allMuteOn;
+  $("onlineAllMuteBtn").setAttribute("aria-pressed", String(allMuteOn));
+  voiceApplyMute();
+});
+/* Avatar picker beside the nickname field. */
+syncAvatarPickBtn();
+buildAvatarGrid();
+$("onlineAvatarBtn").addEventListener("click", function(){ buildAvatarGrid(); openSheet("avatarSheet"); });
+/* Push-to-talk: hold to talk, release to stop — on the voice chat
+   screen and on the Guesser's own game screen. touch-action:none
+   (CSS) keeps the hold from scrolling; context menu suppressed so
+   a long press never interrupts the hold. */
+document.querySelectorAll(".ptt-btn").forEach(function(b){
+  b.addEventListener("pointerdown", voicePttStart);
+  b.addEventListener("pointerup", voicePttEnd);
+  b.addEventListener("pointercancel", voicePttEnd);
+  b.addEventListener("pointerleave", voicePttEnd);
+  b.addEventListener("contextmenu", function(e){ e.preventDefault(); });
+});
+/* Voice mesh warms up on the first tap inside the room (mic
+   permission is asked then, once); denying it leaves the player
+   listen-only. */
+$("onlineOverlay").addEventListener("pointerdown", function(){ if (onlineRoomRef) voiceInit(); }, { once: true });
+/* Text chat (clue-givers): open from the button fixed left of
+   push-to-talk on the voice chat screen. */
+$("onlineTextChatBtn").addEventListener("click", onlineOpenTextChat);
+$("onlineChatSendBtn").addEventListener("click", onlineChatSend);
+$("onlineChatInput").addEventListener("keydown", function(e){ if (e.key === "Enter") { e.preventDefault(); onlineChatSend(); } });
+(function buildChatEmojiRow(){
+  const row = $("onlineChatEmojiRow");
+  if (!row) return;
+  ["😀","😂","😮","👍","🙏","🎉","❤️","🔥","👏","🤔"].forEach(function(em){
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = em; b.setAttribute("aria-label", "Add emoji " + em);
+    b.addEventListener("click", function(){
+      const input = $("onlineChatInput");
+      if (input) { input.value = (input.value + em).slice(0, 300); input.focus(); }
+    });
+    row.appendChild(b);
+  });
+})();
 $("onlineReadyBtn").addEventListener("click", onlineGuesserReady);
 $("onlineNextBtn").addEventListener("click", onlineNextRound);
 $("onlineFinishBtn").addEventListener("click", onlineFinishGame);
@@ -5159,7 +5943,7 @@ lobbySegSetup("lobbyTurnsSeg","turns",function(v){ turnsPerTeam = parseInt(v, 10
    Never attempted from file://, where workers are unavailable. */
 if("serviceWorker" in navigator && /^https?:$/.test(window.location.protocol)){
   navigator.serviceWorker.register("sw.js").catch(function(){
-    return navigator.serviceWorker.register("data:application/javascript;base64,LyogVXBhciBHdWVzc2luZyBHYW1lIOKAlCBvZmZsaW5lIHNlcnZpY2Ugd29ya2VyLgogICBDYWNoZS1maXJzdCBmb3IgdGhlIGFwcCBzaGVsbCBhbmQgbG9jYWwgYXNzZXRzLCBuZXR3b3JrLWZpcnN0IGZvcgogICBuYXZpZ2F0aW9uIHNvIGEgZnJlc2ggdmlzaXQgc3RpbGwgcGlja3MgdXAgYSBuZXcgdmVyc2lvbiB3aGVuIHRoZQogICBuZXR3b3JrIGlzIHRoZXJlLCBhbmQgdGhlIGNhY2hlZCBwYWdlIHdoZW4gaXQgaXMgbm90IChhaXJwbGFuZSBtb2RlKS4KICAgRXZlcnl0aGluZyB0aGUgZ2FtZSBuZWVkcyBpcyBsb2NhbDogdGhlIHBhZ2UsIHRoZSB3b3JkIGxpc3RzCiAgIChhc3NldHMvd29yZHMuanNvbiwgbWlycm9yZWQgaW5saW5lIGluIGluZGV4Lmh0bWwpLCB0aGUgc2VsZi1ob3N0ZWQKICAgZm9udHMgYW5kIHRoZSBpY29ucy4gVGhlcmUgYXJlIG5vIG5ldHdvcmsgY2FsbHMgaW4gdGhlIGdhbWUgaXRzZWxmLAogICBzbyBvbmNlIHRoaXMgd29ya2VyIGhhcyBjYWNoZWQgdGhlIHNoZWxsLCB0aGUgZ2FtZSBydW5zIDEwMCUgb2ZmbGluZS4KCiAgIExheW91dDogdGhlIHBhZ2UgbGl2ZXMgYXQgdGhlIHNpdGUgcm9vdCBhbmQgdGhpcyB3b3JrZXIncyBjb21wYW5pb25zCiAgIChtYW5pZmVzdCwgZm9udHMsIGljb25zLCB3b3Jkcy5qc29uKSBsaXZlIGluIGFzc2V0cy8uIFRoaXMgd29ya2VyCiAgIHdvcmtzIGZyb20gZWl0aGVyIHNwb3Qg4oCUIHNlcnZlZCBhcyBhc3NldHMvc3cuanMgKHNjb3BlOiBhc3NldHMvKQogICBvciBjb3BpZWQgdG8gdGhlIHNpdGUgcm9vdCAoc2NvcGU6IHdob2xlIHNpdGUpIG5leHQgdG8gaW5kZXguaHRtbCDigJQKICAgYmVjYXVzZSBldmVyeSBjYWNoZWQgVVJMIGJlbG93IGlzIGRlcml2ZWQgZnJvbSBpdHMgb3duIGxvY2F0aW9uLiAqLwoidXNlIHN0cmljdCI7Cgp2YXIgU1dfRElSID0gc2VsZi5sb2NhdGlvbi5ocmVmLnJlcGxhY2UoL1teL10qJC8sICIiKTsKdmFyIElOX0FTU0VUUyA9IC9cL2Fzc2V0c1wvJC8udGVzdChTV19ESVIpOwp2YXIgUk9PVCA9IElOX0FTU0VUUyA/IG5ldyBVUkwoIi4uLyIsIFNXX0RJUikuaHJlZiA6IFNXX0RJUjsKdmFyIEFTU0VUUyA9IElOX0FTU0VUUyA/IFNXX0RJUiA6IG5ldyBVUkwoImFzc2V0cy8iLCBTV19ESVIpLmhyZWY7CnZhciBDQUNIRSA9ICJ1cGFyLXYyNiI7CnZhciBDT1JFID0gWwogIFJPT1QsCiAgUk9PVCArICJpbmRleC5odG1sIiwKICBBU1NFVFMgKyAibWFuaWZlc3Qud2VibWFuaWZlc3QiLAogIHNlbGYubG9jYXRpb24uaHJlZiwKICBBU1NFVFMgKyAid29yZHMuanNvbiIsCiAgQVNTRVRTICsgImljb24tMTkyLnBuZyIsCiAgQVNTRVRTICsgImljb24tNTEyLnBuZyIsCiAgQVNTRVRTICsgImljb24tbWFza2FibGUtNTEyLnBuZyIsCiAgQVNTRVRTICsgImFwcGxlLXRvdWNoLWljb24ucG5nIiwKICBBU1NFVFMgKyAiZm9udHMvb3V0Zml0LndvZmYyIiwKICBBU1NFVFMgKyAiZm9udHMvZG1zYW5zLndvZmYyIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FjdC9icnVzaGluZ19oYWlyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWN0L2JydXNoaW5nX3RlZXRoLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWN0L2Nob3BwaW5nX3ZlZ2V0YWJsZXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvY2xpbWJpbmdfYV90cmVlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWN0L2Nvb2tpbmcud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvY3J5aW5nLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWN0L2RhbmNpbmcud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvZG9pbmdfeW9nYS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FjdC9kcml2aW5nLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWN0L2VhdGluZ19zcGljeV9mb29kLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWN0L2ZseWluZ19hX2tpdGUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvanVtcGluZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FjdC9sYXVnaGluZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FjdC9wbGF5aW5nX2NyaWNrZXQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvcGxheWluZ19ndWl0YXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvcmlkaW5nX2FfaG9yc2Uud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvcmlkaW5nX2Ffcm9sbGVyX2NvYXN0ZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvcnVubmluZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FjdC9zaGl2ZXJpbmcud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3Qvc2luZ2luZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FjdC9zbGVlcGluZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FjdC90YWtpbmdfYV9zZWxmaWUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvdGFraW5nX2FuX2V4YW0ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvdGFsa2luZ19vbl90aGVfcGhvbmUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3Qvd2FpdGluZ19mb3JfYV9idXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3Qvd2FzaGluZ19jbG90aGVzLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWN0L3dhdGNoaW5nX2FfaG9ycm9yX21vdmllLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL2FmdGVyX3BhcnR5LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL2NoZW1pc3RyeS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FkdWx0cy9jcnVzaC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FkdWx0cy9kaXJ0eV9kYW5jaW5nLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL2ZsaXJ0aW5nLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL2ZyaWVuZHNfd2l0aF9iZW5lZml0cy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FkdWx0cy9oYW5nb3Zlci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FkdWx0cy9oaWNrZXkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hZHVsdHMvaG9uZXltb29uX3N1aXRlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL2tpc3NfYW5kX3RlbGwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hZHVsdHMvbGFzdF9jYWxsLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL2xhdGVfbmlnaHRfZHJpdmUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hZHVsdHMvbGF0ZV9uaWdodF90ZXh0LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL25hdWdodHlfam9rZXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hZHVsdHMvbmV0ZmxpeF9hbmRfY2hpbGwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hZHVsdHMvc2VkdWNlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL3NwaW5fdGhlX2JvdHRsZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FkdWx0cy90ZXF1aWxhX3Nob3RzLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL3RoaXJzdF90cmFwLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL3dhbGtfb2Zfc2hhbWUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hZHVsdHMvd2luZ21hbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvYmVhci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvYnVmZmFsby53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvY2FtZWwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hbmltYWxzL2NhdC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvY293LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9jcm93LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9kZWVyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9kb2cud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hbmltYWxzL2RvbHBoaW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hbmltYWxzL2R1Y2sud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hbmltYWxzL2VhZ2xlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9lbGVwaGFudC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvZmlzaC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvZm94LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9mcm9nLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9naXJhZmZlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9nb2F0LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9oZW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hbmltYWxzL2hvcnNlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9rYW5nYXJvby53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvbGlvbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvbW9ua2V5LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9vd2wud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hbmltYWxzL3BhcnJvdC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvcGVhY29jay53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvcmFiYml0LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9zbmFrZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvdGlnZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hbmltYWxzL3dvbGYud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hbmltYWxzL3plYnJhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYm9sbHl3b29kL2FuZGF6X2FwbmFfYXBuYS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JvbGx5d29vZC9iYWFodWJhbGkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9ib2xseXdvb2QvYmFyZmkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9ib2xseXdvb2QvY2hha19kZV9pbmRpYS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JvbGx5d29vZC9jaGVubmFpX2V4cHJlc3Mud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9ib2xseXdvb2QvZGFuZ2FsLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYm9sbHl3b29kL2RpbF9jaGFodGFfaGFpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYm9sbHl3b29kL2RpbHdhbGVfZHVsaGFuaWFfbGVfamF5ZW5nZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JvbGx5d29vZC9kb24ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9ib2xseXdvb2QvZ3VsbHlfYm95LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYm9sbHl3b29kL2hlcmFfcGhlcmkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9ib2xseXdvb2QvamFiX3dlX21ldC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JvbGx5d29vZC9rYWJoaV9raHVzaGlfa2FiaGllX2doYW0ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9ib2xseXdvb2Qva3JyaXNoLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYm9sbHl3b29kL2t1Y2hfa3VjaF9ob3RhX2hhaS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JvbGx5d29vZC9sYWdhYW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9ib2xseXdvb2QvbXVubmFfYmhhaV9tX2JfYl9zLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYm9sbHl3b29kL29tX3NoYW50aV9vbS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JvbGx5d29vZC9wYXRoYWFuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYm9sbHl3b29kL3BrLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYm9sbHl3b29kL3F1ZWVuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYm9sbHl3b29kL3JhbmdfZGVfYmFzYW50aS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JvbGx5d29vZC9zaG9sYXkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9ib2xseXdvb2QvdGFhcmVfemFtZWVuX3Bhci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JvbGx5d29vZC90aHJlZV9pZGlvdHMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9ib2xseXdvb2QvemluZGFnaV9uYV9taWxlZ2lfZG9iYXJhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYnJhbmRzL2FkaWRhcy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JyYW5kcy9hbXVsLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYnJhbmRzL2Jtdy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JyYW5kcy9jb2NhX2NvbGEud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9icmFuZHMvZG9taW5vcy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JyYW5kcy9nb29nbGUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9icmFuZHMvaW5zdGFncmFtLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYnJhbmRzL2tmYy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JyYW5kcy9sZWdvLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYnJhbmRzL21hZ2dpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYnJhbmRzL21jZG9uYWxkcy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JyYW5kcy9tZXJjZWRlcy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JyYW5kcy9uaWtlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYnJhbmRzL3BhcmxlX2cud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9icmFuZHMvcGVwc2kud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9icmFuZHMvcHVtYS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JyYW5kcy9yZWxpYW5jZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JyYW5kcy9zYW1zdW5nLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYnJhbmRzL3RhdGEud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9icmFuZHMvdG95b3RhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYnJhbmRzL3doYXRzYXBwLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYnJhbmRzL3phcmEud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jYXJ0b29ucy9iZW5fMTAud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jYXJ0b29ucy9ib2JfdGhlX2J1aWxkZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jYXJ0b29ucy9idWdzX2J1bm55LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvY2hob3RhX2JoZWVtLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvZG9uYWxkX2R1Y2sud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jYXJ0b29ucy9kb3JhX3RoZV9leHBsb3Jlci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NhcnRvb25zL2RvcmFlbW9uLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvbWlja2V5X21vdXNlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvbWluaW9ucy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NhcnRvb25zL21vdHVfcGF0bHUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jYXJ0b29ucy9uYXJ1dG8ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jYXJ0b29ucy9uaW5qYV9oYXR0b3JpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvb2dneS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NhcnRvb25zL3Bhd19wYXRyb2wud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jYXJ0b29ucy9wZXBwYV9waWcud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jYXJ0b29ucy9wb2tlbW9uLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvcG9wZXllLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvc2Nvb2J5X2Rvby53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NhcnRvb25zL3NoaW5jaGFuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvc3BvbmdlYm9iLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvdGhlX3NpbXBzb25zLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvdG9tX2FuZF9qZXJyeS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NlbGVicy9hYW1pcl9raGFuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2VsZWJzL2FsaWFfYmhhdHQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jZWxlYnMvYW1pdGFiaF9iYWNoY2hhbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NlbGVicy9hcGpfYWJkdWxfa2FsYW0ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jZWxlYnMvYXJfcmFobWFuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2VsZWJzL2JpbGxfZ2F0ZXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jZWxlYnMvY3Jpc3RpYW5vX3JvbmFsZG8ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jZWxlYnMvZGVlcGlrYV9wYWR1a29uZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NlbGVicy9lbG9uX211c2sud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jZWxlYnMva2FwaWxfc2hhcm1hLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2VsZWJzL2xhdGFfbWFuZ2VzaGthci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NlbGVicy9saW9uZWxfbWVzc2kud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jZWxlYnMvbXJfYmVhbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NlbGVicy9tc19kaG9uaS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NlbGVicy9uYXJlbmRyYV9tb2RpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2VsZWJzL3ByaXlhbmthX2Nob3ByYS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NlbGVicy9yYW52ZWVyX3NpbmdoLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2VsZWJzL3JvaGl0X3NoYXJtYS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NlbGVicy9zYWNoaW5fdGVuZHVsa2FyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2VsZWJzL3NhbG1hbl9raGFuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2VsZWJzL3NoYWhfcnVraF9raGFuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2VsZWJzL3RheWxvcl9zd2lmdC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NlbGVicy90b21fY3J1aXNlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2VsZWJzL3ZpcmF0X2tvaGxpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY3JpY2tldC9iYWxsLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY3JpY2tldC9iYXQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jcmlja2V0L2JhdHNtYW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jcmlja2V0L2Jvd2xlci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NyaWNrZXQvY2FwdGFpbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NyaWNrZXQvY2F0Y2gud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jcmlja2V0L2NyaWNrZXQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jcmlja2V0L2ZvdXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jcmlja2V0L2hlbG1ldC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NyaWNrZXQvbGJ3LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY3JpY2tldC9ub19iYWxsLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY3JpY2tldC9zaXgud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jcmlja2V0L3N0YWRpdW0ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jcmlja2V0L3N0dW1wcy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NyaWNrZXQvdGVzdF9tYXRjaC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NyaWNrZXQvdG9zcy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NyaWNrZXQvdHJvcGh5LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY3JpY2tldC91bXBpcmUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jcmlja2V0L3dpY2tldC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NyaWNrZXQvd2lkZV9iYWxsLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY3JpY2tldC95b3JrZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS9hbGFybV9jbG9jay53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L2JlZC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L2JpY3ljbGUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS9idXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS9jaGFyZ2VyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZGFpbHkvZmFuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZGFpbHkva2V5cy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L2xhcHRvcC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L2xpZ2h0X2J1bGIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS9taXJyb3Iud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS9tb2JpbGVfcGhvbmUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS9ub3RlYm9vay53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L3Blbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L3BpbGxvdy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L3JpY2tzaGF3LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZGFpbHkvc2Nob29sX2JhZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L3Nob2VzLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZGFpbHkvc2xpcHBlcnMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS9zb2FwLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZGFpbHkvc3VuZ2xhc3Nlcy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L3RlbGV2aXNpb24ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS90b290aGJydXNoLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZGFpbHkvdG93ZWwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS90cmFpbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L3VtYnJlbGxhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZGFpbHkvd2FsbGV0LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZGFpbHkvd2F0Y2gud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS93YXRlcl9ib3R0bGUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9hbmdyeS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL2JvcmVkLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZW1vdGlvbnMvYnJhdmUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9jb25mdXNlZC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL2N1cmlvdXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9lbWJhcnJhc3NlZC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL2V4Y2l0ZWQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9ncmF0ZWZ1bC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL2hhcHB5LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZW1vdGlvbnMvaG9wZWZ1bC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL2h1bmdyeS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL2plYWxvdXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9sb25lbHkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9sb3ZlZC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL25lcnZvdXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9wcm91ZC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL3JlbGF4ZWQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9zYWQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9zY2FyZWQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9zaHkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9zaWxseS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL3NsZWVweS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL3N1cnByaXNlZC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL3RpcmVkLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9hcHBsZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Zvb2QvYmFuYW5hLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9iaXJ5YW5pLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9idXJnZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL2J1dHRlcl9jaGlja2VuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9jaG9jb2xhdGUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL2Nob2xlX2JoYXR1cmUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL2NvZmZlZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Zvb2QvZGFsX21ha2hhbmkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL2Rvc2Eud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL2dvbGdhcHBhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9ndWxhYl9qYW11bi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Zvb2QvaWNlX2NyZWFtLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9pZGxpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9qYWxlYmkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL2xhc3NpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9tYWdnaV9ub29kbGVzLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9tYW5nby53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Zvb2QvbW9tb3Mud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL25hYW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL29yYW5nZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Zvb2QvcGFuZWVyX3Rpa2thLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9wYXJhdGhhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9wYXZfYmhhamkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL3BpenphLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9yYWptYV9jaGF3YWwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL3Jhc2d1bGxhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9zYW1vc2Eud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL3NhbmR3aWNoLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC90ZWEud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9nYW1lcy9hbW9uZ191cy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL2FuZ3J5X2JpcmRzLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZ2FtZXMvYmdtaS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL2NhbGxfb2ZfZHV0eS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL2NhbmR5X2NydXNoLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZ2FtZXMvY2Fycm9tLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZ2FtZXMvY2hlc3Mud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9nYW1lcy9jbGFzaF9vZl9jbGFucy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL2ZpZmEud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9nYW1lcy9mb3J0bml0ZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL2ZyZWVfZmlyZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL2d0YS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL2x1ZG8ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9nYW1lcy9tYXJpby53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL21pbmVjcmFmdC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL25lZWRfZm9yX3NwZWVkLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZ2FtZXMvcGFjX21hbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL3B1Ymcud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9nYW1lcy9zbmFrZV9nYW1lLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZ2FtZXMvc3Vid2F5X3N1cmZlcnMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9nYW1lcy90ZWtrZW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9nYW1lcy90ZW1wbGVfcnVuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZ2FtZXMvdmFsb3JhbnQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9oZXJvZXMvYW50X21hbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy9hcXVhbWFuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvaGVyb2VzL2JhdG1hbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy9ibGFja19wYW50aGVyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvaGVyb2VzL2JsYWNrX3dpZG93LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvaGVyb2VzL2NhcHRhaW5fYW1lcmljYS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy9kZWFkcG9vbC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy9kb2N0b3Jfc3RyYW5nZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy9mbGFzaC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy9ncmVlbl9sYW50ZXJuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvaGVyb2VzL2dyb290LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvaGVyb2VzL2hhd2tleWUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9oZXJvZXMvaHVsay53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy9pcm9uX21hbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy9sb2tpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvaGVyb2VzL3NwaWRlcl9tYW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9oZXJvZXMvc3Rhcl9sb3JkLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvaGVyb2VzL3N1cGVybWFuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvaGVyb2VzL3RoYW5vcy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy90aG9yLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvaGVyb2VzL3dvbHZlcmluZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy93b25kZXJfd29tYW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9qb2JzL2FjdG9yLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvam9icy9hc3Ryb25hdXQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9qb2JzL2JhcmJlci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2pvYnMvY2hlZi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2pvYnMvY3JpY2tldGVyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvam9icy9kYW5jZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9qb2JzL2RvY3Rvci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2pvYnMvZHJpdmVyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvam9icy9lbGVjdHJpY2lhbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2pvYnMvZW5naW5lZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9qb2JzL2Zhcm1lci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2pvYnMvZmlyZWZpZ2h0ZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9qb2JzL2pvdXJuYWxpc3Qud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9qb2JzL2xhd3llci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2pvYnMvbWFnaWNpYW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9qb2JzL251cnNlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvam9icy9waG90b2dyYXBoZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9qb2JzL3BpbG90LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvam9icy9wbHVtYmVyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvam9icy9wb2xpY2Vfb2ZmaWNlci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2pvYnMvc2NpZW50aXN0LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvam9icy9zaW5nZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9qb2JzL3RhaWxvci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2pvYnMvdGVhY2hlci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2tpZHMvYmFieS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2tpZHMvYmlyZC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2tpZHMvYm9vay53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2tpZHMvYnV0dGVyZmx5LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMva2lkcy9jYWtlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMva2lkcy9jYXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9raWRzL2ZhdGhlci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2tpZHMvZmxvd2VyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMva2lkcy9mcmllbmQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9raWRzL21pbGsud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9raWRzL21vb24ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9raWRzL21vdGhlci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2tpZHMvcGVuY2lsLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMva2lkcy9yYWluYm93LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMva2lkcy9zY2hvb2wud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9raWRzL3N0YXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9raWRzL3N1bi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2tpZHMvdG95LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMva2lkcy90cmVlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvcGxhY2VzL2FpcnBvcnQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9wbGFjZXMvYmFuay53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3BsYWNlcy9iZWFjaC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3BsYWNlcy9jaHVyY2gud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9wbGFjZXMvY2luZW1hX2hhbGwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9wbGFjZXMvY2l0eS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3BsYWNlcy9kZXNlcnQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9wbGFjZXMvZWlmZmVsX3Rvd2VyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvcGxhY2VzL2ZvcmVzdC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3BsYWNlcy9ob3NwaXRhbC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3BsYWNlcy9ob3RlbC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3BsYWNlcy9saWJyYXJ5LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvcGxhY2VzL21hcmtldC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3BsYWNlcy9tb3NxdWUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9wbGFjZXMvbW91bnRhaW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9wbGFjZXMvbXVzZXVtLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvcGxhY2VzL3Bhcmsud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9wbGFjZXMvcG9zdF9vZmZpY2Uud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9wbGFjZXMvcmFpbHdheV9zdGF0aW9uLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvcGxhY2VzL3Rhal9tYWhhbC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3BsYWNlcy90ZW1wbGUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9wbGFjZXMvdmlsbGFnZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3BsYWNlcy96b28ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zbGFuZy9hcmV5X3lhYXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zbGFuZy9iYWt3YXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zbGFuZy9iaGFpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc2xhbmcvYmluZ2Vfd2F0Y2gud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zbGFuZy9jaGFpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc2xhbmcvY2hpbGwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zbGFuZy9mbGV4LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc2xhbmcvZm9tby53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NsYW5nL2Z1bGxfcG93ZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zbGFuZy9naG9zdGluZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NsYW5nL2p1Z2FhZC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NsYW5nL2t5YV9zY2VuZV9oYWkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zbGFuZy9saXQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zbGFuZy9tYXN0LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc2xhbmcvbm9fY2FwLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc2xhbmcvcGFnYWwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zbGFuZy9yaXp6LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc2xhbmcvc2VsZmllLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc2xhbmcvc2xheS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NsYW5nL3N1cy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NsYW5nL3RpbWVwYXNzLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc2xhbmcvdmliZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NsYW5nL3lhYXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy9hcG5hX3RpbWVfYWF5ZWdhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc29uZ3MvYmFkdGFtZWV6X2RpbC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NvbmdzL2JlbGlldmVyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc29uZ3MvY2hhaXl5YV9jaGFpeXlhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc29uZ3MvY2hhbm5hX21lcmV5YS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NvbmdzL2Rlc3BhY2l0by53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NvbmdzL2dhbGxhbl9nb29kaXlhbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NvbmdzL2dlcnVhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc29uZ3MvaGFwcHlfYmlydGhkYXkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy9qYWlfaG8ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy9qaW5nbGVfYmVsbHMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy9rYWJpcmEud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy9rYWpyYV9yZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NvbmdzL2thbF9ob19uYWFfaG8ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy9sZXRfaXRfZ28ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy9uYXRpb25hbF9hbnRoZW0ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy9wZXJmZWN0LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc29uZ3MvcmFhYnRhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc29uZ3Mvc2Vub3JpdGEud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy9zaGFwZV9vZl95b3Uud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy90dWpoZV9kZWtoYV90by53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NvbmdzL3R1bV9oaV9oby53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NvbmdzL3R1bV9taWxlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc3BvcnRzL2FyY2hlcnkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMvYmFkbWludG9uLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc3BvcnRzL2Jhc2tldGJhbGwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMvYm94aW5nLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc3BvcnRzL2N5Y2xpbmcud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMvZm9vdGJhbGwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMvZ29sZi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3Nwb3J0cy9neW1uYXN0aWNzLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc3BvcnRzL2hvY2tleS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3Nwb3J0cy9qYXZlbGluX3Rocm93LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc3BvcnRzL2thYmFkZGkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMva2FyYXRlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc3BvcnRzL2tob19raG8ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMvbWFyYXRob24ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMvcnVubmluZ19yYWNlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc3BvcnRzL3Nob3RfcHV0LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc3BvcnRzL3NrYXRpbmcud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMvc3VyZmluZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3Nwb3J0cy9zd2ltbWluZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3Nwb3J0cy90YWJsZV90ZW5uaXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMvdGVubmlzLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc3BvcnRzL3ZvbGxleWJhbGwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMvd2VpZ2h0bGlmdGluZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3Nwb3J0cy93cmVzdGxpbmcud2VicCIsCl07CgpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoImluc3RhbGwiLCBmdW5jdGlvbiAoZXZlbnQpIHsKICBldmVudC53YWl0VW50aWwoCiAgICBjYWNoZXMub3BlbihDQUNIRSkudGhlbihmdW5jdGlvbiAoY2FjaGUpIHsKICAgICAgcmV0dXJuIGNhY2hlLmFkZEFsbChDT1JFKTsKICAgIH0pLnRoZW4oZnVuY3Rpb24gKCkgewogICAgICByZXR1cm4gc2VsZi5za2lwV2FpdGluZygpOwogICAgfSkuY2F0Y2goZnVuY3Rpb24gKCkgewogICAgICAvKiBBIHNpbmdsZSBtaXNzaW5nIGFzc2V0IG11c3Qgbm90IGZhaWwgdGhlIGluc3RhbGw7IHRoZSBmZXRjaAogICAgICAgICBoYW5kbGVyIGNhY2hlcyBhc3NldHMgYXMgdGhleSBhcmUgdXNlZCBpbnN0ZWFkLiAqLwogICAgfSkKICApOwp9KTsKCnNlbGYuYWRkRXZlbnRMaXN0ZW5lcigiYWN0aXZhdGUiLCBmdW5jdGlvbiAoZXZlbnQpIHsKICBldmVudC53YWl0VW50aWwoCiAgICBjYWNoZXMua2V5cygpLnRoZW4oZnVuY3Rpb24gKGtleXMpIHsKICAgICAgcmV0dXJuIFByb21pc2UuYWxsKGtleXMuZmlsdGVyKGZ1bmN0aW9uIChrKSB7IHJldHVybiBrICE9PSBDQUNIRTsgfSkubWFwKGZ1bmN0aW9uIChrKSB7CiAgICAgICAgcmV0dXJuIGNhY2hlcy5kZWxldGUoayk7CiAgICAgIH0pKTsKICAgIH0pLnRoZW4oZnVuY3Rpb24gKCkgewogICAgICByZXR1cm4gc2VsZi5jbGllbnRzLmNsYWltKCk7CiAgICB9KQogICk7Cn0pOwoKc2VsZi5hZGRFdmVudExpc3RlbmVyKCJmZXRjaCIsIGZ1bmN0aW9uIChldmVudCkgewogIHZhciByZXEgPSBldmVudC5yZXF1ZXN0OwogIGlmIChyZXEubWV0aG9kICE9PSAiR0VUIikgcmV0dXJuOwogIHZhciB1cmwgPSBuZXcgVVJMKHJlcS51cmwpOwogIGlmICh1cmwub3JpZ2luICE9PSBzZWxmLmxvY2F0aW9uLm9yaWdpbikgcmV0dXJuOyAvLyB0aGUgZ2FtZSBtYWtlcyBubyBjcm9zcy1vcmlnaW4gY2FsbHMKCiAgaWYgKHJlcS5tb2RlID09PSAibmF2aWdhdGUiIHx8IChyZXEuaGVhZGVycy5nZXQoImFjY2VwdCIpIHx8ICIiKS5pbmRleE9mKCJ0ZXh0L2h0bWwiKSAhPT0gLTEpIHsKICAgIC8vIE5hdmlnYXRpb246IHRyeSB0aGUgbmV0d29yayBmaXJzdCAoZnJlc2ggdmVyc2lvbiB3aGVuIG9ubGluZSksCiAgICAvLyBmYWxsIGJhY2sgdG8gdGhlIGNhY2hlZCBzaGVsbCBvZmZsaW5lLgogICAgZXZlbnQucmVzcG9uZFdpdGgoCiAgICAgIGZldGNoKHJlcSkudGhlbihmdW5jdGlvbiAocmVzKSB7CiAgICAgICAgdmFyIGNvcHkgPSByZXMuY2xvbmUoKTsKICAgICAgICBjYWNoZXMub3BlbihDQUNIRSkudGhlbihmdW5jdGlvbiAoY2FjaGUpIHsgY2FjaGUucHV0KHJlcSwgY29weSk7IH0pOwogICAgICAgIHJldHVybiByZXM7CiAgICAgIH0pLmNhdGNoKGZ1bmN0aW9uICgpIHsKICAgICAgICByZXR1cm4gY2FjaGVzLm1hdGNoKHJlcSwgeyBpZ25vcmVTZWFyY2g6IHRydWUgfSkudGhlbihmdW5jdGlvbiAoY2FjaGVkKSB7CiAgICAgICAgICByZXR1cm4gY2FjaGVkIHx8IGNhY2hlcy5tYXRjaChST09UICsgImluZGV4Lmh0bWwiKS50aGVuKGZ1bmN0aW9uIChob21lKSB7CiAgICAgICAgICAgIHJldHVybiBob21lIHx8IGNhY2hlcy5tYXRjaChST09UKTsKICAgICAgICAgIH0pOwogICAgICAgIH0pOwogICAgICB9KQogICAgKTsKICAgIHJldHVybjsKICB9CgogIC8vIExvY2FsIGFzc2V0cyAoZm9udHMsIGljb25zLCB3b3Jkcy5qc29uKTogY2FjaGUtZmlyc3QsIHJlZnJlc2ggaW4KICAvLyB0aGUgYmFja2dyb3VuZCBzbyB0aGUgbmV4dCBsYXVuY2ggaXMgaW5zdGFudCBhbmQgb2ZmbGluZS1wcm9vZi4KICBldmVudC5yZXNwb25kV2l0aCgKICAgIGNhY2hlcy5tYXRjaChyZXEsIHsgaWdub3JlU2VhcmNoOiB0cnVlIH0pLnRoZW4oZnVuY3Rpb24gKGNhY2hlZCkgewogICAgICB2YXIgbmV0d29yayA9IGZldGNoKHJlcSkudGhlbihmdW5jdGlvbiAocmVzKSB7CiAgICAgICAgaWYgKHJlcyAmJiByZXMub2spIHsKICAgICAgICAgIHZhciBjb3B5ID0gcmVzLmNsb25lKCk7CiAgICAgICAgICBjYWNoZXMub3BlbihDQUNIRSkudGhlbihmdW5jdGlvbiAoY2FjaGUpIHsgY2FjaGUucHV0KHJlcSwgY29weSk7IH0pOwogICAgICAgIH0KICAgICAgICByZXR1cm4gcmVzOwogICAgICB9KS5jYXRjaChmdW5jdGlvbiAoKSB7IHJldHVybiBjYWNoZWQ7IH0pOwogICAgICByZXR1cm4gY2FjaGVkIHx8IG5ldHdvcms7CiAgICB9KQogICk7Cn0pOwo=");
+    return navigator.serviceWorker.register("data:application/javascript;base64,LyogVXBhciBHdWVzc2luZyBHYW1lIOKAlCBvZmZsaW5lIHNlcnZpY2Ugd29ya2VyLgogICBDYWNoZS1maXJzdCBmb3IgdGhlIGFwcCBzaGVsbCBhbmQgbG9jYWwgYXNzZXRzLCBuZXR3b3JrLWZpcnN0IGZvcgogICBuYXZpZ2F0aW9uIHNvIGEgZnJlc2ggdmlzaXQgc3RpbGwgcGlja3MgdXAgYSBuZXcgdmVyc2lvbiB3aGVuIHRoZQogICBuZXR3b3JrIGlzIHRoZXJlLCBhbmQgdGhlIGNhY2hlZCBwYWdlIHdoZW4gaXQgaXMgbm90IChhaXJwbGFuZSBtb2RlKS4KICAgRXZlcnl0aGluZyB0aGUgZ2FtZSBuZWVkcyBpcyBsb2NhbDogdGhlIHBhZ2UsIHRoZSB3b3JkIGxpc3RzCiAgIChhc3NldHMvd29yZHMuanNvbiwgbWlycm9yZWQgaW5saW5lIGluIGluZGV4Lmh0bWwpLCB0aGUgc2VsZi1ob3N0ZWQKICAgZm9udHMgYW5kIHRoZSBpY29ucy4gVGhlcmUgYXJlIG5vIG5ldHdvcmsgY2FsbHMgaW4gdGhlIGdhbWUgaXRzZWxmLAogICBzbyBvbmNlIHRoaXMgd29ya2VyIGhhcyBjYWNoZWQgdGhlIHNoZWxsLCB0aGUgZ2FtZSBydW5zIDEwMCUgb2ZmbGluZS4KCiAgIExheW91dDogdGhlIHBhZ2UgbGl2ZXMgYXQgdGhlIHNpdGUgcm9vdCBhbmQgdGhpcyB3b3JrZXIncyBjb21wYW5pb25zCiAgIChtYW5pZmVzdCwgZm9udHMsIGljb25zLCB3b3Jkcy5qc29uKSBsaXZlIGluIGFzc2V0cy8uIFRoaXMgd29ya2VyCiAgIHdvcmtzIGZyb20gZWl0aGVyIHNwb3Qg4oCUIHNlcnZlZCBhcyBhc3NldHMvc3cuanMgKHNjb3BlOiBhc3NldHMvKQogICBvciBjb3BpZWQgdG8gdGhlIHNpdGUgcm9vdCAoc2NvcGU6IHdob2xlIHNpdGUpIG5leHQgdG8gaW5kZXguaHRtbCDigJQKICAgYmVjYXVzZSBldmVyeSBjYWNoZWQgVVJMIGJlbG93IGlzIGRlcml2ZWQgZnJvbSBpdHMgb3duIGxvY2F0aW9uLiAqLwoidXNlIHN0cmljdCI7Cgp2YXIgU1dfRElSID0gc2VsZi5sb2NhdGlvbi5ocmVmLnJlcGxhY2UoL1teL10qJC8sICIiKTsKdmFyIElOX0FTU0VUUyA9IC9cL2Fzc2V0c1wvJC8udGVzdChTV19ESVIpOwp2YXIgUk9PVCA9IElOX0FTU0VUUyA/IG5ldyBVUkwoIi4uLyIsIFNXX0RJUikuaHJlZiA6IFNXX0RJUjsKdmFyIEFTU0VUUyA9IElOX0FTU0VUUyA/IFNXX0RJUiA6IG5ldyBVUkwoImFzc2V0cy8iLCBTV19ESVIpLmhyZWY7CnZhciBDQUNIRSA9ICJ1cGFyLXYyNyI7CnZhciBDT1JFID0gWwogIFJPT1QsCiAgUk9PVCArICJpbmRleC5odG1sIiwKICBBU1NFVFMgKyAibWFuaWZlc3Qud2VibWFuaWZlc3QiLAogIHNlbGYubG9jYXRpb24uaHJlZiwKICBBU1NFVFMgKyAid29yZHMuanNvbiIsCiAgQVNTRVRTICsgImljb24tMTkyLnBuZyIsCiAgQVNTRVRTICsgImljb24tNTEyLnBuZyIsCiAgQVNTRVRTICsgImljb24tbWFza2FibGUtNTEyLnBuZyIsCiAgQVNTRVRTICsgImFwcGxlLXRvdWNoLWljb24ucG5nIiwKICBBU1NFVFMgKyAiZm9udHMvb3V0Zml0LndvZmYyIiwKICBBU1NFVFMgKyAiZm9udHMvZG1zYW5zLndvZmYyIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FjdC9icnVzaGluZ19oYWlyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWN0L2JydXNoaW5nX3RlZXRoLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWN0L2Nob3BwaW5nX3ZlZ2V0YWJsZXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvY2xpbWJpbmdfYV90cmVlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWN0L2Nvb2tpbmcud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvY3J5aW5nLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWN0L2RhbmNpbmcud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvZG9pbmdfeW9nYS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FjdC9kcml2aW5nLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWN0L2VhdGluZ19zcGljeV9mb29kLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWN0L2ZseWluZ19hX2tpdGUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvanVtcGluZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FjdC9sYXVnaGluZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FjdC9wbGF5aW5nX2NyaWNrZXQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvcGxheWluZ19ndWl0YXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvcmlkaW5nX2FfaG9yc2Uud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvcmlkaW5nX2Ffcm9sbGVyX2NvYXN0ZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvcnVubmluZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FjdC9zaGl2ZXJpbmcud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3Qvc2luZ2luZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FjdC9zbGVlcGluZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FjdC90YWtpbmdfYV9zZWxmaWUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvdGFraW5nX2FuX2V4YW0ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3QvdGFsa2luZ19vbl90aGVfcGhvbmUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3Qvd2FpdGluZ19mb3JfYV9idXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hY3Qvd2FzaGluZ19jbG90aGVzLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWN0L3dhdGNoaW5nX2FfaG9ycm9yX21vdmllLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL2FmdGVyX3BhcnR5LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL2NoZW1pc3RyeS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FkdWx0cy9jcnVzaC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FkdWx0cy9kaXJ0eV9kYW5jaW5nLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL2ZsaXJ0aW5nLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL2ZyaWVuZHNfd2l0aF9iZW5lZml0cy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FkdWx0cy9oYW5nb3Zlci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FkdWx0cy9oaWNrZXkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hZHVsdHMvaG9uZXltb29uX3N1aXRlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL2tpc3NfYW5kX3RlbGwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hZHVsdHMvbGFzdF9jYWxsLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL2xhdGVfbmlnaHRfZHJpdmUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hZHVsdHMvbGF0ZV9uaWdodF90ZXh0LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL25hdWdodHlfam9rZXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hZHVsdHMvbmV0ZmxpeF9hbmRfY2hpbGwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hZHVsdHMvc2VkdWNlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL3NwaW5fdGhlX2JvdHRsZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FkdWx0cy90ZXF1aWxhX3Nob3RzLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL3RoaXJzdF90cmFwLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYWR1bHRzL3dhbGtfb2Zfc2hhbWUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hZHVsdHMvd2luZ21hbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvYmVhci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvYnVmZmFsby53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvY2FtZWwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hbmltYWxzL2NhdC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvY293LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9jcm93LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9kZWVyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9kb2cud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hbmltYWxzL2RvbHBoaW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hbmltYWxzL2R1Y2sud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hbmltYWxzL2VhZ2xlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9lbGVwaGFudC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvZmlzaC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvZm94LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9mcm9nLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9naXJhZmZlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9nb2F0LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9oZW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hbmltYWxzL2hvcnNlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9rYW5nYXJvby53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvbGlvbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvbW9ua2V5LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9vd2wud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hbmltYWxzL3BhcnJvdC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvcGVhY29jay53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvcmFiYml0LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYW5pbWFscy9zbmFrZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2FuaW1hbHMvdGlnZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hbmltYWxzL3dvbGYud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9hbmltYWxzL3plYnJhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYm9sbHl3b29kL2FuZGF6X2FwbmFfYXBuYS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JvbGx5d29vZC9iYWFodWJhbGkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9ib2xseXdvb2QvYmFyZmkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9ib2xseXdvb2QvY2hha19kZV9pbmRpYS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JvbGx5d29vZC9jaGVubmFpX2V4cHJlc3Mud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9ib2xseXdvb2QvZGFuZ2FsLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYm9sbHl3b29kL2RpbF9jaGFodGFfaGFpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYm9sbHl3b29kL2RpbHdhbGVfZHVsaGFuaWFfbGVfamF5ZW5nZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JvbGx5d29vZC9kb24ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9ib2xseXdvb2QvZ3VsbHlfYm95LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYm9sbHl3b29kL2hlcmFfcGhlcmkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9ib2xseXdvb2QvamFiX3dlX21ldC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JvbGx5d29vZC9rYWJoaV9raHVzaGlfa2FiaGllX2doYW0ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9ib2xseXdvb2Qva3JyaXNoLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYm9sbHl3b29kL2t1Y2hfa3VjaF9ob3RhX2hhaS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JvbGx5d29vZC9sYWdhYW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9ib2xseXdvb2QvbXVubmFfYmhhaV9tX2JfYl9zLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYm9sbHl3b29kL29tX3NoYW50aV9vbS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JvbGx5d29vZC9wYXRoYWFuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYm9sbHl3b29kL3BrLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYm9sbHl3b29kL3F1ZWVuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYm9sbHl3b29kL3JhbmdfZGVfYmFzYW50aS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JvbGx5d29vZC9zaG9sYXkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9ib2xseXdvb2QvdGFhcmVfemFtZWVuX3Bhci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JvbGx5d29vZC90aHJlZV9pZGlvdHMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9ib2xseXdvb2QvemluZGFnaV9uYV9taWxlZ2lfZG9iYXJhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYnJhbmRzL2FkaWRhcy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JyYW5kcy9hbXVsLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYnJhbmRzL2Jtdy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JyYW5kcy9jb2NhX2NvbGEud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9icmFuZHMvZG9taW5vcy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JyYW5kcy9nb29nbGUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9icmFuZHMvaW5zdGFncmFtLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYnJhbmRzL2tmYy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JyYW5kcy9sZWdvLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYnJhbmRzL21hZ2dpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYnJhbmRzL21jZG9uYWxkcy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JyYW5kcy9tZXJjZWRlcy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JyYW5kcy9uaWtlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYnJhbmRzL3BhcmxlX2cud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9icmFuZHMvcGVwc2kud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9icmFuZHMvcHVtYS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JyYW5kcy9yZWxpYW5jZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2JyYW5kcy9zYW1zdW5nLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYnJhbmRzL3RhdGEud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9icmFuZHMvdG95b3RhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYnJhbmRzL3doYXRzYXBwLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvYnJhbmRzL3phcmEud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jYXJ0b29ucy9iZW5fMTAud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jYXJ0b29ucy9ib2JfdGhlX2J1aWxkZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jYXJ0b29ucy9idWdzX2J1bm55LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvY2hob3RhX2JoZWVtLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvZG9uYWxkX2R1Y2sud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jYXJ0b29ucy9kb3JhX3RoZV9leHBsb3Jlci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NhcnRvb25zL2RvcmFlbW9uLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvbWlja2V5X21vdXNlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvbWluaW9ucy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NhcnRvb25zL21vdHVfcGF0bHUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jYXJ0b29ucy9uYXJ1dG8ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jYXJ0b29ucy9uaW5qYV9oYXR0b3JpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvb2dneS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NhcnRvb25zL3Bhd19wYXRyb2wud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jYXJ0b29ucy9wZXBwYV9waWcud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jYXJ0b29ucy9wb2tlbW9uLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvcG9wZXllLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvc2Nvb2J5X2Rvby53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NhcnRvb25zL3NoaW5jaGFuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvc3BvbmdlYm9iLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvdGhlX3NpbXBzb25zLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2FydG9vbnMvdG9tX2FuZF9qZXJyeS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NlbGVicy9hYW1pcl9raGFuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2VsZWJzL2FsaWFfYmhhdHQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jZWxlYnMvYW1pdGFiaF9iYWNoY2hhbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NlbGVicy9hcGpfYWJkdWxfa2FsYW0ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jZWxlYnMvYXJfcmFobWFuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2VsZWJzL2JpbGxfZ2F0ZXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jZWxlYnMvY3Jpc3RpYW5vX3JvbmFsZG8ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jZWxlYnMvZGVlcGlrYV9wYWR1a29uZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NlbGVicy9lbG9uX211c2sud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jZWxlYnMva2FwaWxfc2hhcm1hLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2VsZWJzL2xhdGFfbWFuZ2VzaGthci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NlbGVicy9saW9uZWxfbWVzc2kud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jZWxlYnMvbXJfYmVhbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NlbGVicy9tc19kaG9uaS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NlbGVicy9uYXJlbmRyYV9tb2RpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2VsZWJzL3ByaXlhbmthX2Nob3ByYS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NlbGVicy9yYW52ZWVyX3NpbmdoLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2VsZWJzL3JvaGl0X3NoYXJtYS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NlbGVicy9zYWNoaW5fdGVuZHVsa2FyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2VsZWJzL3NhbG1hbl9raGFuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2VsZWJzL3NoYWhfcnVraF9raGFuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2VsZWJzL3RheWxvcl9zd2lmdC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NlbGVicy90b21fY3J1aXNlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY2VsZWJzL3ZpcmF0X2tvaGxpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY3JpY2tldC9iYWxsLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY3JpY2tldC9iYXQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jcmlja2V0L2JhdHNtYW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jcmlja2V0L2Jvd2xlci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NyaWNrZXQvY2FwdGFpbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NyaWNrZXQvY2F0Y2gud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jcmlja2V0L2NyaWNrZXQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jcmlja2V0L2ZvdXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jcmlja2V0L2hlbG1ldC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NyaWNrZXQvbGJ3LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY3JpY2tldC9ub19iYWxsLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY3JpY2tldC9zaXgud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jcmlja2V0L3N0YWRpdW0ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jcmlja2V0L3N0dW1wcy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NyaWNrZXQvdGVzdF9tYXRjaC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NyaWNrZXQvdG9zcy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NyaWNrZXQvdHJvcGh5LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY3JpY2tldC91bXBpcmUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9jcmlja2V0L3dpY2tldC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2NyaWNrZXQvd2lkZV9iYWxsLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvY3JpY2tldC95b3JrZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS9hbGFybV9jbG9jay53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L2JlZC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L2JpY3ljbGUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS9idXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS9jaGFyZ2VyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZGFpbHkvZmFuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZGFpbHkva2V5cy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L2xhcHRvcC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L2xpZ2h0X2J1bGIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS9taXJyb3Iud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS9tb2JpbGVfcGhvbmUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS9ub3RlYm9vay53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L3Blbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L3BpbGxvdy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L3JpY2tzaGF3LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZGFpbHkvc2Nob29sX2JhZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L3Nob2VzLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZGFpbHkvc2xpcHBlcnMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS9zb2FwLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZGFpbHkvc3VuZ2xhc3Nlcy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L3RlbGV2aXNpb24ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS90b290aGJydXNoLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZGFpbHkvdG93ZWwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS90cmFpbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2RhaWx5L3VtYnJlbGxhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZGFpbHkvd2FsbGV0LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZGFpbHkvd2F0Y2gud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9kYWlseS93YXRlcl9ib3R0bGUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9hbmdyeS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL2JvcmVkLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZW1vdGlvbnMvYnJhdmUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9jb25mdXNlZC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL2N1cmlvdXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9lbWJhcnJhc3NlZC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL2V4Y2l0ZWQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9ncmF0ZWZ1bC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL2hhcHB5LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZW1vdGlvbnMvaG9wZWZ1bC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL2h1bmdyeS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL2plYWxvdXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9sb25lbHkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9sb3ZlZC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL25lcnZvdXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9wcm91ZC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL3JlbGF4ZWQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9zYWQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9zY2FyZWQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9zaHkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9lbW90aW9ucy9zaWxseS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL3NsZWVweS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL3N1cnByaXNlZC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Vtb3Rpb25zL3RpcmVkLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9hcHBsZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Zvb2QvYmFuYW5hLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9iaXJ5YW5pLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9idXJnZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL2J1dHRlcl9jaGlja2VuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9jaG9jb2xhdGUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL2Nob2xlX2JoYXR1cmUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL2NvZmZlZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Zvb2QvZGFsX21ha2hhbmkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL2Rvc2Eud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL2dvbGdhcHBhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9ndWxhYl9qYW11bi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Zvb2QvaWNlX2NyZWFtLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9pZGxpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9qYWxlYmkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL2xhc3NpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9tYWdnaV9ub29kbGVzLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9tYW5nby53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Zvb2QvbW9tb3Mud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL25hYW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL29yYW5nZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2Zvb2QvcGFuZWVyX3Rpa2thLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9wYXJhdGhhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9wYXZfYmhhamkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL3BpenphLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9yYWptYV9jaGF3YWwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL3Jhc2d1bGxhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC9zYW1vc2Eud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9mb29kL3NhbmR3aWNoLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZm9vZC90ZWEud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9nYW1lcy9hbW9uZ191cy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL2FuZ3J5X2JpcmRzLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZ2FtZXMvYmdtaS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL2NhbGxfb2ZfZHV0eS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL2NhbmR5X2NydXNoLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZ2FtZXMvY2Fycm9tLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZ2FtZXMvY2hlc3Mud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9nYW1lcy9jbGFzaF9vZl9jbGFucy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL2ZpZmEud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9nYW1lcy9mb3J0bml0ZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL2ZyZWVfZmlyZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL2d0YS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL2x1ZG8ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9nYW1lcy9tYXJpby53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL21pbmVjcmFmdC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL25lZWRfZm9yX3NwZWVkLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZ2FtZXMvcGFjX21hbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2dhbWVzL3B1Ymcud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9nYW1lcy9zbmFrZV9nYW1lLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZ2FtZXMvc3Vid2F5X3N1cmZlcnMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9nYW1lcy90ZWtrZW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9nYW1lcy90ZW1wbGVfcnVuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvZ2FtZXMvdmFsb3JhbnQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9oZXJvZXMvYW50X21hbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy9hcXVhbWFuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvaGVyb2VzL2JhdG1hbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy9ibGFja19wYW50aGVyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvaGVyb2VzL2JsYWNrX3dpZG93LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvaGVyb2VzL2NhcHRhaW5fYW1lcmljYS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy9kZWFkcG9vbC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy9kb2N0b3Jfc3RyYW5nZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy9mbGFzaC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy9ncmVlbl9sYW50ZXJuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvaGVyb2VzL2dyb290LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvaGVyb2VzL2hhd2tleWUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9oZXJvZXMvaHVsay53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy9pcm9uX21hbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy9sb2tpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvaGVyb2VzL3NwaWRlcl9tYW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9oZXJvZXMvc3Rhcl9sb3JkLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvaGVyb2VzL3N1cGVybWFuLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvaGVyb2VzL3RoYW5vcy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy90aG9yLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvaGVyb2VzL3dvbHZlcmluZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2hlcm9lcy93b25kZXJfd29tYW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9qb2JzL2FjdG9yLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvam9icy9hc3Ryb25hdXQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9qb2JzL2JhcmJlci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2pvYnMvY2hlZi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2pvYnMvY3JpY2tldGVyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvam9icy9kYW5jZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9qb2JzL2RvY3Rvci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2pvYnMvZHJpdmVyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvam9icy9lbGVjdHJpY2lhbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2pvYnMvZW5naW5lZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9qb2JzL2Zhcm1lci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2pvYnMvZmlyZWZpZ2h0ZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9qb2JzL2pvdXJuYWxpc3Qud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9qb2JzL2xhd3llci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2pvYnMvbWFnaWNpYW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9qb2JzL251cnNlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvam9icy9waG90b2dyYXBoZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9qb2JzL3BpbG90LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvam9icy9wbHVtYmVyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvam9icy9wb2xpY2Vfb2ZmaWNlci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2pvYnMvc2NpZW50aXN0LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvam9icy9zaW5nZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9qb2JzL3RhaWxvci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2pvYnMvdGVhY2hlci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2tpZHMvYmFieS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2tpZHMvYmlyZC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2tpZHMvYm9vay53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2tpZHMvYnV0dGVyZmx5LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMva2lkcy9jYWtlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMva2lkcy9jYXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9raWRzL2ZhdGhlci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2tpZHMvZmxvd2VyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMva2lkcy9mcmllbmQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9raWRzL21pbGsud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9raWRzL21vb24ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9raWRzL21vdGhlci53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2tpZHMvcGVuY2lsLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMva2lkcy9yYWluYm93LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMva2lkcy9zY2hvb2wud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9raWRzL3N0YXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9raWRzL3N1bi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL2tpZHMvdG95LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMva2lkcy90cmVlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvcGxhY2VzL2FpcnBvcnQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9wbGFjZXMvYmFuay53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3BsYWNlcy9iZWFjaC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3BsYWNlcy9jaHVyY2gud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9wbGFjZXMvY2luZW1hX2hhbGwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9wbGFjZXMvY2l0eS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3BsYWNlcy9kZXNlcnQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9wbGFjZXMvZWlmZmVsX3Rvd2VyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvcGxhY2VzL2ZvcmVzdC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3BsYWNlcy9ob3NwaXRhbC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3BsYWNlcy9ob3RlbC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3BsYWNlcy9saWJyYXJ5LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvcGxhY2VzL21hcmtldC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3BsYWNlcy9tb3NxdWUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9wbGFjZXMvbW91bnRhaW4ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9wbGFjZXMvbXVzZXVtLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvcGxhY2VzL3Bhcmsud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9wbGFjZXMvcG9zdF9vZmZpY2Uud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9wbGFjZXMvcmFpbHdheV9zdGF0aW9uLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvcGxhY2VzL3Rhal9tYWhhbC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3BsYWNlcy90ZW1wbGUud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9wbGFjZXMvdmlsbGFnZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3BsYWNlcy96b28ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zbGFuZy9hcmV5X3lhYXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zbGFuZy9iYWt3YXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zbGFuZy9iaGFpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc2xhbmcvYmluZ2Vfd2F0Y2gud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zbGFuZy9jaGFpLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc2xhbmcvY2hpbGwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zbGFuZy9mbGV4LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc2xhbmcvZm9tby53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NsYW5nL2Z1bGxfcG93ZXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zbGFuZy9naG9zdGluZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NsYW5nL2p1Z2FhZC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NsYW5nL2t5YV9zY2VuZV9oYWkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zbGFuZy9saXQud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zbGFuZy9tYXN0LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc2xhbmcvbm9fY2FwLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc2xhbmcvcGFnYWwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zbGFuZy9yaXp6LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc2xhbmcvc2VsZmllLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc2xhbmcvc2xheS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NsYW5nL3N1cy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NsYW5nL3RpbWVwYXNzLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc2xhbmcvdmliZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NsYW5nL3lhYXIud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy9hcG5hX3RpbWVfYWF5ZWdhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc29uZ3MvYmFkdGFtZWV6X2RpbC53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NvbmdzL2JlbGlldmVyLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc29uZ3MvY2hhaXl5YV9jaGFpeXlhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc29uZ3MvY2hhbm5hX21lcmV5YS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NvbmdzL2Rlc3BhY2l0by53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NvbmdzL2dhbGxhbl9nb29kaXlhbi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NvbmdzL2dlcnVhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc29uZ3MvaGFwcHlfYmlydGhkYXkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy9qYWlfaG8ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy9qaW5nbGVfYmVsbHMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy9rYWJpcmEud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy9rYWpyYV9yZS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NvbmdzL2thbF9ob19uYWFfaG8ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy9sZXRfaXRfZ28ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy9uYXRpb25hbF9hbnRoZW0ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy9wZXJmZWN0LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc29uZ3MvcmFhYnRhLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc29uZ3Mvc2Vub3JpdGEud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy9zaGFwZV9vZl95b3Uud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zb25ncy90dWpoZV9kZWtoYV90by53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NvbmdzL3R1bV9oaV9oby53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3NvbmdzL3R1bV9taWxlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc3BvcnRzL2FyY2hlcnkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMvYmFkbWludG9uLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc3BvcnRzL2Jhc2tldGJhbGwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMvYm94aW5nLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc3BvcnRzL2N5Y2xpbmcud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMvZm9vdGJhbGwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMvZ29sZi53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3Nwb3J0cy9neW1uYXN0aWNzLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc3BvcnRzL2hvY2tleS53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3Nwb3J0cy9qYXZlbGluX3Rocm93LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc3BvcnRzL2thYmFkZGkud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMva2FyYXRlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc3BvcnRzL2tob19raG8ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMvbWFyYXRob24ud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMvcnVubmluZ19yYWNlLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc3BvcnRzL3Nob3RfcHV0LndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc3BvcnRzL3NrYXRpbmcud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMvc3VyZmluZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3Nwb3J0cy9zd2ltbWluZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3Nwb3J0cy90YWJsZV90ZW5uaXMud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMvdGVubmlzLndlYnAiLAogIEFTU0VUUyArICJpbWFnZXMvc3BvcnRzL3ZvbGxleWJhbGwud2VicCIsCiAgQVNTRVRTICsgImltYWdlcy9zcG9ydHMvd2VpZ2h0bGlmdGluZy53ZWJwIiwKICBBU1NFVFMgKyAiaW1hZ2VzL3Nwb3J0cy93cmVzdGxpbmcud2VicCIsCl07CgpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoImluc3RhbGwiLCBmdW5jdGlvbiAoZXZlbnQpIHsKICBldmVudC53YWl0VW50aWwoCiAgICBjYWNoZXMub3BlbihDQUNIRSkudGhlbihmdW5jdGlvbiAoY2FjaGUpIHsKICAgICAgcmV0dXJuIGNhY2hlLmFkZEFsbChDT1JFKTsKICAgIH0pLnRoZW4oZnVuY3Rpb24gKCkgewogICAgICByZXR1cm4gc2VsZi5za2lwV2FpdGluZygpOwogICAgfSkuY2F0Y2goZnVuY3Rpb24gKCkgewogICAgICAvKiBBIHNpbmdsZSBtaXNzaW5nIGFzc2V0IG11c3Qgbm90IGZhaWwgdGhlIGluc3RhbGw7IHRoZSBmZXRjaAogICAgICAgICBoYW5kbGVyIGNhY2hlcyBhc3NldHMgYXMgdGhleSBhcmUgdXNlZCBpbnN0ZWFkLiAqLwogICAgfSkKICApOwp9KTsKCnNlbGYuYWRkRXZlbnRMaXN0ZW5lcigiYWN0aXZhdGUiLCBmdW5jdGlvbiAoZXZlbnQpIHsKICBldmVudC53YWl0VW50aWwoCiAgICBjYWNoZXMua2V5cygpLnRoZW4oZnVuY3Rpb24gKGtleXMpIHsKICAgICAgcmV0dXJuIFByb21pc2UuYWxsKGtleXMuZmlsdGVyKGZ1bmN0aW9uIChrKSB7IHJldHVybiBrICE9PSBDQUNIRTsgfSkubWFwKGZ1bmN0aW9uIChrKSB7CiAgICAgICAgcmV0dXJuIGNhY2hlcy5kZWxldGUoayk7CiAgICAgIH0pKTsKICAgIH0pLnRoZW4oZnVuY3Rpb24gKCkgewogICAgICByZXR1cm4gc2VsZi5jbGllbnRzLmNsYWltKCk7CiAgICB9KQogICk7Cn0pOwoKc2VsZi5hZGRFdmVudExpc3RlbmVyKCJmZXRjaCIsIGZ1bmN0aW9uIChldmVudCkgewogIHZhciByZXEgPSBldmVudC5yZXF1ZXN0OwogIGlmIChyZXEubWV0aG9kICE9PSAiR0VUIikgcmV0dXJuOwogIHZhciB1cmwgPSBuZXcgVVJMKHJlcS51cmwpOwogIGlmICh1cmwub3JpZ2luICE9PSBzZWxmLmxvY2F0aW9uLm9yaWdpbikgcmV0dXJuOyAvLyB0aGUgZ2FtZSBtYWtlcyBubyBjcm9zcy1vcmlnaW4gY2FsbHMKCiAgaWYgKHJlcS5tb2RlID09PSAibmF2aWdhdGUiIHx8IChyZXEuaGVhZGVycy5nZXQoImFjY2VwdCIpIHx8ICIiKS5pbmRleE9mKCJ0ZXh0L2h0bWwiKSAhPT0gLTEpIHsKICAgIC8vIE5hdmlnYXRpb246IHRyeSB0aGUgbmV0d29yayBmaXJzdCAoZnJlc2ggdmVyc2lvbiB3aGVuIG9ubGluZSksCiAgICAvLyBmYWxsIGJhY2sgdG8gdGhlIGNhY2hlZCBzaGVsbCBvZmZsaW5lLgogICAgZXZlbnQucmVzcG9uZFdpdGgoCiAgICAgIGZldGNoKHJlcSkudGhlbihmdW5jdGlvbiAocmVzKSB7CiAgICAgICAgdmFyIGNvcHkgPSByZXMuY2xvbmUoKTsKICAgICAgICBjYWNoZXMub3BlbihDQUNIRSkudGhlbihmdW5jdGlvbiAoY2FjaGUpIHsgY2FjaGUucHV0KHJlcSwgY29weSk7IH0pOwogICAgICAgIHJldHVybiByZXM7CiAgICAgIH0pLmNhdGNoKGZ1bmN0aW9uICgpIHsKICAgICAgICByZXR1cm4gY2FjaGVzLm1hdGNoKHJlcSwgeyBpZ25vcmVTZWFyY2g6IHRydWUgfSkudGhlbihmdW5jdGlvbiAoY2FjaGVkKSB7CiAgICAgICAgICByZXR1cm4gY2FjaGVkIHx8IGNhY2hlcy5tYXRjaChST09UICsgImluZGV4Lmh0bWwiKS50aGVuKGZ1bmN0aW9uIChob21lKSB7CiAgICAgICAgICAgIHJldHVybiBob21lIHx8IGNhY2hlcy5tYXRjaChST09UKTsKICAgICAgICAgIH0pOwogICAgICAgIH0pOwogICAgICB9KQogICAgKTsKICAgIHJldHVybjsKICB9CgogIC8vIExvY2FsIGFzc2V0cyAoZm9udHMsIGljb25zLCB3b3Jkcy5qc29uKTogY2FjaGUtZmlyc3QsIHJlZnJlc2ggaW4KICAvLyB0aGUgYmFja2dyb3VuZCBzbyB0aGUgbmV4dCBsYXVuY2ggaXMgaW5zdGFudCBhbmQgb2ZmbGluZS1wcm9vZi4KICBldmVudC5yZXNwb25kV2l0aCgKICAgIGNhY2hlcy5tYXRjaChyZXEsIHsgaWdub3JlU2VhcmNoOiB0cnVlIH0pLnRoZW4oZnVuY3Rpb24gKGNhY2hlZCkgewogICAgICB2YXIgbmV0d29yayA9IGZldGNoKHJlcSkudGhlbihmdW5jdGlvbiAocmVzKSB7CiAgICAgICAgaWYgKHJlcyAmJiByZXMub2spIHsKICAgICAgICAgIHZhciBjb3B5ID0gcmVzLmNsb25lKCk7CiAgICAgICAgICBjYWNoZXMub3BlbihDQUNIRSkudGhlbihmdW5jdGlvbiAoY2FjaGUpIHsgY2FjaGUucHV0KHJlcSwgY29weSk7IH0pOwogICAgICAgIH0KICAgICAgICByZXR1cm4gcmVzOwogICAgICB9KS5jYXRjaChmdW5jdGlvbiAoKSB7IHJldHVybiBjYWNoZWQ7IH0pOwogICAgICByZXR1cm4gY2FjaGVkIHx8IG5ldHdvcms7CiAgICB9KQogICk7Cn0pOwo=");
   }).catch(function(){ /* offline caching unavailable — game still works */ });
 }
 </script>
