@@ -3,7 +3,7 @@
  * installs and reloads in airplane mode. Firebase / CDN requests
  * are never cached: online mode always goes to the network.
  */
-const CACHE = 'upar-v33';
+const CACHE = 'upar-v35';
 const CORE = [
   './',
   './index.html',
@@ -38,11 +38,30 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Page navigations (including ?room=CODE links): try the network first
-  // so online rooms stay fresh; fall back to the cached app shell offline.
+  // Page navigations (including ?room=CODE links): cache first so
+  // reloads and re-opens are instant — serve the cached app shell
+  // (ignoreSearch, so ?room=CODE links open from the same cached
+  // shell) and refresh it in the background from plain './index.html',
+  // always cached under that one plain key, so ?room= links never
+  // create duplicate entries. With no cached shell yet (first load),
+  // fall through to the network.
   if (req.mode === 'navigate') {
     event.respondWith(
-      fetch(req).catch(() => caches.match('./index.html', { ignoreSearch: true }))
+      caches.match('./index.html', { ignoreSearch: true }).then((cached) => {
+        const refresh = fetch('./index.html')
+          .then((res) => {
+            if (res && res.ok) {
+              const copy = res.clone();
+              return caches.open(CACHE).then((cache) => cache.put('./index.html', copy)).then(() => res);
+            }
+            return res;
+          });
+        if (cached) {
+          event.waitUntil(refresh.catch(() => { /* offline: cached shell already served */ }));
+          return cached;
+        }
+        return refresh.catch(() => caches.match('./index.html', { ignoreSearch: true }));
+      })
     );
     return;
   }
