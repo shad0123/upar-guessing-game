@@ -6,6 +6,10 @@
   ],
   "description": "Hold the phone to your forehead, friends give clues, guess the word. Every word in English and Hinglish. Works fully offline.",
   "display": "standalone",
+  "display_override": [
+    "fullscreen",
+    "standalone"
+  ],
   "icons": [
     {
       "purpose": "any",

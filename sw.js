@@ -3,7 +3,7 @@
  * installs and reloads in airplane mode. Firebase / CDN requests
  * are never cached: online mode always goes to the network.
  */
-const CACHE = 'upar-v32';
+const CACHE = 'upar-v33';
 const CORE = [
   './',
   './index.html',
